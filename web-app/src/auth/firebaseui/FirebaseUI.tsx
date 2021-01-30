@@ -9,13 +9,13 @@ const FirebaseUI: React.FC = () => {
 
   useEffect(() => {
 		const firebaseConfig = {
-			apiKey: "AIzaSyDE433rN99xE-xv5x3atmyEy8GS5xbKwYk",
-			authDomain: "movie-polls-e2e1d.firebaseapp.com",
-			projectId: "movie-polls-e2e1d",
-			storageBucket: "movie-polls-e2e1d.appspot.com",
-			messagingSenderId: "901456091743",
-			appId: "1:901456091743:web:64da991f98cedbf56cd9ea",
-			measurementId: "G-CYHNJ28M1C"	
+      apiKey: "AIzaSyB70N4pe6mTtAHp4C0TDBNUi24mFMRGZEg",
+      authDomain: "movie-polls-9d110.firebaseapp.com",
+      projectId: "movie-polls-9d110",
+      storageBucket: "movie-polls-9d110.appspot.com",
+      messagingSenderId: "102319739237",
+      appId: "1:102319739237:web:67fdba5c367828d449d18c",
+      measurementId: "G-JNJQJKVHEG"
 		};
 
 		firebase.initializeApp(firebaseConfig);
