@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css?family=Monoton');
+
+.auth-component {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba($color: #000000, $alpha: 0.4);
+
+    .bg-image {
+        z-index: -1;
+        position: absolute;
+        min-width: 100%;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        background-image: url('../shared/resources/background-images/bg-image.jpg');
+        @media screen and (max-width: 425px) {
+            background-image: url('../shared/resources/background-images/bg-image-portrait.jpg');            
+        }
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+    }
+
+    .header {
+        .title {
+            font-size: 4rem;
+            font-family: 'Monoton';
+            color: gold;
+            text-align: center;
+            text-shadow: 1px 1px 5px black;
+        }
+
+        .subtitle {
+            font-size: 3rem;
+            color: whitesmoke;
+            font-weight: 600;
+            text-align: center;
+        }
+    }
+}
