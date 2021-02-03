@@ -14,32 +14,6 @@ const NavBarButton: React.FC<any> = ({text, callback}) => {
   )
 };
 
-const SignInButton: React.FC = () => {
-  const history = useHistory();
-
-  const handleClick = () => {
-    history.push('/auth');
-  };
-
-  return (
-    <Fragment>
-      <NavBarButton text='Sign In' callback={handleClick}/>
-    </Fragment>
-  );
-};
-
-const SignOutButton: React.FC = () => {
-  const handleClick = () => {
-    firebase.auth().signOut();
-  }
-
-  return (
-    <Fragment>
-      <NavBarButton text='Sign Out' callback={handleClick} />
-    </Fragment>
-  )
-}
-
 const MenuOptions: React.FC<any> = ({userAuthStatus}) => {
   const history = useHistory();
 
@@ -47,13 +21,21 @@ const MenuOptions: React.FC<any> = ({userAuthStatus}) => {
     <Fragment>
       {
         userAuthStatus === USER_AUTHENTICATION_STATUS.SIGNED ? (
-          <SignOutButton />
+          <Fragment>
+            <NavBarButton text='Top Movies' callback={() => {history.push('/')}} />
+            <NavBarButton text='Trending Movies' callback={() => {history.push('/')}} />
+            <NavBarButton text='Random Picks' callback={() => {history.push('/')}} />
+            <NavBarButton text='My Polls' callback={() => {history.push('/')}} />
+            <hr style={{height: '1rem', marginTop: 'auto', marginBottom: 'auto'}}/>
+            <NavBarButton text='Sign Out' callback={() => {firebase.auth().signOut()}}/>
+          </Fragment>
         ) : null
       }
       {
         userAuthStatus === USER_AUTHENTICATION_STATUS.NOT_SIGNED ? (
           <Fragment>
             <NavBarButton text='About' callback={() => {history.push('/')}} />
+            <NavBarButton text='Contact' callback={() => {history.push('/')}} />
             <hr style={{height: '1rem', marginTop: 'auto', marginBottom: 'auto'}}/>
             <NavBarButton text='Sign In' callback={() => {history.push('/auth')}}/>            
           </Fragment>
