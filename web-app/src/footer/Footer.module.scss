@@ -1,10 +1,12 @@
 .footer-component {
     background-color: black;
-    min-height: 23rem;
+    min-height: 30rem;
     padding: 5rem 7rem;
     position: relative;
     width: 100%;
     box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
 
     @media screen and (max-width: 768px) {
         padding: 2rem 2rem;
@@ -14,7 +16,49 @@
         font-family: 'Monoton';
         font-size: calc(2rem + 1vw);
         color: gold;
-        margin: auto;
         text-shadow: 1px 1px 5px black;
+        flex-basis: auto;
+        margin-right: 2rem;
+    }
+
+    .footer-columns {
+        padding: 1rem 0;
+        font-family: 'PT Sans Narrow';
+        padding: 1rem 2rem;
+        max-width: 50%;
+
+        @media screen and (max-width: 769px) {
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .column {
+            display: inline-block;
+            padding: 1rem 2rem;
+
+            @media screen and (max-width: 768px) {
+                width: 100%;
+            }
+        }
+
+        .header {
+            font-size: 2.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+        }
+
+        .links {
+            font-size: 2.5rem;
+            a {
+                text-decoration: none;
+                color: white;
+                display: block;
+                margin-bottom: 1rem;
+
+                &:hover {
+                    color: gold;
+                }
+            }
+        }
     }
 }
