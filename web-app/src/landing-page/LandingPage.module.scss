@@ -1,0 +1,174 @@
+.landing-page-component {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .container {
+        padding-top: 10rem;
+        min-height: 100vh;
+        box-sizing: border-box;
+
+        @media screen and (max-width: 768px) {
+            padding-top: 8rem;
+        }
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        column-gap: 2rem;
+        max-width: 80vw;
+        box-sizing: border-box;
+
+        @media screen and (max-width: 768px) {
+            display: flex;
+            flex-direction: column;
+            max-width: 90vw;
+
+            * {
+                margin-bottom: 2rem;
+            }
+        }
+
+        .app-info {
+            background-color: rgba(245, 245, 245, 0.1);
+            border-radius: 5px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            @media screen and (max-width: 768px) {
+                min-height: min-content;
+            }
+        
+            .title {
+                font-size: calc(3rem + 1vw);
+                color: gold;
+                font-family: 'Monoton';   
+                text-align: center;   
+                text-shadow: 1px 1px 5px black;
+            }
+
+            .content {
+                padding: 2rem;
+                font-size: calc(2rem + 0.5vw);
+                color: white;
+                text-align: center;
+                font-family: 'PT Sans Narrow';
+            }
+        }
+
+        .app-steps {
+            background-color: rgba(245, 245, 245, 0.1);
+            border-radius: 5px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            height: min-content;
+            font-family: 'PT Sans Narrow';
+            align-items: center;
+            z-index: 1;
+
+            .carousel {
+                display: grid;
+                grid-template-columns: auto;
+                grid-template-rows: auto auto auto auto;
+                margin-bottom: 0;
+
+                .step-title {
+                    text-align: center;
+                    font-size: calc(2rem + 100%);
+                }
+
+                .step-number-container {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                }
+
+                .step-number {
+                    margin: 1.5rem auto;
+                    padding: 3rem;
+                    background-color: black;
+                    color: gold;
+                    border-radius: 50%;
+                    width: 5rem;
+                    height: 5rem;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: calc(3rem + 1vw);
+                    font-weight: 600;
+                }
+
+                hr {
+                    width: calc(3rem + 1vw);
+                    border: 1px solid white;
+                }
+
+                .media-container {
+                    min-height: 20rem;
+                    min-width: 30rem;
+                    padding: 1rem;
+                    box-sizing: border-box;
+                    border-radius: 5px;
+                    background-color: rgba(245, 245, 245, 0.2);
+                }
+
+                .buttons {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    margin-top: 1.5rem;
+                    margin-bottom: 0;
+
+                    .back, .forward {
+                        min-height: 6rem;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+
+                        &:hover {
+                            cursor: pointer;
+                        }
+
+                        span {
+                            height: 3px;
+                            border-radius: 3px;
+                            width: 2rem;
+                            background-color: white;
+                            display: inline;
+                            margin-bottom: 0;
+                        }
+                    }
+
+                    .page-indicator {
+                        width: 100%;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: center;
+
+                        .indicator {
+                            height: 1rem;
+                            width: 1rem;
+                            background-color: rgba(255, 255, 255, 0.205);
+                            margin-right: 1rem;
+                            border-radius: 50%;
+
+                            &.active {
+                                background-color: gold;
+                            }
+                        }
+
+                        .indicator:last-child {
+                            margin-right: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,20 @@
+.footer-component {
+    background-color: black;
+    min-height: 23rem;
+    padding: 5rem 7rem;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+
+    @media screen and (max-width: 768px) {
+        padding: 2rem 2rem;
+    }
+
+    .app-title {
+        font-family: 'Monoton';
+        font-size: calc(2rem + 1vw);
+        color: gold;
+        margin: auto;
+        text-shadow: 1px 1px 5px black;
+    }
+}

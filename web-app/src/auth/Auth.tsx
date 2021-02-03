@@ -7,7 +7,7 @@ const Auth: React.FC = () => {
 		<div className={style['auth-component']}>
 			<div className={style['header']}>
 				<div className={style['title']}>
-					Movie Polls 🎬
+					Movie Polls
 				</div>
 				<div className={style['subtitle']}>
 					Sign In

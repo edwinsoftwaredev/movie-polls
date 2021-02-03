@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
-import logo from './logo.svg';
-import style from './App.module.scss';
-import {BrowserRouter as Router, Route} from 'react-router-dom';
+import React, { Fragment, useEffect } from 'react';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import Auth from './auth/Auth';
 import LandingPage from './landing-page/LandingPage';
 import Home from './home/Home';
@@ -12,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { USER_AUTHENTICATION_STATUS } from './shared/utils/enums';
 import { userAuthenticationStatusSelector } from './auth/auth-selectors';
 import { setAuthStateObserver } from './firebase-config';
+import NavBar from './navbar/NavBar';
+import Footer from './footer/Footer';
 
 
 const InitialPage: React.FC = () => {
@@ -26,7 +26,7 @@ const InitialPage: React.FC = () => {
   } else {
     return <LandingPage />;
   }
-}
+};
 
 function App() {
   const dispatch = useDispatch();
@@ -36,18 +36,23 @@ function App() {
   }, [dispatch]);
 
   return (
-    <Router>
-      <Route exact path='/'>
-        <InitialPage />
-      </Route>
-      <Route path='/auth'>
-        <Auth />
-      </Route>
-      <ProtectedRoute path='/account'>
-        <Account />
-      </ProtectedRoute>
-    </Router>
+    <Fragment>
+      <Router>
+        <NavBar />
+        <Switch>
+          <Route exact path='/'>
+            <InitialPage />
+          </Route>
+          <Route exact path='/auth'>
+            <Auth />
+          </Route>
+          <ProtectedRoute path='/account'>
+            <Account />
+          </ProtectedRoute>
+        </Switch>
+      </Router>
+    </Fragment>
   );
-}
+};
 
 export default App;

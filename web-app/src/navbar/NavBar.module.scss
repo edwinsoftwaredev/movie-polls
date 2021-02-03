@@ -1,0 +1,268 @@
+button {
+    font-family: 'PT Sans Narrow';
+}
+
+.navbar-component {
+    position: fixed;
+    z-index: 100;
+    right: 0;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(7px);
+    min-height: 6rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto;
+    color: white;
+    padding: 0 7rem;
+
+    @media screen and (max-width: 768px) {
+        padding: 0 2rem;
+    }
+
+    .app-title {
+        font-family: 'Monoton';
+        font-size: calc(2rem + 1vw);
+        color: gold;
+        margin: auto;
+        text-shadow: 1px 1px 5px black;
+    }
+
+    .options {
+        display: flex;
+        flex-direction: row;
+        @media screen and (max-width: 768px) {
+            display: none;
+        }
+
+        * {
+            margin-left: 1rem;
+        }
+        .navbar-button {
+            height: 100%;
+            display: flex;
+            button {
+                margin: auto;
+                height: 100%;
+                background-color: rgba(245, 245, 245, 0);
+                border-radius: 0px;
+                color: white;
+                border: none;
+                padding: 0 0rem;
+                font-size: 2rem;
+                font-weight: 600;
+                transition: background-color 150ms ease-in;
+
+                &:focus {
+                    outline: none;
+                }
+
+                &:hover {
+                    cursor: pointer;
+                    color: gold;
+                    // background-color: rgba(245, 245, 245, 0.3);
+                }
+            }
+        }
+    }
+
+    .options-drawer {
+        display: flex;
+        flex-direction: column;
+        
+        @media screen and (min-width: 769px) {
+            display: none;
+        }
+
+        button {
+            margin: auto;
+            background-color: rgba(245, 245, 245, 0);
+            border-radius: 0px;
+            border: none;
+            color: transparent;
+            display: flex;
+            flex-direction: column;
+            z-index: 2;
+
+            &:focus {
+                outline: none;
+            }
+
+            span {
+                background-color: white;
+                margin-top: 4px;
+                border-radius: 2px;
+                width: 2.3rem;
+                height: 0.3rem;
+                transition: 200ms;
+                transform-origin: 2.14rem;
+            }
+
+            &.close {
+                span:nth-child(2) {
+                    opacity: 1;
+                }
+
+                span:nth-child(1) {
+                    transform: rotate(0deg);
+                }
+
+                span:nth-child(3) {
+                    transform: rotate(0deg);
+                }
+            }
+
+            &.open {
+                span:nth-child(2) {
+                    opacity: 0;
+                }
+
+                span:nth-child(1) {
+                    transform: rotate(-45deg);
+                }
+
+                span:nth-child(3) {
+                    transform: rotate(45deg);
+                }
+            }
+        }
+    }
+
+    .drawer-overlay {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        z-index: 0;
+        visibility: hidden;
+        transition: 300ms ease-in;
+        left: 0;
+
+        @media screen and (max-width: 768px) {
+            display: block;
+        }
+
+        &.open {
+            background-color: rgba(0, 0, 0, 0.4);
+            display: block;
+            visibility: visible;
+        }
+
+        &.close {
+            background-color: rgba(0, 0, 0, 0);
+            z-index: -1;
+        }
+    }
+
+    .menu-drawer {
+        position: fixed;
+        height: 100vh;
+        right: 0;
+        top: 0;
+        background-color: black;        
+        width: 45rem;
+        max-width: 100vw;
+        padding: 5rem;
+        display: none;
+        flex-direction: column;
+        box-sizing: border-box;
+        transition: 200ms ease-in;
+        overflow-x: hidden;
+
+        hr {
+            height: 0 !important;
+            width: 2.5rem;
+            margin: 0 0 1.5rem 0 !important;
+            opacity: 0;
+            transition: 200ms ease-in;
+            transition-delay: 200ms;
+            transform: translateX(4rem);
+        }
+
+        @media screen and (max-width: 768px) {
+            display: flex;
+        }
+        
+        &.open {
+            right: 0;
+            .navbar-button {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            button {
+                color: white !important;
+            }
+
+            .app-title {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            hr {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+        }
+
+        &.close {
+            right: -45rem;
+            opacity: 0;
+
+            button {
+                color: rgba(255, 255, 255, 0) !important;
+            }
+        }
+
+        .navbar-button {
+            transform: translateX(4rem);
+            opacity: 0;
+            transition: 200ms ease-out;
+            transition-delay: 200ms;
+            button {
+                margin: auto;
+                margin-bottom: 2rem;
+                width: 100%;
+                text-align: left;
+                height: auto;
+                background-color: rgba(245, 245, 245, 0);
+                border-radius: 0px;
+                color: white;
+                border: none;
+                padding: 0 0rem;
+                font-size: 3.5rem;
+                font-weight: 600;
+                transition: background-color 150ms ease-in;
+                transition: color 150ms;
+
+                &:focus {
+                    outline: none;
+                }
+
+                &:active {
+                    color: gold !important;
+                }
+
+                &:hover {
+                    cursor: pointer;
+                    color: gold;
+                    // background-color: rgba(245, 245, 245, 0.3);
+                }
+            }
+        }
+
+        .drawer-space {
+            height: 100%;
+        }
+
+        .app-title {
+            transition: 200ms ease-out;
+            transition-delay: 300ms;
+            margin: 0;
+            transform: translateX(6rem);
+            opacity: 0;
+        }
+    }
+}
