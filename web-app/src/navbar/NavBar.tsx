@@ -6,9 +6,9 @@ import { USER_AUTHENTICATION_STATUS } from '../shared/utils/enums';
 import style from './NavBar.module.scss';
 import firebase from 'firebase/app';
 
-const NavBarButton: React.FC<any> = ({text, callback}) => {
+const NavBarButton: React.FC<any> = ({text, callback, active}) => {
   return (
-    <div className={style['navbar-button']}>
+    <div className={style['navbar-button'] + ' ' + (active ? style['active'] : '')}>
       <button onClick={e => callback()}>{text}</button>
     </div>
   )
@@ -16,17 +16,20 @@ const NavBarButton: React.FC<any> = ({text, callback}) => {
 
 const MenuOptions: React.FC<any> = ({userAuthStatus}) => {
   const history = useHistory();
+  const location = useLocation();
 
   return (
     <Fragment>
       {
         userAuthStatus === USER_AUTHENTICATION_STATUS.SIGNED ? (
           <Fragment>
+            <NavBarButton active={location.pathname === '/'} text='Home' callback={() => {history.push('/')}} />
             <NavBarButton text='Top Movies' callback={() => {history.push('/')}} />
             <NavBarButton text='Trending Movies' callback={() => {history.push('/')}} />
             <NavBarButton text='Random Picks' callback={() => {history.push('/')}} />
             <NavBarButton text='My Polls' callback={() => {history.push('/')}} />
             <hr style={{height: '1rem', marginTop: 'auto', marginBottom: 'auto'}}/>
+            <NavBarButton text='Account' callback={() => {firebase.auth().signOut()}}/>
             <NavBarButton text='Sign Out' callback={() => {firebase.auth().signOut()}}/>
           </Fragment>
         ) : null

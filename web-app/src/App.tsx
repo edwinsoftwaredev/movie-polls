@@ -11,7 +11,7 @@ import { USER_AUTHENTICATION_STATUS } from './shared/utils/enums';
 import { userAuthenticationStatusSelector } from './auth/auth-selectors';
 import { setAuthStateObserver } from './firebase-config';
 import NavBar from './navbar/NavBar';
-import Footer from './footer/Footer';
+import TopMovies from './top-movies/TopMovies';
 
 
 const InitialPage: React.FC = () => {
@@ -48,6 +48,9 @@ function App() {
           </Route>
           <ProtectedRoute path='/account'>
             <Account />
+          </ProtectedRoute>
+          <ProtectedRoute exact path='/top-movies'>
+            <TopMovies />
           </ProtectedRoute>
         </Switch>
       </Router>

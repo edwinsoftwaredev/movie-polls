@@ -1,0 +1,140 @@
+.movie-card-component::before {
+    background-image: url('https://www.themoviedb.org/t/p/w533_and_h300_bestv2/a7p3RuCocDAwurgu2bJbAEhJagf.jpg');
+    background-repeat: no-repeat;
+    background-position-y: top;
+    background-position-x: center;
+    background-size: cover;
+    content: '';
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 0;
+    border-radius: 5px;
+}
+
+.movie-card-component {
+    position: relative;
+    //width: calc((100% - 4px*5)/5);
+    width: 0;
+    height: 100%;
+    padding: 0.6rem;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: inline-grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto 1fr auto;
+    border-radius: 5px;
+    margin: 0 2px;
+    flex-shrink: 0;
+    /*transition: 250ms ease-out;
+    transition-delay: 200ms;
+
+    &:hover {
+        width: 25vw;
+        height: 18vw;
+    }*/
+
+    @media screen and (max-width: 768px) {
+        width: calc(9rem + 1vw);
+        margin-right: 0.5rem;
+        background-color: rgba(0, 0, 0, 0.2);
+        min-height: calc(10rem + 6vh);
+    }
+
+    & div {
+        z-index: 2;
+    }
+
+    .header {
+        display: grid;
+        grid-template-columns: 80% 1fr auto;
+        grid-template-rows: auto;
+
+        .title {
+            font-family: 'PT Sans Narrow';
+            font-weight: 500;
+            font-size: calc(1rem + 0.7vw);
+            line-height: 1;
+
+            @media screen and (max-width: 768px) {
+                display: none;
+            }
+        }
+
+        .menu-btn {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            &:hover {
+                cursor: pointer;
+                background-color: rgba(0, 0, 0, 0.3);
+            }
+            
+            span {
+                margin-bottom: 2px;
+                display: block;
+                height: 4px;
+                width: 4px;
+                border-radius: 50%;
+                background-color: white;
+            }
+
+            & span:last-child {
+                margin-bottom: 0;
+            }
+
+            @media screen and (max-width: 768px) {
+                display: none;
+            }
+        }
+
+    }
+
+    .space {
+    }
+
+    .data {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-template-rows: auto;
+        width: 100%;
+        font-size: 1.3rem;
+        font-family: 'PT Sans Narrow';
+        line-height: 1;
+
+        @media screen and (max-width: 768px) {
+            display: none;
+        }
+
+        ul {
+            list-style-type: none;
+            margin-block-start: 0;
+            margin-block-end: 0;
+            padding-inline-start: 0;
+            border: 1px solid white;
+            padding: 0 0.5rem;
+            width: fit-content;
+
+            li {
+                display: inline-block;
+                margin-right: 0.5rem;
+            }
+
+            & :last-child {
+                margin-right: 0;
+            }
+        }
+
+        .popularity {
+            display: block;
+        }
+    }
+}

@@ -1,0 +1,89 @@
+.container {
+    min-height: 13vw;
+    height: 13vw;
+    box-sizing: border-box;
+    margin: 1rem 0;
+    overflow: hidden;
+
+    .header {
+        display: grid;
+        padding: 0 4%;
+        box-sizing: border-box;
+        height: 20%;
+        width: 100%;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto;
+        .title {
+            font-size: calc(1rem + 1.1vw);
+            font-family: 'PT Sans Narrow';
+            font-weight: 600;
+            line-height: 100%;
+        }
+    }
+
+    .list-container {
+        position: relative;
+        height: 80%;
+        padding: 0 4%;
+        overflow: visible;
+
+        .list {
+            height: 100%;
+            float: left;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            // transition: transform 650ms ease-out;
+        }
+
+        .forward, .backward {
+            width: 4%;
+            position: absolute;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%; // this is the original height of a card
+            background-color: rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            border-radius: 5px;
+            cursor: pointer;
+            span {
+                background-color: white;
+                height: 0.3rem;
+                width: 2rem;
+                display: block;
+                border-radius: 3px;
+            }
+        }
+
+        .backward {
+            left: 0;
+
+            & span:first-child {
+                transform: rotate(65deg);
+                transform-origin: left;
+            }
+
+            & span:last-child {
+                transform: rotate(-65deg);
+                transform-origin: left;
+            }
+        }
+
+        .forward {
+            right: 0;
+
+            & span:first-child {
+                transform: rotate(-65deg);
+                transform-origin: right;
+            }
+
+            & span:last-child {
+                transform: rotate(65deg);
+                transform-origin: right;
+            }
+        }
+    }
+}

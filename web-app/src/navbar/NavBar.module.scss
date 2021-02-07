@@ -36,6 +36,11 @@ button {
             display: none;
         }
 
+        hr {
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+
         .navbar-button {
             height: 100%;
             display: flex;
@@ -58,6 +63,12 @@ button {
                     cursor: pointer;
                     color: gold;
                     // background-color: rgba(245, 245, 245, 0.3);
+                }
+            }
+
+            &.active {
+                button {
+                    color: gold !important;
                 }
             }
         }
