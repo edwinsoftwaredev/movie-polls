@@ -8,6 +8,7 @@ interface IMovie {
   popularity: string;
   genres: string[];
   key: number;
+  backdrop: string
 }
 
 interface ISlider {
@@ -31,7 +32,7 @@ const Slider: React.FC<ISlider> = (props: ISlider) => {
       className={style['slider']}
       ref={props.sliderRef}
       style={{
-        transform: `translate3d(${props.posX}px, 0, 0)`,
+        transform: `translate3d(${props.posX}%, 0, 0)`,
         transition: `${props.transitionTime}ms ease-out`
       }}
     >
@@ -43,6 +44,7 @@ const Slider: React.FC<ISlider> = (props: ISlider) => {
               popularity={item.popularity}
               genres={item.genres}
               width={cardWidth}
+              backdrop={item.backdrop}
             />
           </Fragment>
         ))

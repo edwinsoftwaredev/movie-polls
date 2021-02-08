@@ -1,5 +1,6 @@
-.movie-card-component::before {
-    background-image: url('https://www.themoviedb.org/t/p/w533_and_h300_bestv2/a7p3RuCocDAwurgu2bJbAEhJagf.jpg');
+/*.movie-card-component::before {
+    // background-image: url('https://www.themoviedb.org/t/p/w533_and_h300_bestv2/a7p3RuCocDAwurgu2bJbAEhJagf.jpg');
+    background-image: url(attr(data-backdrop));
     background-repeat: no-repeat;
     background-position-y: top;
     background-position-x: center;
@@ -12,9 +13,25 @@
     position: absolute;
     z-index: 0;
     border-radius: 5px;
-}
+}*/
 
 .movie-card-component {
+
+    .before {
+        background-repeat: no-repeat;
+        background-position-y: top;
+        background-position-x: center;
+        background-size: cover;
+        content: '';
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: 0;
+        border-radius: 5px;
+    }
+
     position: relative;
     //width: calc((100% - 4px*5)/5);
     width: 0;
@@ -106,7 +123,6 @@
         grid-template-columns: auto 1fr auto;
         grid-template-rows: auto;
         width: 100%;
-        font-size: 1.3rem;
         font-family: 'PT Sans Narrow';
         line-height: 1;
 
@@ -126,6 +142,7 @@
             li {
                 display: inline-block;
                 margin-right: 0.5rem;
+                font-size: calc(100% + 0.2rem);
             }
 
             & :last-child {

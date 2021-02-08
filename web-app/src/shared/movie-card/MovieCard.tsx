@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import style from './MovieCard.module.scss';
 
 const MovieCard: React.FC<any> = ({
   title,
   popularity,
   genres,
-  width
+  width,
+  backdrop
 }) => {
   return (
-    <div style={{width: width}} className={style['movie-card-component']}>
+    <div
+      style={{width: width}}
+      className={style['movie-card-component']}
+    >
+      <div className={style['before']} style={{backgroundImage: `url(${backdrop})`}}></div>
       <div className={style['header']}>
         <div className={style['title']}>{title}</div>
         <div className={style['space']}></div>
