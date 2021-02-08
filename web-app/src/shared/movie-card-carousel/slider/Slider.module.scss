@@ -1,0 +1,13 @@
+.slider {
+    height: 100%;
+    float: left;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    // transition: transform 650ms ease-out;
+
+    .slice {
+        display: flex;
+        flex-direction: row;
+    }
+}

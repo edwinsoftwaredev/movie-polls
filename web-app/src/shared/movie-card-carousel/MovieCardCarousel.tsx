@@ -1,6 +1,6 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
-import MovieCard from '../movie-card/MovieCard';
+import React, { useEffect, useRef, useState } from 'react';
 import style from './MovieCardCarousel.module.scss';
+import Slider from './slider/Slider';
 
 const movieList = [{
   id: '1',
@@ -74,37 +74,54 @@ const movieList = [{
   genres: ['Adventure', 'Fantasy', 'Action']
 }]
 
+const movieItems = movieList.map((item, index) => ({...item, key: index}))
+
+interface ISlider {
+  list: typeof movieItems;
+  posX: number;
+  transitionTime: number,
+  controlCounter: number
+}
+
+const initialSlider = {
+  list: [],
+  posX: 0,
+  transitionTime: 0,
+  controlCounter: 0
+}
+
 const MovieCarousel: React.FC<any> = ({title}) => {
 	const listRef = useRef<HTMLDivElement>(null);
-	const [posX, setPosX] = useState(0);
-	const [list, setList] = useState<typeof movieList>([]);
+  const [slider, setSlider] = useState<ISlider>(initialSlider);
 	const [cardAmount, setCardAmount] = useState(0);
 	const [idx, setIdx] = useState(0);
-  const [touched, setTouched] = useState(false); // if the carousel was touched
-  const [cardWidth, setCardWidth] = useState(0);
-  const [transitionStarted, setTrasitionStarted] = useState(false);
+  const [touched, setTouched] = useState(false);
 
 	const handleFowardMovement = () => {
-    if (!transitionStarted) {
-      if (!touched) {
-        setTouched(true);
-      }
-      setTrasitionStarted(true);
-      setIdx(state => state + cardAmount - movieList.length*(Math.trunc((state + cardAmount) / movieList.length)));
-  
-      const listWidth = listRef.current?.clientWidth ?? 0;
-      setPosX(state => state - listWidth);
+    if (!touched) {
+      setTouched(true);
     }
+    setIdx(state => state + cardAmount - movieList.length*(Math.trunc((state + cardAmount) / movieList.length)));
+
+    const listWidth = listRef.current?.clientWidth ?? 0;
+    setSlider(state => ({
+      ...state, 
+      posX: state.posX - listWidth,
+      transitionTime: 650,
+      controlCounter: state.controlCounter + cardAmount
+    }));
 	};
 
 	const handleBackwardMovement = () => {
-    if (!transitionStarted) {
-      setTrasitionStarted(true);
-      setIdx(state => state - cardAmount + movieList.length*(state - cardAmount >= 0 ? 0 : 1));
-      
-      const listWidth = listRef.current?.clientWidth ?? 0;
-      setPosX(state => state + listWidth);
-    }
+    setIdx(state => state - cardAmount + movieList.length*(state - cardAmount >= 0 ? 0 : 1));
+    
+    const listWidth = listRef.current?.clientWidth ?? 0;
+    setSlider(state => ({
+      ...state, 
+      posX: state.posX + listWidth, 
+      transitionTime: 650,
+      controlCounter: state.controlCounter - cardAmount
+    }));
   };
 
   const getSlice = (start: number, end: number) => {
@@ -127,50 +144,27 @@ const MovieCarousel: React.FC<any> = ({title}) => {
   };
 
 	useEffect(() => {
-		listRef.current
-			?.setAttribute(
-        'style',
-        `transform: translate3d(${posX}px, 0, 0); transition: 650ms ease-out`);
-	},[posX]);
-
-	useEffect(() => {
     if (!touched && cardAmount) {
-      setList([
+      const slice =  [
         ...getSlice(idx, cardAmount + 1),
         ...getSlice(cardAmount + 1, cardAmount*2 + 1)
-      ]);
+      ];
+
+
+      setSlider(state => (
+        {
+          ...state,
+          list: slice.map((item, index) => ({...item, key: state.controlCounter + index}))        
+        }
+      ))
     }
 	}, [cardAmount, idx, touched]);
-
-  useEffect(() => {
-    setTrasitionStarted(false);
-  }, [list]);
-
-  useEffect(() => {
-    const listWidth = listRef.current?.clientWidth ?? 0;
-    setCardWidth(Math.floor((listWidth - 4*cardAmount)/cardAmount));
-  }, [cardAmount, list]);
-
-  useEffect(() => {
-    if (touched && !transitionStarted) {
-      const resetX = listRef.current?.clientWidth ?? 0; 
-      // console.log(-resetX);
-      // setPosX(-resetX);
-      listRef.current
-        ?.setAttribute(
-          'style',
-          `transform: translate3d(${-resetX}px, 0, 0); transition: 0 !important;`
-        );
-      
-      setPosX(-resetX);
-    }
-  }, [touched, list, transitionStarted]);
 
   useEffect(() => {
     const listReference = listRef.current;
 
     const handleTranslationFinish = () => {
-      if (touched && transitionStarted) {
+      if (touched) {
         const start1 = idx - cardAmount + movieList.length*(idx - cardAmount >= 0 ? 0 : 1);
         const end1 = (
             start1 + cardAmount >= movieList.length ?
@@ -182,12 +176,27 @@ const MovieCarousel: React.FC<any> = ({title}) => {
 
         const start3 = end2;
         const end3 = start3 + cardAmount - movieList.length*(Math.trunc((start3 + cardAmount) / movieList.length));
-  
-        setList([
+    
+        console.log(getSlice(start1, end1));
+        console.log(getSlice(start2, end2));
+        console.log(getSlice(start3, end3));
+
+        const slice = [
           ...getSlice(start1, end1),
           ...getSlice(start2, end2),
           ...getSlice(start3, end3)
-        ]);
+        ];
+
+        // 1,2,3,4,5,6 -> 3,4,5,6,7,8 -> 5,6,7,8,9,10
+
+        const resetX = listRef.current?.clientWidth ?? 0;
+
+        setSlider(state => ({
+          ...state,
+          list: slice.map((value, index) => ({...value, key: state.controlCounter + index - cardAmount})),
+          posX: -resetX,
+          transitionTime: 0
+        }));
       }
     };
 
@@ -196,11 +205,11 @@ const MovieCarousel: React.FC<any> = ({title}) => {
     return () => {
       listReference?.removeEventListener('transitionend', handleTranslationFinish);
     };
-  }, [idx, cardAmount, touched, transitionStarted]);
+  }, [idx, cardAmount, touched]);
 
 	useEffect(() => {
 		const handleResize = () => {
-			let numberCards = 10;
+			let numberCards = 6;
 			const windowWidth = window.innerWidth;
 
 			if (windowWidth >= 1440) {
@@ -239,20 +248,13 @@ const MovieCarousel: React.FC<any> = ({title}) => {
             </div>
           ) : null
         }
-				<div className={style['list']} ref={listRef}>
-					{
-						list.map((item, index) => (
-							<Fragment key={index}>
-                <MovieCard 
-                  title={item.id}
-                  popularity={item.popularity}
-                  genres={item.genres}
-                  width={cardWidth}
-                />
-              </Fragment>
-						))
-					}
-				</div>
+        <Slider 
+          movieSlice={slider.list} 
+          cardAmount={cardAmount}
+          sliderRef={listRef}
+          posX={slider.posX}
+          transitionTime={slider.transitionTime}
+        />
 				<div className={style['forward']} onClick={handleFowardMovement}>
           <span></span>
           <span></span>
