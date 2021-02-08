@@ -23,8 +23,21 @@ const Slider: React.FC<ISlider> = (props: ISlider) => {
   const [cardWidth, setCardWidth] = useState(0);
 
   useEffect(() => {
-    const listWidth = props.sliderRef.current?.clientWidth ?? 0;
-    setCardWidth(Math.floor((listWidth - 4*props.cardAmount)/props.cardAmount));
+    const listWidth = props.sliderRef.current?.getBoundingClientRect().width ?? 0;
+    setCardWidth((listWidth - 4*props.cardAmount) / props.cardAmount);
+  }, [props.cardAmount, props.sliderRef]);
+
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const listWidth = props.sliderRef.current?.getBoundingClientRect().width ?? 0;
+      setCardWidth((listWidth - 4*props.cardAmount) / props.cardAmount);
+    };
+
+    window.addEventListener('resize', handleWindowResize);
+
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    }
   }, [props.cardAmount, props.sliderRef]);
 
   return (
@@ -33,7 +46,7 @@ const Slider: React.FC<ISlider> = (props: ISlider) => {
       ref={props.sliderRef}
       style={{
         transform: `translate3d(${props.posX}%, 0, 0)`,
-        transition: `${props.transitionTime}ms ease-out`
+        transition: `${props.transitionTime}ms ease`
       }}
     >
       {

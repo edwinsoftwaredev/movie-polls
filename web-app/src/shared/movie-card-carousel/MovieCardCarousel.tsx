@@ -112,30 +112,37 @@ const MovieCarousel: React.FC<any> = ({title}) => {
   const [touched, setTouched] = useState(false);
   const listReference = listRef.current;
   const [listAdjusted, setListAdjusted] = useState(true);
+  const [transitionStarted, setTransitionStarted] = useState(false);
 
 	const handleFowardMovement = () => {
-    if (!touched) {
-      setTouched(true);
-    }
-    setIdx(state => state + cardAmount - movieList.length*(Math.trunc((state + cardAmount) / movieList.length)));
-
-    setSlider(state => ({
-      ...state, 
-      posX: state.posX - 100,
-      transitionTime: 650,
-      controlCounter: state.controlCounter + cardAmount
-    }));
+    if (!transitionStarted) {
+      setTransitionStarted(true);
+      if (!touched) {
+        setTouched(true);
+      }
+      setIdx(state => state + cardAmount - movieList.length*(Math.trunc((state + cardAmount) / movieList.length)));
+  
+      setSlider(state => ({
+        ...state, 
+        posX: state.posX - 100,
+        transitionTime: 650,
+        controlCounter: state.controlCounter + cardAmount
+      }));
+    } 
 	};
 
 	const handleBackwardMovement = () => {
-    setIdx(state => state - cardAmount + movieList.length*(state - cardAmount >= 0 ? 0 : 1));
+    if (!transitionStarted) {
+      setTransitionStarted(true);
+      setIdx(state => state - cardAmount + movieList.length*(state - cardAmount >= 0 ? 0 : 1));
     
-    setSlider(state => ({
-      ...state, 
-      posX: state.posX + 100, 
-      transitionTime: 650,
-      controlCounter: state.controlCounter - cardAmount
-    }));
+      setSlider(state => ({
+        ...state, 
+        posX: state.posX + 100, 
+        transitionTime: 800,
+        controlCounter: state.controlCounter - cardAmount
+      }));
+    }
   };
 
   const getSlice = (start: number, end: number) => {
@@ -169,7 +176,7 @@ const MovieCarousel: React.FC<any> = ({title}) => {
           ...state,
           list: slice.map((item, index) => ({...item, key: state.controlCounter + index}))        
         }
-      ))
+      ));
     }
 	}, [cardAmount, idx, touched]);
 
@@ -194,14 +201,14 @@ const MovieCarousel: React.FC<any> = ({title}) => {
           ...getSlice(start3, end3)
         ];
 
-        const resetX = listRef.current?.clientWidth ?? 0;
-
         setSlider(state => ({
           ...state,
           list: slice.map((value, index) => ({...value, key: state.controlCounter + index - cardAmount})),
-          posX: -100 - (Math.floor((resetX - 4*cardAmount)/cardAmount)/resetX)*100,
+          posX: -100 - (1/cardAmount)*100,
           transitionTime: 0
         }));
+
+        setTransitionStarted(false);
       }
     };
 

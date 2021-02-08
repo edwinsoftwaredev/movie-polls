@@ -1,22 +1,8 @@
-/*.movie-card-component::before {
-    // background-image: url('https://www.themoviedb.org/t/p/w533_and_h300_bestv2/a7p3RuCocDAwurgu2bJbAEhJagf.jpg');
-    background-image: url(attr(data-backdrop));
-    background-repeat: no-repeat;
-    background-position-y: top;
-    background-position-x: center;
-    background-size: cover;
-    content: '';
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    z-index: 0;
-    border-radius: 5px;
-}*/
+.movie-card-container {
+    padding: 0 2px;
+}
 
 .movie-card-component {
-
     .before {
         background-repeat: no-repeat;
         background-position-y: top;
@@ -33,7 +19,6 @@
     }
 
     position: relative;
-    //width: calc((100% - 4px*5)/5);
     width: 0;
     height: 100%;
     padding: 0.6rem;
@@ -43,12 +28,9 @@
     grid-template-columns: auto;
     grid-template-rows: auto 1fr auto;
     border-radius: 5px;
-    margin: 0 2px;
     flex-shrink: 0;
-    /*transition: 250ms ease-out;
-    transition-delay: 200ms;
 
-    &:hover {
+    /*&:hover {
         width: 25vw;
         height: 18vw;
     }*/
