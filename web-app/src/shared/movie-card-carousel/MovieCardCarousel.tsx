@@ -125,7 +125,7 @@ const MovieCarousel: React.FC<any> = ({title}) => {
       setSlider(state => ({
         ...state, 
         posX: state.posX - 100,
-        transitionTime: 650,
+        transitionTime: 800,
         controlCounter: state.controlCounter + cardAmount
       }));
     } 

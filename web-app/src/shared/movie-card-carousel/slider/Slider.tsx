@@ -53,7 +53,7 @@ const Slider: React.FC<ISlider> = (props: ISlider) => {
         props.movieSlice.map((item, index) => (
           <Fragment key={item.key}>
             <MovieCard            
-              title={item.id}
+              title={item.title}
               popularity={item.popularity}
               genres={item.genres}
               width={cardWidth}

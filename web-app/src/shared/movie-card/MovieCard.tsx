@@ -8,10 +8,27 @@ const MovieCard: React.FC<any> = ({
   width,
   backdrop
 }) => {
+  const cardReference = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ref = cardReference.current;
+
+    const handleTransitionEnd = (e: TransitionEvent) => {
+
+      e.stopPropagation();
+    };
+
+    ref?.addEventListener('transitionend', handleTransitionEnd);
+
+    return () => {
+      ref?.removeEventListener('transitionend', handleTransitionEnd);
+    }
+  }, []);
+
   return (
-    <div className={style['movie-card-container']}>
+    <div className={style['movie-card-container']} ref={cardReference}>
       <div
-        style={{width: width + 'px'}}
+        style={{width: width + 'px', height: (width*9)/16 + 'px'}}
         className={style['movie-card-component']}
       >
         <div className={style['before']} style={{backgroundImage: `url(${backdrop})`}}></div>
