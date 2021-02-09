@@ -5,7 +5,7 @@ import { USER_AUTHENTICATION_STATUS } from './shared/utils/enums';
 
 export const initializeFirebase = () => {  
   const firebaseConfig = {
-    apiKey: "AIzaSyB70N4pe6mTtAHp4C0TDBNUi24mFMRGZEg",
+    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
     authDomain: "movie-polls-9d110.firebaseapp.com",
     projectId: "movie-polls-9d110",
     storageBucket: "movie-polls-9d110.appspot.com",
