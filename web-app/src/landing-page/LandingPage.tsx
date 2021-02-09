@@ -49,7 +49,7 @@ const Carousel: React.FC = () => {
         <div className={style['page-indicator']}>
           {
             steps.map((value, index) => (
-                <div className={
+                <div key={index} className={
                   style['indicator'] + ' ' + (
                     step === index ? style['active'] : ''
                   )
