@@ -86,9 +86,9 @@ const movieList = [{
   popularity: '72%',
   genres: ['Drama', 'History', 'War'],
   backdrop: 'https://www.themoviedb.org/t/p/w533_and_h300_bestv2/oMAhce30UvkgJwlzMwsuLaPJ5cG.jpg'
-}]
+}];
 
-const movieItems = movieList.map((item, index) => ({...item, key: index}))
+const movieItems = movieList.map((item, index) => ({...item, key: index}));
 
 interface ISlider {
   list: typeof movieItems;
@@ -145,20 +145,17 @@ const MovieCarousel: React.FC<any> = ({title}) => {
     }
   };
 
-  const getSlice = (start: number, end: number) => {
-    const slice = [];
+  const getSlice = (start: number, cardAmount: number) => {
+    const slice: typeof movieList = [];
+    const sliceFinalSize =
+      cardAmount < movieList.length ? cardAmount*3 + 2 : movieList.length;
+
     let idx = start;
-    
-    while (idx !== end) {
-      if (idx === movieList.length) {
-        idx = 0;
-        if (idx === end) break;
-        slice.push(movieList[idx]);
-        idx++;
-      } else {
-        slice.push(movieList[idx]);
-        idx++;
-      }
+
+    while (slice.length < sliceFinalSize) {
+      if (idx === movieList.length) idx = 0;
+      slice.push(movieList[idx]);
+      idx++;
     }
 
     return slice;
@@ -166,10 +163,18 @@ const MovieCarousel: React.FC<any> = ({title}) => {
 
 	useEffect(() => {
     if (!touched && cardAmount) {
-      const slice =  [
-        ...getSlice(idx, cardAmount + 1),
-        ...getSlice(cardAmount + 1, (cardAmount + 1)*2)
-      ];
+
+      let slice: typeof movieList = [];
+
+      if (cardAmount >= movieList.length) {
+        slice = [
+          ...getSlice(idx, cardAmount)
+        ];
+      } else {
+        slice = [
+          ...getSlice(idx, cardAmount),
+        ];
+      }
 
       setSlider(state => (
         {
@@ -183,28 +188,25 @@ const MovieCarousel: React.FC<any> = ({title}) => {
   useEffect(() => {
     const handleTranslationFinished = () => {
       if (touched) {
-        const start1 = idx - cardAmount - 1 + movieList.length*(idx - cardAmount - 1 >= 0 ? 0 : 1);
-        const end1 = (
-            start1 + cardAmount >= movieList.length ?
-              (start1 + cardAmount - movieList.length) : start1 + cardAmount
-          );
-  
-        const start2 = idx - 1 + movieList.length*(idx - 1 >= 0 ? 0 : 1);
-        const end2 = start2 + cardAmount + 2 - movieList.length*(Math.trunc((start2 + cardAmount + 2) / movieList.length));
+        const start =
+          idx - cardAmount - 1 + movieList.length*(idx - cardAmount - 1 >= 0 ? 0 : 1);
 
-        const start3 = end2;
-        const end3 = start3 + cardAmount - movieList.length*(Math.trunc((start3 + cardAmount) / movieList.length));
+        let slice: typeof movieList = [];
 
-        const slice = [
-          ...getSlice(start1, end1),
-          ...getSlice(start2, end2),
-          ...getSlice(start3, end3)
-        ];
+        if (cardAmount >= movieList.length) {
+          slice = [
+            ...getSlice(0, cardAmount)
+          ];
+        } else {
+          slice = [
+            ...getSlice(start, cardAmount),
+          ];
+        }
 
         setSlider(state => ({
           ...state,
           list: slice.map((value, index) => ({...value, key: state.controlCounter + index - cardAmount})),
-          posX: -100 - (1/cardAmount)*100,
+          posX: movieList.length > cardAmount ? -100 - (1/cardAmount)*100 : 0,
           transitionTime: 0
         }));
 
@@ -259,7 +261,7 @@ const MovieCarousel: React.FC<any> = ({title}) => {
 			</div>
 			<div className={style['list-container']}>
         {
-          touched ? (
+          touched && cardAmount < movieList.length ? (
             <div className={style['backward']} onClick={handleBackwardMovement}>
               <span></span>
               <span></span>
@@ -273,10 +275,14 @@ const MovieCarousel: React.FC<any> = ({title}) => {
           posX={slider.posX}
           transitionTime={slider.transitionTime}
         />
-				<div className={style['forward']} onClick={handleFowardMovement}>
-          <span></span>
-          <span></span>
-        </div>
+        {
+          cardAmount < movieList.length ? (
+            <div className={style['forward']} onClick={handleFowardMovement}>
+              <span></span>
+              <span></span>
+            </div>   
+          ) : null
+        }
 			</div>
 		</div>
 	)

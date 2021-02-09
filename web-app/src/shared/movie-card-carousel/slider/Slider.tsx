@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import MovieCard from '../../movie-card/MovieCard';
 import style from './Slider.module.scss';
 
