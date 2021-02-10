@@ -1,13 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import style from './MovieCard.module.scss';
+import {IMovie} from '../movie-card-carousel/slider/Slider';
 
-const MovieCard: React.FC<any> = ({
-  title,
-  popularity,
-  genres,
-  width,
-  backdrop
-}) => {
+interface IMovieCard {
+  movie: IMovie,
+  width: number,
+  handleOverlay: (card: HTMLDivElement | undefined | null, movie: IMovie) => void
+}
+
+const MovieCard: React.FC<IMovieCard> = (props: IMovieCard) => {
   const cardReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -26,16 +27,23 @@ const MovieCard: React.FC<any> = ({
   }, []);
 
   return (
-    <div className={style['movie-card-container']} ref={cardReference}>
+    <div 
+      className={style['movie-card-container']} 
+      ref={cardReference}
+    >
       <div
-        style={{width: width + 'px', height: (width*9)/16 + 'px'}}
+        style={{width: props.width + 'px', height: (props.width*9)/16 + 'px'}}
         className={style['movie-card-component']}
       >
-        <div className={style['before']} style={{backgroundImage: `url(${backdrop})`}}></div>
+        <div className={style['before']} style={{backgroundImage: `url(${props.movie.backdrop})`}}></div>
         <div className={style['header']}>
-          <div className={style['title']}>{title}</div>
+          <div className={style['title']}>{props.movie.title}</div>
           <div className={style['space']}></div>
-          <div className={style['menu-btn']}>
+          <div className={style['menu-btn']} onClick={e => {
+              props.handleOverlay(cardReference.current, props.movie)
+              e.stopPropagation(); 
+            }}
+          >
             <span></span>
             <span></span>
             <span></span>
@@ -46,7 +54,7 @@ const MovieCard: React.FC<any> = ({
           <div className={style['genres']}>
             <ul>
               {
-                genres.map((genre: string, index: number) => (
+                props.movie.genres.map((genre: string, index: number) => (
                   <li key={index}>{genre}</li>
                   )
                 )
@@ -55,7 +63,7 @@ const MovieCard: React.FC<any> = ({
           </div>
           <div className={style['separator']}></div>
           <div className={style['popularity']}>
-            🤩<span> {popularity}</span>
+            🤩<span> {props.movie.popularity}</span>
           </div>
         </div>
       </div>
