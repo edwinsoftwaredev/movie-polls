@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
+import CardOverlay from './card-overlay/CardOverlay';
 import style from './MovieCardCarousel.module.scss';
 import Slider from './slider/Slider';
 
@@ -113,6 +114,8 @@ const MovieCarousel: React.FC<any> = ({title}) => {
   const listReference = listRef.current;
   const [listAdjusted, setListAdjusted] = useState(true);
   const [transitionStarted, setTransitionStarted] = useState(false);
+  const [activeCard, setActiveCard] = useState<HTMLDivElement | undefined | null>();
+  const [activeMovie, setActiveMovie] = useState<any>();
 
 	const handleFowardMovement = () => {
     if (!transitionStarted) {
@@ -143,6 +146,15 @@ const MovieCarousel: React.FC<any> = ({title}) => {
         controlCounter: state.controlCounter - cardAmount
       }));
     }
+  };
+
+  const handleOverlay = (card: HTMLDivElement | undefined | null, movie: any) => {
+    setActiveCard(card);
+    setActiveMovie(movieList.find(item => item.id === movie.id));
+  };
+
+  const clearCardOverlay = () => {
+    setActiveCard(undefined);
   };
 
   const getSlice = (start: number, cardAmount: number) => {
@@ -255,36 +267,44 @@ const MovieCarousel: React.FC<any> = ({title}) => {
 	}, []);
 
 	return (
-		<div className={style['container']}>
-			<div className={style['header']}>
-				<div className={style['title']}>{title}</div>
-			</div>
-			<div className={style['list-container']}>
-        {
-          touched && cardAmount < movieList.length ? (
-            <div className={style['backward']} onClick={handleBackwardMovement}>
-              <span></span>
-              <span></span>
-            </div>
-          ) : null
-        }
-        <Slider 
-          movieSlice={slider.list} 
-          cardAmount={cardAmount}
-          sliderRef={listRef}
-          posX={slider.posX}
-          transitionTime={slider.transitionTime}
-        />
-        {
-          cardAmount < movieList.length ? (
-            <div className={style['forward']} onClick={handleFowardMovement}>
-              <span></span>
-              <span></span>
-            </div>   
-          ) : null
-        }
-			</div>
-		</div>
+    <Fragment>
+      <CardOverlay 
+        card={activeCard}
+        clearCardOverlay={clearCardOverlay}
+        movie={activeMovie}
+      />
+      <div className={style['container']}>
+        <div className={style['header']}>
+          <div className={style['title']}>{title}</div>
+        </div>
+        <div className={style['list-container']}>
+          {
+            touched && cardAmount < movieList.length ? (
+              <div className={style['backward']} onClick={handleBackwardMovement}>
+                <span></span>
+                <span></span>
+              </div>
+            ) : null
+          }
+          <Slider 
+            movieSlice={slider.list} 
+            cardAmount={cardAmount}
+            sliderRef={listRef}
+            posX={slider.posX}
+            transitionTime={slider.transitionTime}
+            handleOverlay={handleOverlay}
+          />
+          {
+            cardAmount < movieList.length ? (
+              <div className={style['forward']} onClick={handleFowardMovement}>
+                <span></span>
+                <span></span>
+              </div>   
+            ) : null
+          }
+        </div>
+      </div>
+    </Fragment>
 	)
 };
 

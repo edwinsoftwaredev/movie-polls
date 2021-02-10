@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import MovieCard from '../../movie-card/MovieCard';
 import style from './Slider.module.scss';
 
-interface IMovie {
+export interface IMovie {
   id: string;
   title: string;
   popularity: string;
@@ -17,6 +17,7 @@ interface ISlider {
   sliderRef: React.RefObject<HTMLDivElement>;
   posX: number;
   transitionTime: number;
+  handleOverlay: (card: HTMLDivElement | undefined | null, movie: IMovie) => void
 }
 
 const Slider: React.FC<ISlider> = (props: ISlider) => {
@@ -52,12 +53,10 @@ const Slider: React.FC<ISlider> = (props: ISlider) => {
       {
         props.movieSlice.map((item, index) => (
           <Fragment key={item.key}>
-            <MovieCard            
-              title={item.title}
-              popularity={item.popularity}
-              genres={item.genres}
+            <MovieCard    
+              movie={item}
               width={cardWidth}
-              backdrop={item.backdrop}
+              handleOverlay={props.handleOverlay}
             />
           </Fragment>
         ))
