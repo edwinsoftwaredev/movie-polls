@@ -54,10 +54,29 @@
             box-sizing: border-box;
             border-radius: 0 0 5px 5px;
             opacity: 0;
-            // transition: 350ms ease-out;
+            visibility: hidden;
+            height: 0;
+            overflow: hidden;
 
             &.active {
-                opacity: 1;
+                animation: content-frames 350ms;
+                animation-timing-function: ease-out;
+                animation-delay: 350ms;
+                animation-fill-mode: forwards;
+                // opacity: 1;
+
+                @keyframes content-frames {
+                    0% {
+                        visibility: visible;
+                        height: auto;
+                    }
+
+                    100% {
+                        visibility: visible;
+                        height: auto;
+                        opacity: 1;
+                    }
+                }
             }
 
             .primary-info {

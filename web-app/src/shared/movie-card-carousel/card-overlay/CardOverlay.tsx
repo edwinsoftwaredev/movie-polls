@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Transition } from 'react-transition-group';
 import { IMovie } from '../slider/Slider';
 import style from './CardOverlay.module.scss';
 
