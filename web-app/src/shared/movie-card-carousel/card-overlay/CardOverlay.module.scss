@@ -9,24 +9,58 @@
     transition-delay: 150ms;
     overflow: auto;
 
+    /*@media screen and (max-width: 768px) {
+        transition: 350ms ease-out !important;
+        top: unset;
+        bottom: -50vh;
+    }*/
+
     &.active {
         background-color: rgba(0, 0, 0, 0.5);
-        z-index: 100;
         height: 100vh;
         width: 100vw;
         top: 0;
         left: 0;
+
+        @media screen and (max-width: 768px) {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
     }
 
     .card-overlay {
         position: absolute;
         transition: 350ms ease-out;
 
+        @media screen and (max-width: 768px) {
+            position: fixed;
+            display: flex;
+            flex-direction: row;
+            box-sizing: border-box;
+            padding: 1rem;
+            transition-delay: 350ms;
+            top: unset !important;
+            bottom: -50vh !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            background-color: black;
+            border-radius: 15px 15px 0 0;
+        }
+
         &.active {
             height: 27.125vw !important;
             width: 50vw !important;
             left: 25vw !important;
             top: 5vh !important;
+
+            @media screen and (max-width: 768px) {
+                position: fixed;
+                top: unset !important;
+                left: 0 !important;
+                bottom: 0 !important;
+                height: auto !important;
+                width: 100% !important;
+            }
         }
 
         .before {
@@ -42,6 +76,12 @@
             position: absolute;
             z-index: 110;
             border-radius: 5px;
+
+            @media screen and (max-width: 768px) {
+                position: relative;
+                width: calc(100vw/2.5) !important; // 3.25 => 0.25 => 0.25 shown of the 4th card
+                height: calc((((100vw - 0.25rem*3*2)/3.25)*16)/10) !important;
+            }
         }
 
         .content {
@@ -58,12 +98,21 @@
             height: 0;
             overflow: hidden;
 
+            @media screen and (max-width: 768px) {
+                opacity: 1;
+                visibility: visible;
+                background-color: unset !important;
+                padding: 0 0 0 1rem;
+                top: 0;
+                position: relative;
+                height: fit-content;
+            }
+
             &.active {
                 animation: content-frames 350ms;
                 animation-timing-function: ease-out;
                 animation-delay: 350ms;
                 animation-fill-mode: forwards;
-                // opacity: 1;
 
                 @keyframes content-frames {
                     0% {
@@ -77,44 +126,58 @@
                         opacity: 1;
                     }
                 }
+
+                @media screen and (max-width: 768px) {
+                    transition: none;
+                    position: relative;
+                    top: 0;
+                    left: 0;
+                    opacity: 1;
+                    animation: none 0 !important;
+                }
             }
 
             .primary-info {
                 display: grid;
                 grid-template-columns: 1fr auto;
                 grid-template-rows: auto auto;
+                column-gap: 5px;
                 row-gap: 7px;
                 font-family: 'PT Sans Narrow';
                 font-weight: 600;
                 font-size: calc(1rem + 0.8vw);
 
+                @media screen and (max-width: 768px) {
+                    font-size: calc(1rem + 1.5vw);
+                }
 
                 .title {
                 }
 
                 .popularity {
+                    display: flex;
+                    flex-direction: row;
+
+                    img {
+                        padding: 0 3px;
+                        width: calc(1rem + 1.1vw);
+                        @media screen and (max-width: 768px){
+                            padding: 0 3px;
+                            width: calc(1rem + 3.5vw);
+                            height: calc(1rem + 3.5vw);
+                        }
+                    }
                 }
 
                 .genres {
+                    padding: 0.1rem 0;
                     font-size: calc(1rem + 0.5vw);
-                    ul {
-                        list-style-type: none;
-                        margin-block-start: 0;
-                        margin-block-end: 0;
-                        padding-inline-start: 0;
+                    span {
                         border: 1px solid white;
                         padding: 0 0.5rem;
+                        box-sizing: border-box;
                         width: fit-content;
-            
-                        li {
-                            display: inline-block;
-                            margin-right: 0.5rem;
-                            font-size: calc(100% + 0.2rem);
-                        }
-            
-                        & :last-child {
-                            margin-right: 0;
-                        }
+                        font-size: calc(70% + 0.2rem);
                     }
                 }
             }

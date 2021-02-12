@@ -5,6 +5,16 @@
     display: flex;
     flex-direction: row;
 
+    @media screen and (max-width: 768px) {
+        /*& :first-child {
+            padding-left: 2rem;
+        }
+
+        & :last-child {
+            padding-right: 2rem;
+        }*/
+    }
+
     .slice {
         display: flex;
         flex-direction: row;

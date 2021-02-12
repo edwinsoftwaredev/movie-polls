@@ -8,6 +8,7 @@ export interface IMovie {
   popularity: string;
   genres: string[];
   key: number;
+  poster: string,
   backdrop: string
 }
 

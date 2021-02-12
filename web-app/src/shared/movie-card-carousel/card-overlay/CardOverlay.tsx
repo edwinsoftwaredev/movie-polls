@@ -1,24 +1,28 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IMovie } from '../slider/Slider';
 import style from './CardOverlay.module.scss';
+import popularyIcon from '../../resources/icons/star-struck.png';
 
 interface ICardOverlay {
   card: HTMLDivElement | undefined | null,
   clearCardOverlay: () => void,
-  movie: IMovie
+  movie: IMovie,
+  isMobile: boolean
 }
 
 const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
   const [active, setActive] = useState(false);
+  const [transitionEnded, setTransitionEnded] = useState(true);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const handleOverlayClick = () => {
     setActive(false);
-  };  
+  };
 
   useEffect(() => {
     if (props.card) {
       setActive(true);
+      setTransitionEnded(false);
     }
   }, [props.card]);
 
@@ -27,6 +31,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
 
     const handleTransionEnd = () => {
       if (!active) {
+        setTransitionEnded(true);
         props.clearCardOverlay();
       }
     };
@@ -43,7 +48,10 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
       className={
         style['card-overlay-component'] + ' ' +
         (active ? style['active'] : '')
-      } 
+      }
+      style={{
+        zIndex: (transitionEnded ? -100 : 100)
+      }}
       onClick={handleOverlayClick}
       ref={overlayRef}
     >
@@ -65,7 +73,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
             <div 
               className={style['before']}
               style={{
-                backgroundImage: `url(${props.movie.backdrop})`
+                backgroundImage: (props.isMobile ? `url(${props.movie.poster})` : `url(${props.movie.backdrop})`)
               }}
             >
             </div>
@@ -74,26 +82,20 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                 style['content'] + ' ' +
                 (active ? style['active'] : '')
               }
-              style={{
-                transition: (active ? '350ms ease-out' : '0ms'),
-                transitionDelay: (active ? '400ms' : '0')
-              }}
             >
               <div className={style['primary-info']}>
                 <div className={style['title']}>
                   {props.movie.title}
                 </div>
                 <div className={style['popularity']}>
-                  🤩 <span>{props.movie.popularity}</span>
+                  <img 
+                    alt='Popularity' 
+                    src={popularyIcon}
+                  /> 
+                  <span>{props.movie.popularity}</span>
                 </div>
                 <div className={style['genres']}>
-                  <ul>
-                    {
-                      props.movie.genres.map((item, index) => (
-                        <li key={index}>{item}</li>
-                      ))
-                    }
-                  </ul>
+                  <span>{props.movie.genres.join(', ')}</span>
                 </div>
               </div>
             </div>
