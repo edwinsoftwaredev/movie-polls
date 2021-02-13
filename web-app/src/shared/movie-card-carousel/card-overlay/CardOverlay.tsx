@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IMovie } from '../slider/Slider';
 import style from './CardOverlay.module.scss';
 import popularyIcon from '../../resources/icons/star-struck.png';
+import { IMovie } from '../../interfaces/movie-types';
 
 interface ICardOverlay {
   card: HTMLDivElement | undefined | null,
@@ -73,7 +73,11 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
             <div 
               className={style['before']}
               style={{
-                backgroundImage: (props.isMobile ? `url(${props.movie.poster})` : `url(${props.movie.backdrop})`)
+                backgroundImage: (
+                  props.isMobile ? 
+                    `url(${process.env.REACT_APP_TMDB_API_POSTER_URL}/${props.movie.poster_path})` : 
+                    `url(${process.env.REACT_APP_TMDB_API_BACKDROP_URL}/${props.movie.backdrop_path})`
+                )
               }}
             >
             </div>
@@ -92,10 +96,10 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                     alt='Popularity' 
                     src={popularyIcon}
                   /> 
-                  <span>{props.movie.popularity}</span>
+                  <span>{props.movie.vote_average*10}%</span>
                 </div>
                 <div className={style['genres']}>
-                  <span>{props.movie.genres.join(', ')}</span>
+                  <div>{props.movie.genre_names.join(', ')}</div>
                 </div>
               </div>
             </div>

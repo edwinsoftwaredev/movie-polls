@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import style from './MovieCard.module.scss';
-import {IMovie} from '../movie-card-carousel/slider/Slider';
 import popularyIcon from '../resources/icons/star-struck.png';
+import { IMovie } from '../interfaces/movie-types';
 
 interface IMovieCard {
   movie: IMovie,
@@ -58,7 +58,11 @@ const MovieCard: React.FC<IMovieCard> = (props: IMovieCard) => {
         <div 
           className={style['before']} 
           style={{
-            backgroundImage: (isMobile ? `url(${props.movie.poster})` : `url(${props.movie.backdrop})`) 
+            backgroundImage: (
+              isMobile ? 
+                `url(${process.env.REACT_APP_TMDB_API_POSTER_URL}/${props.movie.poster_path})` : 
+                `url(${process.env.REACT_APP_TMDB_API_BACKDROP_URL}/${props.movie.backdrop_path})`
+            ) 
           }}
         ></div>
         <div className={style['header']}>
@@ -77,7 +81,7 @@ const MovieCard: React.FC<IMovieCard> = (props: IMovieCard) => {
         <div className={style['space']}></div>
         <div className={style['data']}>
           <div className={style['genres']}>
-            <span>{props.movie.genres.join(', ')}</span>
+            <div>{props.movie.genre_names.join(', ')}</div>
           </div>
           <div className={style['separator']}></div>
           <div className={style['popularity']}>
@@ -85,7 +89,7 @@ const MovieCard: React.FC<IMovieCard> = (props: IMovieCard) => {
               alt='Populary'
               src={popularyIcon}
             />
-            <span> {props.movie.popularity}</span>
+            <span> {props.movie.vote_average*10}%</span>
           </div>
         </div>
       </div>

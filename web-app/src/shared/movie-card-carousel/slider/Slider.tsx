@@ -1,16 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
+import { IMovie } from '../../interfaces/movie-types';
 import MovieCard from '../../movie-card/MovieCard';
 import style from './Slider.module.scss';
-
-export interface IMovie {
-  id: string;
-  title: string;
-  popularity: string;
-  genres: string[];
-  key: number;
-  poster: string,
-  backdrop: string
-}
 
 interface ISlider {
   movieSlice: IMovie[];

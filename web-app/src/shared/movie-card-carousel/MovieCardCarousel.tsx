@@ -1,9 +1,10 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { IMovie } from '../interfaces/movie-types';
 import CardOverlay from './card-overlay/CardOverlay';
 import style from './MovieCardCarousel.module.scss';
 import Slider from './slider/Slider';
 
-const movieList = [{
+/*const movieList = [{
   id: '1',
   title: 'The lord of the Ring: The Return of the King',
   popularity: '85%',
@@ -101,12 +102,12 @@ const movieList = [{
   genres: ['Drama', 'History', 'War'],
   poster: 'https://www.themoviedb.org/t/p/w220_and_h330_face/8u0QBGUbZcBW59VEAdmeFl9g98N.jpg',
   backdrop: 'https://www.themoviedb.org/t/p/w533_and_h300_bestv2/oMAhce30UvkgJwlzMwsuLaPJ5cG.jpg'
-}];
+}];*/
 
-const movieItems = movieList.map((item, index) => ({...item, key: index}));
+// const movieItems = movieList.map((item, index) => ({...item, key: index}));
 
 interface ISlider {
-  list: typeof movieItems;
+  list: IMovie[];
   posX: number;
   transitionTime: number,
   controlCounter: number
@@ -119,7 +120,12 @@ const initialSlider = {
   controlCounter: 0
 }
 
-const MovieCarousel: React.FC<any> = ({title}) => {
+interface IMovieCarousel {
+  title: string;
+  movieList: IMovie[]
+}
+
+const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
 	const listRef = useRef<HTMLDivElement>(null);
   const [slider, setSlider] = useState<ISlider>(initialSlider);
 	const [cardAmount, setCardAmount] = useState(0);
@@ -172,8 +178,8 @@ const MovieCarousel: React.FC<any> = ({title}) => {
     setActiveCard(null);
   };
 
-  const getSlice = (start: number, cardAmount: number) => {
-    const slice: typeof movieList = [];
+  const getSlice = (start: number, cardAmount: number, movieList: IMovie[]) => {
+    const slice: IMovie[] = [];
     const sliceFinalSize =
       cardAmount < movieList.length ? cardAmount*3 + 2 : movieList.length;
 
@@ -195,11 +201,11 @@ const MovieCarousel: React.FC<any> = ({title}) => {
 
       if (cardAmount >= movieList.length) {
         slice = [
-          ...getSlice(idx, cardAmount)
+          ...getSlice(idx, cardAmount, movieList)
         ];
       } else {
         slice = [
-          ...getSlice(idx, cardAmount),
+          ...getSlice(idx, cardAmount, movieList),
         ];
       }
 
@@ -210,7 +216,7 @@ const MovieCarousel: React.FC<any> = ({title}) => {
         }
       ));
     }
-	}, [cardAmount, idx, touched]);
+	}, [cardAmount, idx, touched, movieList]);
 
   useEffect(() => {
     const handleTranslationFinished = () => {
@@ -222,11 +228,11 @@ const MovieCarousel: React.FC<any> = ({title}) => {
 
         if (cardAmount >= movieList.length) {
           slice = [
-            ...getSlice(0, cardAmount)
+            ...getSlice(0, cardAmount, movieList)
           ];
         } else {
           slice = [
-            ...getSlice(start, cardAmount),
+            ...getSlice(start, cardAmount, movieList),
           ];
         }
 
@@ -244,7 +250,7 @@ const MovieCarousel: React.FC<any> = ({title}) => {
     if (isMobile) {
       setSlider(state => ({
         ...state,
-        list: getSlice(0, movieList.length).map((value, index) => ({...value, key: index})),
+        list: getSlice(0, movieList.length, movieList).map((value, index) => ({...value, key: index})),
         posX: 0,
         transitionTime: 0
       }));
@@ -260,7 +266,7 @@ const MovieCarousel: React.FC<any> = ({title}) => {
     return () => {
       listReference?.removeEventListener('transitionend', handleTranslationFinished);
     };
-  }, [idx, cardAmount, touched, listReference, listAdjusted, isMobile]);
+  }, [idx, cardAmount, touched, listReference, listAdjusted, isMobile, movieList]);
 
 	useEffect(() => {
 		const handleResize = () => {
