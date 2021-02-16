@@ -83,7 +83,6 @@ const MovieCard: React.FC<IMovieCard> = (props: IMovieCard) => {
           <div className={style['genres']}>
             <div>{props.movie.genre_names.join(', ')}</div>
           </div>
-          <div className={style['separator']}></div>
           <div className={style['popularity']}>
             <img 
               alt='Populary'
