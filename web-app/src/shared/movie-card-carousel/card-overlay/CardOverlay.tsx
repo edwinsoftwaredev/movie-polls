@@ -89,7 +89,10 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
             >
               <div className={style['primary-info']}>
                 <div className={style['title']}>
-                  {props.movie.title}
+                  {props.movie.title} 
+                </div>
+                <div className={style['release-date']}>
+                  ({props.movie.release_date.split('-')[0]})
                 </div>
                 <div className={style['popularity']}>
                   <img 
@@ -97,6 +100,9 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                     src={popularyIcon}
                   /> 
                   <span>{props.movie.vote_average*10}%</span>
+                </div>
+                <div className={style['overview']}>
+                  {props.movie.overview}
                 </div>
                 <div className={style['genres']}>
                   <div>{props.movie.genre_names.join(', ')}</div>
