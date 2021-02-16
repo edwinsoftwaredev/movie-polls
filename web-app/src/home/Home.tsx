@@ -67,7 +67,7 @@ const Home: React.FC = () => {
 
   return (
     <div className={style['home-component']}>
-      <MovieCardCarousel movieList={top10Movies} title='Top 10 Movies'/>
+      <MovieCardCarousel movieList={top10Movies} title='Top 10 Best Popular Movies'/>
     </div>
   );
 };
