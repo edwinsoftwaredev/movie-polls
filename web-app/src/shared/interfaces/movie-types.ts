@@ -24,6 +24,32 @@ export interface IMovie {
     key: number; // this is a custom property
 }
 
+export interface IMovieDetail {
+    homepage: string;
+    production_countries: {
+        iso_3166_1: string;
+        name: string
+    }[];
+    credits: {
+        cast: {
+            name: string;
+        }[];
+        crew: {
+            job: string;
+            name: string
+        }[];
+    };
+    release_dates: {
+        results: {
+            iso_3166_1: string;
+            release_dates: {
+                certification: string;
+            }[];
+        }[];
+    };
+    runtime: number;
+}
+
 export interface IGenreRequest {
     genres: IGenre[];
 }
