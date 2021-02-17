@@ -276,6 +276,69 @@
                 }
             }
 
+            .movie-poll-menu {
+                width: 100%;
+                height: fit-content;
+                background-color: rgba(255, 255, 255, 0.1);
+                padding: 1rem;
+                border-radius: 5px;
+                box-sizing: border-box;
+                margin-top: 2rem;
+
+                .menu {
+                    border-radius: 5px;
+                    box-sizing: border-box;
+                    color: white;
+
+                    .title {
+                        font-weight: 600;
+                        font-size: calc(1rem + 1vw);
+                        font-family: 'PT Sans Narrow';
+                    }
+                }
+
+                .available-polls-container {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    grid-template-rows: auto;
+
+                    .poll-options {
+                        padding: 1rem;
+
+                        .header {
+                            font-family: 'PT Sans Narrow';
+                            font-size: calc(1rem + 0.7vw);
+                            font-weight: 600;
+                            color: rgba(255,255,255,0.7);
+                            margin-bottom: 1rem;
+                            width: 100%;
+                            text-align: center;
+                        }
+
+                        .new-poll-form {
+                            * {
+                                margin-bottom: 0.5rem;
+                            }
+                        }
+                    }
+
+                    .available-poll-details {
+                        display: flex;
+                        flex-direction: row;
+                        padding: 1rem;
+
+                        .header {
+                            font-size: calc(1rem + 0.7vw);
+                            font-family: 'PT Sans Narrow';
+                            font-weight: 600;
+                            color: rgba(255,255,255,0.7);
+                            margin-bottom: 1rem;
+                            width: 100%;
+                            text-align: center;
+                        }
+                    }
+                }
+            }
         }
     }
 }

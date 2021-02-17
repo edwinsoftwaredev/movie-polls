@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import style from './CardOverlay.module.scss';
-import popularyIcon from '../../resources/icons/star-struck.png';
+import popularityIcon from '../../resources/icons/star-struck.png';
 import { IMovie, IMovieDetail } from '../../interfaces/movie-types';
 import Axios, { AxiosResponse } from 'axios';
+import Button from "../../button/Button.test";
+import TextInput from "../../inputs/text-input/TextInput";
 
 interface ICardOverlay {
   card: HTMLDivElement | undefined | null,
@@ -134,7 +136,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                   <div className={style['popularity']}>
                     <img 
                       alt='Popularity' 
-                      src={popularyIcon}
+                      src={popularityIcon}
                     /> 
                     <span>{props.movie.vote_average*10}%</span>
                   </div>
@@ -157,6 +159,44 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                 </div>
                 <div className={style['genres']}>
                   <div>{props.movie.genre_names.join(', ')}</div>
+                </div>
+              </div>
+              <div className={style['movie-poll-menu']}>
+                <div className={style['menu']}>
+                  <div className={style['title']}>
+                    Add this movie to a poll
+                  </div>
+                  <div className={style['available-polls-container']}>
+                    <div className={style['poll-options']}>
+                      <div className={style['header']}>
+                        Create a New Poll
+                      </div>
+                      <form
+                        className={style['new-poll-form']}
+                        onSubmit={e => e.preventDefault()}
+                      >
+                        <TextInput
+                          name={'poll-name'}
+                          placeholder={'Type the name of the poll'}
+                          otherProperties={{
+                            required: 'true',
+                            autoComplete: 'off',
+                            pattern: '[0-9A-Za-z]*'
+                          }}
+                        />
+                        <Button
+                          name={'Add To A New Poll'}
+                          type={"submit"}
+                          classType={"default"}
+                        />
+                      </form>
+                    </div>
+                    <div className={style['available-poll-details']}>
+                      <div className={style['header']}>
+                        Available Polls
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
