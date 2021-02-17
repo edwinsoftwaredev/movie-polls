@@ -1,0 +1,14 @@
+.text-input-container {
+  input {
+    outline: none;
+    border-style: none;
+    border-radius: 2px;
+    height: 3.5rem;
+    font-size: calc(1rem + 0.6vw);
+    font-weight: 600;
+    font-family: 'PT Sans Narrow';
+    width: 100%;
+    padding: 0 0.9rem;
+    box-sizing: border-box;
+  }
+}
