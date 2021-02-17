@@ -1,0 +1,45 @@
+.button-container {
+  width: fit-content;
+  button {
+    font-family: 'PT Sans Narrow';
+    font-size: calc(1rem + 0.5vw);
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.3);
+    padding: 0.7rem 2rem;
+    text-transform: capitalize;
+    min-width: 15rem !important;
+    border-radius: 5px;
+    border-style: none;
+    outline: none;
+    transition: 300ms ease;
+
+    &:hover {
+      cursor: pointer;
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    &:active {
+      animation: button-focused 300ms linear;
+      animation-direction: normal;
+      animation-fill-mode: both;
+
+      @keyframes button-focused {
+        0% {
+          background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        50% {
+          background-color: rgba(255, 255, 255, 0.6);
+        }
+
+        100% {
+          background-color: rgba(255, 255, 255, 0.3);
+        }
+      }
+    }
+
+    &.default {
+      color: white;
+    }
+  }
+}
