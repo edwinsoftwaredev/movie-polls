@@ -94,10 +94,10 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
               (active ? style['active'] : '')
             }
             style={{
-              height: props.card?.getBoundingClientRect().height ?? 0,
-              width: props.card?.getBoundingClientRect().width - 4 ?? 0, // - 4 => padding
-              left: props.card?.getBoundingClientRect().left + 2 ?? 0, // + 2 => padding
-              top: props.card?.getBoundingClientRect().top ?? 0
+                // height: props.card?.getBoundingClientRect().height ?? 0,
+                width: props.card?.getBoundingClientRect().width - 4 ?? 0, // - 4 => padding
+                left: props.card?.getBoundingClientRect().left + 2 ?? 0, // + 2 => padding
+                top: props.card?.getBoundingClientRect().top ?? 0
             }}
             onClick={e => e.stopPropagation()}
           >
@@ -108,7 +108,8 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                   props.isMobile ? 
                     `url(${process.env.REACT_APP_TMDB_API_POSTER_URL}/${props.movie.poster_path})` : 
                     `url(${process.env.REACT_APP_TMDB_API_BACKDROP_URL}/${props.movie.backdrop_path})`
-                )
+                ),
+                height: props.card?.getBoundingClientRect().height ?? 0
               }}
             >
             </div>
@@ -161,40 +162,43 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                   <div>{props.movie.genre_names.join(', ')}</div>
                 </div>
               </div>
-              <div className={style['movie-poll-menu']}>
-                <div className={style['menu']}>
-                  <div className={style['title']}>
-                    Add this movie to a poll
-                  </div>
-                  <div className={style['available-polls-container']}>
-                    <div className={style['poll-options']}>
-                      <div className={style['header']}>
-                        Create a New Poll
-                      </div>
-                      <form
-                        className={style['new-poll-form']}
-                        onSubmit={e => e.preventDefault()}
-                      >
-                        <TextInput
-                          name={'poll-name'}
-                          placeholder={'Type the name of the poll'}
-                          otherProperties={{
-                            required: 'true',
-                            autoComplete: 'off',
-                            pattern: '[0-9A-Za-z]*'
-                          }}
-                        />
-                        <Button
-                          name={'Add To A New Poll'}
-                          type={"submit"}
-                          classType={"default"}
-                        />
-                      </form>
+            </div>
+            <div className={
+              style['movie-poll-menu'] + ' ' +
+              (active ? style['active'] : '')
+            }>
+              <div className={style['menu']}>
+                <div className={style['title']}>
+                  Add this movie to a poll
+                </div>
+                <div className={style['available-polls-container']}>
+                  <div className={style['poll-options']}>
+                    <div className={style['header']}>
+                      Create a New Poll
                     </div>
-                    <div className={style['available-poll-details']}>
-                      <div className={style['header']}>
-                        Available Polls
-                      </div>
+                    <form
+                      className={style['new-poll-form']}
+                      onSubmit={e => e.preventDefault()}
+                    >
+                      <TextInput
+                        name={'poll-name'}
+                        placeholder={'Type the name of the new poll'}
+                        otherProperties={{
+                          required: 'true',
+                          autoComplete: 'off',
+                          pattern: '[0-9A-Za-z]*'
+                        }}
+                      />
+                      <Button
+                        name={'Add To A New Poll'}
+                        type={"submit"}
+                        classType={"default"}
+                      />
+                    </form>
+                  </div>
+                  <div className={style['available-poll-details']}>
+                    <div className={style['header']}>
+                      Available Polls
                     </div>
                   </div>
                 </div>
