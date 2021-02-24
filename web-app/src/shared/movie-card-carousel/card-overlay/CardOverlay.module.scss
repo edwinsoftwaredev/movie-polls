@@ -9,12 +9,6 @@
     transition-delay: 150ms;
     overflow: auto;
 
-    /*@media screen and (max-width: 768px) {
-        transition: 350ms ease-out !important;
-        top: unset;
-        bottom: -50vh;
-    }*/
-
     &.active {
         background-color: rgba(0, 0, 0, 0.5);
         height: 100vh;
@@ -31,7 +25,11 @@
         position: absolute;
         display: flex;
         flex-direction: column;
-        transition: 350ms ease-out;
+        background-color: transparent;
+        border-radius: 5px;
+        animation: inactive-overlay 350ms ease-out;
+        // animation-delay: 350ms;
+        animation-fill-mode: forwards;
 
         @media screen and (max-width: 768px) {
             position: fixed;
@@ -50,19 +48,145 @@
             border-radius: 15px 15px 0 0;
         }
 
+        @keyframes inactive-overlay {
+            0% {
+                height: auto;
+                width: 56vw;
+                left: 22vw;
+                top: 5vh;
+                background-color: black;
+            }
+
+            100% {
+            }
+        }
+
+        .before {
+            animation: inactive-before 350ms ease-out;
+            animation-fill-mode: forwards;
+
+            @keyframes inactive-before {
+                0% {
+                    height: 27.125vw;
+                }
+
+                100% {
+                }
+            }
+        }
+
+        .content {
+            height: 0;
+        }
+
+        .movie-poll-menu {
+            height: 0;
+        }
+
         &.active {
-            height: auto !important;
-            width: 56vw !important;
-            left: 22vw !important;
-            top: 5vh !important;
+            animation: active-overlay 350ms ease-out;
+            animation-fill-mode: forwards;
 
             .before {
-                height: 27.125vw !important;
+                animation: active-frames-before 350ms ease-out;
+                animation-fill-mode: forwards;
+
+                @keyframes active-frames-before {
+                    0% {
+                    }
+    
+                    100% {
+                        height: 27.125vw;
+                    }
+                }
 
                 @media screen and (max-width: 768px) {
                     position: relative;
                     width: calc(100vw/3.5) !important; // 3.25 => 0.25 => 0.25 shown of the 4th card
                     height: calc((((100vw - 0.25rem*3*2)/3.25)*16)/10) !important;
+                }
+            }
+
+            .content {
+                animation: active-frames-content 350ms ease-out;
+                animation-fill-mode: forwards;
+                animation-delay: 350ms;
+                @keyframes active-frames-content {
+                    0% {
+                        opacity: 0;
+                        padding: 0;
+                        visibility: visible;
+                        height: auto;
+                    }
+
+                    1% {
+                        padding: 1.5rem;
+                    }
+
+                    100% {
+                        padding: 1.5rem;
+                        visibility: visible;
+                        opacity: 1;
+                        height: auto;
+                    }
+                }
+
+                @media screen and (max-width: 768px) {
+                    transition: none;
+                    position: relative;
+                    top: 0;
+                    left: 0;
+                    opacity: 1;
+                    animation: none 0 !important;
+                }
+            }
+
+            .movie-poll-menu {
+                animation: active-frames-mpm 350ms ease-out;
+                animation-delay: 350ms;
+                animation-fill-mode: forwards;
+
+                @keyframes active-frames-mpm {
+                    0% {
+                        padding: 0;
+                        opacity: 0;
+                        height: auto;
+                        visibility: visible;
+                    }
+
+                    1% {
+                        padding: 1.5rem;
+                    }
+
+                    100% {
+                        padding: 1.5rem;
+                        visibility: visible;
+                        opacity: 1;
+                        height: auto;
+                    }
+                }
+
+                @media screen and (max-width: 768px) {
+                    transition: none;
+                    position: relative;
+                    visibility: visible;
+                    top: 0;
+                    left: 0;
+                    opacity: 1;
+                    animation: none 0 !important;
+                }
+            }
+            
+            @keyframes active-overlay {
+                0% {
+                }
+
+                100% {
+                    height: auto;
+                    width: 56vw;
+                    left: 22vw;
+                    top: 5vh;
+                    background-color: black;
                 }
             }
 
@@ -77,7 +201,6 @@
         }
 
         .before {
-            transition: 350ms ease-out;
             background-repeat: no-repeat;
             background-position-y: center;
             background-position-x: center;
@@ -90,6 +213,7 @@
             position: relative;
             z-index: 110;
             border-radius: 5px;
+            transition: 350ms ease-out;
 
             @media screen and (max-width: 768px) {
                 position: relative;
@@ -101,8 +225,8 @@
         .content {
             position: relative;
             z-index: 110;
-            padding: 1.5rem;
-            background-color: black;
+            // padding: 1.5rem;
+            padding: 0;
             width: fit-content;
             box-sizing: border-box;
             border-radius: 0 0 5px 5px;
@@ -121,35 +245,6 @@
                 position: relative;
                 height: calc((((100vw - 0.25rem*3*2)/3.25)*16)/10);
                 margin-top: 0;
-            }
-
-            &.active {
-                animation: content-frames 350ms;
-                animation-timing-function: ease-out;
-                animation-delay: 350ms;
-                animation-fill-mode: forwards;
-
-                @keyframes content-frames {
-                    0% {
-                        visibility: visible;
-                        height: auto;
-                    }
-
-                    100% {
-                        visibility: visible;
-                        height: auto;
-                        opacity: 1;
-                    }
-                }
-
-                @media screen and (max-width: 768px) {
-                    transition: none;
-                    position: relative;
-                    top: 0;
-                    left: 0;
-                    opacity: 1;
-                    animation: none 0 !important;
-                }
             }
 
             .primary-info {
@@ -288,54 +383,22 @@
 
         .movie-poll-menu {
             width: 100%;
-            height: fit-content;
-            background-color: black;
-            padding: 1rem 1.5rem;
             border-radius: 5px;
             box-sizing: border-box;
             margin-top: -5px;
             visibility: hidden;
             opacity: 0;
+            transition: 350ms ease-out;
 
             @media screen and (max-width: 768px) {
                 margin-top: 1rem;
                 grid-column-start: 1;
                 grid-column-end: span 2;
-                padding: 0
-            }
-
-            &.active {
-                animation: content-frames 350ms;
-                animation-timing-function: ease-out;
-                animation-delay: 350ms;
-                animation-fill-mode: forwards;
-
-                @keyframes content-frames {
-                    0% {
-                        visibility: visible;
-                        height: auto;
-                    }
-
-                    100% {
-                        visibility: visible;
-                        height: auto;
-                        opacity: 1;
-                    }
-                }
-
-                @media screen and (max-width: 768px) {
-                    transition: none;
-                    position: relative;
-                    visibility: visible;
-                    top: 0;
-                    left: 0;
-                    opacity: 1;
-                    animation: none 0 !important;
-                }
+                padding: 0;
             }
 
             .menu {
-                padding: 1rem;
+                padding: 1rem 2rem;
                 background-color: rgba(255, 255, 255, 0.1);
                 border-radius: 5px;
                 box-sizing: border-box;
@@ -351,6 +414,7 @@
             .available-polls-container {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
+                column-gap: 2rem;
                 grid-template-rows: auto;
 
                 @media screen and (max-width: 768px) {
@@ -359,8 +423,9 @@
                 }
 
                 .poll-options {
-                    padding: 1rem;
-
+                    padding: 1rem 0;
+                    width: 80%;
+                    margin: 0 auto;
                     .header {
                         font-family: 'PT Sans Narrow';
                         font-size: calc(1rem + 0.7vw);
@@ -380,8 +445,8 @@
 
                 .available-poll-details {
                     display: flex;
-                    flex-direction: row;
-                    padding: 1rem;
+                    flex-direction: column;
+                    padding: 1rem 0;
 
                     .header {
                         font-size: calc(1rem + 0.7vw);

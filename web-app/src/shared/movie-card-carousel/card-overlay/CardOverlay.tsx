@@ -5,6 +5,7 @@ import { IMovie, IMovieDetail } from '../../interfaces/movie-types';
 import Axios, { AxiosResponse } from 'axios';
 import Button from "../../button/Button.test";
 import TextInput from "../../inputs/text-input/TextInput";
+import AvailablePollList from './available-polls-list/AvailablePollList';
 
 interface ICardOverlay {
   card: HTMLDivElement | undefined | null,
@@ -67,10 +68,10 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
       }
     };
 
-    ref?.addEventListener('transitionend', handleTransionEnd);
+    ref?.addEventListener('animationend', handleTransionEnd);
 
     return () => {
-      ref?.removeEventListener('transitionend', handleTransionEnd);
+      ref?.removeEventListener('animationend', handleTransionEnd);
     };
   }, [active, props]);
 
@@ -199,6 +200,9 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                   <div className={style['available-poll-details']}>
                     <div className={style['header']}>
                       Available Polls
+                    </div>
+                    <div className={style['poll-list']}>
+                      <AvailablePollList />
                     </div>
                   </div>
                 </div>
