@@ -22,14 +22,15 @@
     }
 
     .card-overlay {
+        overflow: hidden;
         position: absolute;
         display: flex;
         flex-direction: column;
         background-color: transparent;
         border-radius: 5px;
         animation: inactive-overlay 350ms ease-out;
-        // animation-delay: 350ms;
         animation-fill-mode: forwards;
+        visibility: hidden;
 
         @media screen and (max-width: 768px) {
             position: fixed;
@@ -179,9 +180,11 @@
             
             @keyframes active-overlay {
                 0% {
+                    visibility: visible;
                 }
 
                 100% {
+                    visibility: visible;
                     height: auto;
                     width: 56vw;
                     left: 22vw;
@@ -234,7 +237,6 @@
             visibility: hidden;
             height: 0;
             overflow: hidden;
-            margin-top: -4px;
 
             @media screen and (max-width: 768px) {
                 opacity: 1;
@@ -385,7 +387,6 @@
             width: 100%;
             border-radius: 5px;
             box-sizing: border-box;
-            margin-top: -5px;
             visibility: hidden;
             opacity: 0;
             transition: 350ms ease-out;

@@ -74,6 +74,7 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
 
   const clearCardOverlay = () => {
     setActiveCard(null);
+    setActiveMovie(null);
   };
 
   const getSlice = (start: number, cardAmount: number, movieList: IMovie[]) => {
