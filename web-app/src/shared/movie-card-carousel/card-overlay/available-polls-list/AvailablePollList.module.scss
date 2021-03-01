@@ -1,6 +1,29 @@
 .available-polls-list-component {
     display: flex;
     flex-direction: column;
+    max-height: 20rem;
+    overflow-y: auto;
+    padding-right: 1rem;
+
+    @media screen and (min-width: 768px) {
+        &::-webkit-scrollbar {
+            width: 0.5rem;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        &::-webkit-scrollbar-track {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        overflow: hidden;
+        max-height: fit-content;
+        padding-right: 0;
+    }
 
     .poll-item {
         display: grid;
@@ -11,10 +34,53 @@
         font-size: calc(1rem + 0.7vw);
         padding: 0.7rem 0.5rem;
         border-radius: 5px;
+
+        @media screen and (max-width: 768px) {
+            font-size: calc(1rem + 2vw);
+        }
+
+        .name {
+            margin: auto;
+        }
+
+        .counter {
+            margin: auto;
+        }
+
         svg {
             height: calc(1rem + 0.7vw);
             width: calc(1rem + 0.7vw);
             stroke-width: 4px;
+        }
+
+        .more-info-btn {
+            animation: inactiveb 350ms ease-out;
+            animation-fill-mode: forwards;
+
+            @keyframes inactiveb {
+                0% {
+                    transform: rotate(-180deg);
+                }
+
+                100% {
+                    transform: rotate(0deg);
+                }
+            }
+
+            &.active {
+                animation: activeb 350ms ease-out;
+                animation-fill-mode: forwards;
+
+                @keyframes activeb {
+                    0% {
+                        transform: rotate(0deg);
+                    }
+
+                    100% {
+                        transform: rotate(-180deg);
+                    }
+                }
+            }
         }
 
         .btn {
@@ -26,6 +92,11 @@
             height: calc(1.5rem + 1vw);
             background-color: rgba(0, 0, 0, 0.4);
 
+            @media screen and (max-width: 768px) {
+                width: calc(3rem + 1vw);
+                height: calc(3rem + 1vw);
+            }
+
             &:hover {
                 cursor: pointer;
                 color: gold;
@@ -35,6 +106,68 @@
         &:hover {
             background-color: rgba(255, 255, 255, 0.4);
             cursor: pointer;
+        }
+
+        .poll-item-detail {
+            font-size: calc(1rem + 0.4vw);
+            background-color: black;
+            grid-column-start: 1;
+            grid-column-end: 5 span;
+            border-radius: 5px;
+            box-sizing: border-box;
+            animation: inactive 350ms ease-out;
+            animation-fill-mode: forwards;
+            animation-delay: 0;
+
+            @keyframes inactive {
+                0% {
+                    opacity: 1;
+                    font-size: calc(1rem + 0.4vw);
+                    padding: 0.7rem;
+                    margin-top: 1rem;
+                }
+
+                50% {
+                    font-size: calc(1rem + 0.4vw);
+                    padding: 0.7rem;
+                    margin-top: 1rem;
+                    opacity: 0;
+                }
+
+                100% {
+                    font-size: 0;
+                    opacity: 0;
+                    padding: 0;
+                    margin-top: 0;
+                }
+            }
+
+            &.active {
+                animation: active 350ms ease-out;
+                animation-fill-mode: forwards;
+
+                @keyframes active {
+                    0% {
+                        opacity: 0;
+                        font-size: 0;
+                        padding: 0;
+                        margin-top: 0;
+                    }
+
+                    50% {
+                        font-size: calc(1rem + 0.4vw);
+                        opacity: 0;
+                        padding: 0.7rem;
+                        margin-top: 1rem;
+                    }
+
+                    100% {
+                        padding: 0.7rem;
+                        margin-top: 1rem;
+                        opacity: 1;
+                    }
+                }
+            }
         }
     }
 }
