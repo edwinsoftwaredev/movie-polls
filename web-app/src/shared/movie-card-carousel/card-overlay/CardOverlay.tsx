@@ -102,107 +102,109 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
             }}
             onClick={e => e.stopPropagation()}
           >
-            <div 
-              className={style['before']}
-              style={{
-                backgroundImage: (
-                  props.isMobile ? 
-                    `url(${process.env.REACT_APP_TMDB_API_POSTER_URL}/${props.movie.poster_path})` : 
-                    `url(${process.env.REACT_APP_TMDB_API_BACKDROP_URL}/${props.movie.backdrop_path})`
-                ),
-                height: props.card?.getBoundingClientRect().height ?? 0
-              }}
-            >
-            </div>
-            <div 
+            <div className={style['grid-container']}>
+              <div 
+                className={style['before']}
+                style={{
+                  backgroundImage: (
+                    props.isMobile ? 
+                      `url(${process.env.REACT_APP_TMDB_API_POSTER_URL}/${props.movie.poster_path})` : 
+                      `url(${process.env.REACT_APP_TMDB_API_BACKDROP_URL}/${props.movie.backdrop_path})`
+                  ),
+                  height: props.card?.getBoundingClientRect().height ?? 0
+                }}
+              >
+              </div>
+              <div 
               className={
-                style['content'] + ' ' +
-                (active ? style['active'] : '')
-              }
-            >
-              <div className={style['primary-info']}>
-                <div className={style['header']}>
-                  <div className={style['title']}>
-                    {props.movie.title}
+                  style['content'] + ' ' +
+                  (active ? style['active'] : '')
+                }
+              >
+                <div className={style['primary-info']}>
+                  <div className={style['header']}>
+                    <div className={style['title']}>
+                      {props.movie.title}
+                    </div>
+                    <div className={style['release-date']}>
+                    ({props.movie.release_date.split('-')[0]})
+                    </div>
+                    {
+                      certification ? (
+                        <div className={style['certification']}>
+                          {certification}
+                        </div>
+                      ) : (<div></div>)
+                    }
+                    <div className={style['popularity']}>
+                      <img 
+                        alt='Popularity' 
+                        src={popularityIcon}
+                      /> 
+                      <span>{props.movie.vote_average*10}%</span>
+                    </div>
                   </div>
-                  <div className={style['release-date']}>
-                   ({props.movie.release_date.split('-')[0]})
-                  </div>
-                  {
-                    certification ? (
-                      <div className={style['certification']}>
-                        {certification}
+                  <div className={style['overview']}>
+                    <div className={style['description']}>
+                      {props.movie.overview}
+                    </div>
+                    <div className={style['movie-info']}>
+                      <div className={style['director']}>
+                        <span>Director: </span>{director}
                       </div>
-                    ) : (<div></div>)
-                  }
-                  <div className={style['popularity']}>
-                    <img 
-                      alt='Popularity' 
-                      src={popularityIcon}
-                    /> 
-                    <span>{props.movie.vote_average*10}%</span>
-                  </div>
-                </div>
-                <div className={style['overview']}>
-                  <div className={style['description']}>
-                    {props.movie.overview}
-                  </div>
-                  <div className={style['movie-info']}>
-                    <div className={style['director']}>
-                      <span>Director: </span>{director}
-                    </div>
-                    <div className={style['cast']}>
-                      <span>Cast: </span>{cast.join(', ')}
-                    </div>
-                    <div className={style['duration']}>
-                      <span>Duration: </span>{duration}
+                      <div className={style['cast']}>
+                        <span>Cast: </span>{cast.join(', ')}
+                      </div>
+                      <div className={style['duration']}>
+                        <span>Duration: </span>{duration}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className={style['genres']}>
-                  <div>{props.movie.genre_names.join(', ')}</div>
+                  <div className={style['genres']}>
+                    <div>{props.movie.genre_names.join(', ')}</div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className={
-              style['movie-poll-menu'] + ' ' +
-              (active ? style['active'] : '')
-            }>
-              <div className={style['menu']}>
-                <div className={style['title']}>
-                  Add this movie to a poll
-                </div>
-                <div className={style['available-polls-container']}>
-                  <div className={style['poll-options']}>
-                    <div className={style['header']}>
-                      Create a New Poll
-                    </div>
-                    <form
-                      className={style['new-poll-form']}
-                      onSubmit={e => e.preventDefault()}
-                    >
-                      <TextInput
-                        name={'poll-name'}
-                        placeholder={'Type the name of the new poll'}
-                        otherProperties={{
-                          required: 'true',
-                          autoComplete: 'off',
-                          pattern: '[0-9A-Za-z]*'
-                        }}
-                      />
-                      <Button
-                        name={'Add To A New Poll'}
-                        type={"submit"}
-                        classType={"default"}
-                      />
-                    </form>
+              <div className={
+                style['movie-poll-menu'] + ' ' +
+                (active ? style['active'] : '')
+              }>
+                <div className={style['menu']}>
+                  <div className={style['title']}>
+                    Add this movie to a poll
                   </div>
-                  <div className={style['available-poll-details']}>
-                    <div className={style['header']}>
-                      Available Polls
+                  <div className={style['available-polls-container']}>
+                    <div className={style['poll-options']}>
+                      <div className={style['header']}>
+                        Create a New Poll
+                      </div>
+                      <form
+                        className={style['new-poll-form']}
+                        onSubmit={e => e.preventDefault()}
+                      >
+                        <TextInput
+                          name={'poll-name'}
+                          placeholder={'Type the name of the new poll'}
+                          otherProperties={{
+                            required: 'true',
+                            autoComplete: 'off',
+                            pattern: '[0-9A-Za-z]*'
+                          }}
+                        />
+                        <Button
+                          name={'Add To A New Poll'}
+                          type={"submit"}
+                          classType={"default"}
+                        />
+                      </form>
                     </div>
-                    <div className={style['poll-list']}>
-                      <AvailablePollList />
+                    <div className={style['available-poll-details']}>
+                      <div className={style['header']}>
+                        Available Polls
+                      </div>
+                      <div className={style['poll-list']}>
+                        <AvailablePollList />
+                      </div>
                     </div>
                   </div>
                 </div>
