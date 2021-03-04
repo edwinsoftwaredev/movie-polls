@@ -14,11 +14,12 @@ import {default as initRoutes} from './routes/init';
 
 const app = new Koa();
 const router = new Router();
+const corsConfig: cors.Options = {origin: process.env.CLIENT_ORIGIN}
 
 initRoutes(router);
 
 app.use(KoaLogger());
-app.use(cors());
+app.use(cors(corsConfig));
 app.use(router.routes());
 
 app.listen(process.env.PORT);
