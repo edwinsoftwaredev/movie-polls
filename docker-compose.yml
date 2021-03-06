@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  mysql-instance:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+      - ./database-scripts/init_database.sql:/docker-entrypoint-initdb.d/setup.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    # instance must not be exposed
+    ports:
+      - 3306:3306
