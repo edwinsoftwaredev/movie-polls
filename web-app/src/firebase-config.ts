@@ -30,3 +30,10 @@ export const setAuthStateObserver = (dispatch: Dispatch<any>) => {
     }
   }, error => dispatch(action(USER_AUTHENTICATION_STATUS.ERROR_RETRIVING)))
 };
+
+export const getIdToken = async () => {
+  const idToken = await firebase.auth().currentUser?.getIdToken(true)
+    .catch(error => console.error(error));
+
+  return idToken;
+};
