@@ -11,16 +11,22 @@ import Router from '@koa/router';
 import cors from '@koa/cors';
 import session from 'koa-session'
 import {PrismaClient} from '@prisma/client';
+import * as admin from 'firebase-admin';
 
 import {default as initRoutes} from './routes/init';
 
+/** Apps initialization block **/
 const app = new Koa();
 const prisma = new PrismaClient();
+admin.initializeApp({
+  credential: admin.credential.applicationDefault()
+});
+/******************************/
 
 app.keys = [process.env.KEY as string];
 
-const router = new Router();
-const corsConfig: cors.Options = {origin: process.env.CLIENT_ORIGIN};
+const router = new Router<Koa.DefaultState, Koa.DefaultContext>();
+const corsConfig: cors.Options = {origin: process.env.CLIENT_ORIGIN, credentials: true};
 
 const sessionConfig: Partial<session.opts> = {
   store: {
@@ -50,8 +56,8 @@ const sessionConfig: Partial<session.opts> = {
 initRoutes(router);
 
 app.use(KoaLogger());
-app.use(session(sessionConfig, app)); // client side session -> Use a proper store like Redis
 app.use(cors(corsConfig));
+app.use(session(sessionConfig, app)); // Prefer a store like Redis - MySql is in used.
 app.use(router.routes());
 
 app.listen(process.env.PORT);
