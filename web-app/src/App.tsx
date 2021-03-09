@@ -16,9 +16,7 @@ import TopMovies from './top-movies/TopMovies';
 
 const InitialPage: React.FC = () => {
   const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
-
-  return <Home />;
-
+  
   if (userAuthenticationStatus === USER_AUTHENTICATION_STATUS.NOT_FETCHED) {
     return <LoadingPage />;
   } else if (userAuthenticationStatus === USER_AUTHENTICATION_STATUS.NOT_SIGNED) {
