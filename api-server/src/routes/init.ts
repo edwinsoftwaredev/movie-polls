@@ -1,6 +1,5 @@
 import Router from "@koa/router";
 import CSRF from 'koa-csrf';
-import authRouter from './auth';
 import csrfTokenRouter from './csrf_token';
 import movieRouter from './movie';
 import Koa from 'koa';
@@ -44,7 +43,7 @@ const firebaseTokenValidatorMiddleware = async (
     });
 
   if (idTokenDecoded) {
-    next();
+    await next();
   }
 };
 
@@ -53,8 +52,7 @@ const init = (router: Router<Koa.DefaultState, Koa.DefaultContext>): void => {
   // is based on the level of protection determined 
   // for each route in ascending order.
   router.use('/api', csrfMiddlewareGenerator, csrfTokenRouter.routes(), csrfTokenRouter.allowedMethods());
-  router.use('/api', csrfMiddleware, authRouter.routes(), authRouter.allowedMethods());
-  router.use('/api', csrfMiddleware, firebaseTokenValidatorMiddleware, movieRouter.routes(), authRouter.allowedMethods());
+  router.use('/api', csrfMiddleware, firebaseTokenValidatorMiddleware, movieRouter.routes(), movieRouter.allowedMethods());
 };
 
 export default init;
