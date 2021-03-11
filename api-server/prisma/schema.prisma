@@ -14,3 +14,9 @@ model Session {
   id String @id
   session Json
 }
+
+model TopMovies {
+  id Int @id
+  movie Json
+  updateDate DateTime
+}
