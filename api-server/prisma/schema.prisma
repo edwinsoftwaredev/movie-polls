@@ -17,6 +17,6 @@ model Session {
 
 model TopMovies {
   id Int @id
-  movie Json
+  topMovies Json
   updateDate DateTime
 }
