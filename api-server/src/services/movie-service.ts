@@ -1,4 +1,5 @@
 import Axios, { AxiosResponse } from 'axios';
+import prisma from '../prisma-client';
 import { IGenre, IGenreRequest, IMovie, IMovieRequest } from "../shared/type-interfaces/movie-types";
 
 // TODO: Make this class use the sigleton pattern if it is required.
@@ -17,6 +18,13 @@ export default class MoviesService {
   }
 
   static async fetchTopMovies(): Promise<IMovie[]> {
+    const cache = await prisma.topMovies.findFirst();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return cache ? cache.topMovies?.result : [];
+  }
+
+  static async fetchTopMovies_Job(): Promise<IMovie[]> {
     const movieList: IMovie[] = [];
     const promises: Promise<void>[] = [];
     const genres = await this.fetchGenres();
@@ -44,7 +52,7 @@ export default class MoviesService {
       // this is an optimal number of concurrent requests in parallel
       // more than this number ECONNRESET error are thrown
       // less than this makes the request longer to be resolved
-      const maxConcurrency = 50;
+      const maxConcurrency = 50; // avg. response time: 7s
       let appendedPages = maxConcurrency + 1;
       const maxPages = 500; // this is the max number of pages in TMDB
 
@@ -79,13 +87,10 @@ export default class MoviesService {
     }
 
     await executeByParallelChunks();
-
     const topMovies = movieList
       .sort((a, b) => b.vote_count - a.vote_count)
       .slice(0, 10)
       .sort((a, b) => b.vote_average - a.vote_average);
-
-    // topMovies should be cached in database.
 
     return Promise.resolve<IMovie[]>(topMovies);
   }
