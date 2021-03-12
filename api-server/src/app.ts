@@ -5,19 +5,22 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
 
+import {topMoviesJob} from './jobs/top-movies';
+// this will execute immediatly the job
+topMoviesJob.invoke();
+
 import Koa from 'koa';
 import KoaLogger from 'koa-logger';
 import Router from '@koa/router';
 import cors from '@koa/cors';
 import session from 'koa-session'
-import {PrismaClient} from '@prisma/client';
+import prisma from './prisma-client';
 import * as admin from 'firebase-admin';
 
 import {default as initRoutes} from './routes/init';
 
 /** Apps initialization block **/
 const app = new Koa();
-const prisma = new PrismaClient();
 admin.initializeApp({
   credential: admin.credential.applicationDefault()
 });
@@ -34,7 +37,7 @@ const sessionConfig: Partial<session.opts> = {
       // TODO: Errors should be catched.
       const sessionObj = await prisma.session.findUnique({
         where: {id: key}
-      }).finally(() => prisma.$disconnect());
+      });
       return sessionObj?.session;
     },
     async set(key, sess, maxAge, data) {
@@ -43,12 +46,11 @@ const sessionConfig: Partial<session.opts> = {
         where: {id: key},
         update: {session: sess},
         create: {id: key, session: sess}
-      }).finally(() => prisma.$disconnect());
+      })
     },
     async destroy(key){
       // TODO: Errors should be catched.
       await prisma.session.delete({where: {id: key}})
-        .finally(() => prisma.$disconnect());
     }
   }
 };
