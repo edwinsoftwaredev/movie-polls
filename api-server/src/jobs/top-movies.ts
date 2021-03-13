@@ -2,8 +2,12 @@ import prisma from '../prisma-client';
 import schedule from 'node-schedule';
 import MoviesService from '../services/movie-service';
 
-// this job is executed every 24 hours
-export const topMoviesJob = schedule.scheduleJob('* * */24 * * *', async () => {
+const rule = new schedule.RecurrenceRule();
+rule.minute = 0; // this will schedule to execute the job every hour at minute 0
+
+// this job is executed every hours
+export const topMoviesJob = schedule.scheduleJob(rule, async () => {
+  console.info('Executing topMoviesJob');
   const cache = await prisma.topMovies.findFirst();
 
   if (cache) {
@@ -17,7 +21,7 @@ export const topMoviesJob = schedule.scheduleJob('* * */24 * * *', async () => {
 
       await prisma.topMovies.update({
         where: {id: cache.id}, 
-        data: {topMovies: topMoviesObject}
+        data: {topMovies: topMoviesObject, updateDate: new Date(today)}
       });
       console.log('TopMovies cache updated.');
     }
