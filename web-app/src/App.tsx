@@ -12,7 +12,7 @@ import { userAuthenticationStatusSelector } from './auth/auth-selectors';
 import { setAuthStateObserver } from './firebase-config';
 import NavBar from './navbar/NavBar';
 import TopMovies from './top-movies/TopMovies';
-
+import Interceptors from './auth/security/interceptors';
 
 const InitialPage: React.FC = () => {
   const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
@@ -32,7 +32,10 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    // this will initialize the default interceptors (CSRF-Token and ID Token)
+    Interceptors.setDefaultInterceptors();
     setAuthStateObserver(dispatch);
+
   }, [dispatch]);
 
   return (
