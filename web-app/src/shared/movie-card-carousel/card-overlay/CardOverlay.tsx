@@ -198,6 +198,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                         />
                       </form>
                     </div>
+                    <hr/>
                     <div className={style['available-poll-details']}>
                       <div className={style['header']}>
                         Available Polls
