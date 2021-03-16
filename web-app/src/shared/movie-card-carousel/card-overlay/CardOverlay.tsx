@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import style from './CardOverlay.module.scss';
 import popularityIcon from '../../resources/icons/star-struck.png';
 import { IMovie, IMovieDetail } from '../../interfaces/movie-types';
-import Axios, { AxiosResponse } from 'axios';
 import Button from "../../button/Button.test";
 import TextInput from "../../inputs/text-input/TextInput";
 import AvailablePollList from './available-polls-list/AvailablePollList';
+import MovieService from '../../../services/movie-service';
 
 interface ICardOverlay {
   card: HTMLDivElement | undefined | null,
@@ -29,25 +29,21 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
 
   useEffect(() => {
     if (props.movie) {
-      Axios.get(`${process.env.REACT_APP_TMDB_API_URL}/movie/${props.movie.id}`,
-      {
-        params: {
-          api_key: process.env.REACT_APP_TMDB_API_KEY,
-          append_to_response: 'credits,release_dates'
-        }
-      }).then((response: AxiosResponse<IMovieDetail>) => {
-        const hours = Math.floor(response.data.runtime / 60);
-        const mins = response.data.runtime % 60;
-        setDuration(hours + 'h ' + mins + 'm')
-        setCast(response.data.credits.cast.slice(0, 4).map(value => value.name))
-        setDirector(response.data.credits.crew.filter(value => value.job === 'Director')[0].name);
-        setCertificaction(
-          response.data.release_dates.results
-            .filter(value => value.iso_3166_1 === 'US')[0]
-            .release_dates[0]
-            .certification
-        );
-      });
+      MovieService.getMovieDetails(props.movie.id)
+        .then((details: IMovieDetail) => {
+          const hours = Math.floor(details.runtime / 60);
+          const mins = details.runtime % 60;
+
+          setDuration(hours + 'h ' + mins + 'm');
+          setCast(details.credits.cast.slice(0, 4).map(value => value.name));
+          setDirector(details.credits.crew.filter(value => value.job === 'Director')[0].name);
+          setCertificaction(
+            details.release_dates.results
+              .filter(value => value.iso_3166_1 === 'US')[0]
+              .release_dates[0]
+              .certification
+          );
+        });
     }
   }, [props.movie]);
 
@@ -65,6 +61,10 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
       if (!active) {
         setTransitionEnded(true);
         props.clearCardOverlay();
+        setCast([]);
+        setDuration('');
+        setDirector('');
+        setCertificaction('');
       }
     };
 
@@ -150,13 +150,13 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                     </div>
                     <div className={style['movie-info']}>
                       <div className={style['director']}>
-                        <span>Director: </span>{director}
+                        {director ? (<Fragment><span>Director: </span>{director}</Fragment>) : null}
                       </div>
                       <div className={style['cast']}>
-                        <span>Cast: </span>{cast.join(', ')}
+                        {cast.length ? (<Fragment><span>Cast: </span>{cast.join(', ')}</Fragment>) : null}
                       </div>
                       <div className={style['duration']}>
-                        <span>Duration: </span>{duration}
+                        {duration ? (<Fragment><span>Duration: </span>{duration}</Fragment>) : null}
                       </div>
                     </div>
                   </div>
@@ -186,7 +186,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                           name={'poll-name'}
                           placeholder={'Type the name of the new poll'}
                           otherProperties={{
-                            required: 'true',
+                            required: true,
                             autoComplete: 'off',
                             pattern: '[0-9A-Za-z]*'
                           }}
