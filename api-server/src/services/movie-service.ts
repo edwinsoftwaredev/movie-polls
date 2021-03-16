@@ -1,9 +1,14 @@
 import Axios, { AxiosResponse } from 'axios';
 import prisma from '../prisma-client';
-import { IGenre, IGenreRequest, IMovie, IMovieRequest } from "../shared/type-interfaces/movie-types";
+import { IGenre, IGenreRequest, IMovie, IMovieDetail, IMovieRequest } from "../shared/type-interfaces/movie-types";
 
 // TODO: Make this class use the sigleton pattern if it is required.
 export default class MoviesService {
+
+  /**
+   * Fetches a list of genres used by TMDB API.
+   * @returns A Promise of a list of genres. 
+   */
   static async fetchGenres(): Promise<IGenre[]> {
     const genresResponse = await Axios.get<IGenreRequest>(
       `${process.env.TMDB_API_URL}/genre/movie/list`, 
@@ -17,6 +22,27 @@ export default class MoviesService {
     return genresResponse.data.genres;
   }
 
+  /**
+   * Fetches the details of a movie.
+   * @param movieId The id of the movie.
+   * @returns A Promise of movie details.
+   */
+  static async fetchMovieDetails(movieId: number): Promise<IMovieDetail> {
+    const res = await Axios.get<IMovieDetail>(
+      `${process.env.TMDB_API_URL}/movie/${movieId}`, {
+      params: {
+        api_key: process.env.TMDB_API_KEY,
+        append_to_response: 'credits,release_dates'
+      }
+    });
+
+    return res.data;
+  }
+
+  /**
+   * Fetchs a list of 10 top movies from database or cache
+   * @returns IMovie[]
+   */
   static async fetchTopMovies(): Promise<IMovie[]> {
     const cache = await prisma.topMovies.findFirst();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -24,6 +50,12 @@ export default class MoviesService {
     return cache ? cache.topMovies?.result : [];
   }
 
+  /**
+   * Fetchs a list of 10 top movies from TMDB API.
+   * Don't use this function to resolve client requests.
+   * This is a function that will be executed as a part of scheduled job.
+   * @returns IMovie[]
+   */
   static async fetchTopMovies_Job(): Promise<IMovie[]> {
     const movieList: IMovie[] = [];
     const promises: Promise<void>[] = [];
@@ -95,6 +127,12 @@ export default class MoviesService {
     return Promise.resolve<IMovie[]>(topMovies);
   }
 
+  /**
+   * Gets a list of movies by page.
+   * @param url The url to request against to.
+   * @param page The request's page.
+   * @returns A Promise of a page of movies.
+   */
   static getMovieListByPage(url: string, page: number): Promise<AxiosResponse<IMovieRequest>> {    
     return Axios.get<IMovieRequest>(url, {
       params: {
