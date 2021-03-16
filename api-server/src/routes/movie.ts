@@ -15,9 +15,9 @@ router.get('/top-movies', async (ctx, next) => {
   ctx.status = 200;
 });
 
-router.get('/movie-details', async (ctx, next) => {
-  const idString = ctx.query.id;
-  if (typeof idString === 'string' && ctx.query.id) {
+router.get('/movie-details/:id', async (ctx, next) => {
+  const idString = ctx.params.id;
+  if (idString) {
     const id = Number.parseInt(idString);
     ctx.body = await MoviesService.fetchMovieDetails(id).catch((err: AxiosError | Error) => {
       console.log(`Error when fetching movie details. Message: ${err.message}`);

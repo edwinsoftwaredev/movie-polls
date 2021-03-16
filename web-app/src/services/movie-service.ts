@@ -9,11 +9,9 @@ export default class MovieService {
    * @returns A Promise of movie details.
    */
   static async getMovieDetails(id: number): Promise<IMovieDetail> {
-    const res = await Axios.get(`${process.env.REACT_APP_API_SERVER}/api/movies/movie-details`, {
-      params: {
-        id: id
-      }
-    });
+    const res = await Axios.get(
+      `${process.env.REACT_APP_API_SERVER}/api/movies/movie-details/${id}`
+    );
 
     return res.data;
   }
