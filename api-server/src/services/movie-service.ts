@@ -1,5 +1,6 @@
 import Axios, { AxiosResponse } from 'axios';
 import prisma from '../prisma-client';
+import { BestMoviesTypes } from '../shared/cache-movie-types';
 import { IGenre, IGenreRequest, IMovie, IMovieDetail, IMovieRequest } from "../shared/type-interfaces/movie-types";
 
 // TODO: Make this class use the sigleton pattern if it is required.
@@ -20,6 +21,18 @@ export default class MoviesService {
     );
     
     return genresResponse.data.genres;
+  }
+
+  /**
+   * Fetch popular movies.
+   * @returns A Promise of popular movies
+   */
+  static async fetchTrendingMovies(): Promise<IMovie[]> {
+    const cache = await prisma.bestMovies.findFirst({where: {type: BestMoviesTypes.TrendingMovies}});
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return cache ? cache.movies?.result : [];
   }
 
   /**
@@ -44,10 +57,10 @@ export default class MoviesService {
    * @returns IMovie[]
    */
   static async fetchTopMovies(): Promise<IMovie[]> {
-    const cache = await prisma.topMovies.findFirst();
+    const cache = await prisma.bestMovies.findFirst({where: {type: BestMoviesTypes.TopMovies}});
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    return cache ? cache.topMovies?.result : [];
+    return cache ? cache.movies?.result : [];
   }
 
   /**
@@ -56,7 +69,7 @@ export default class MoviesService {
    * This is a function that will be executed as a part of scheduled job.
    * @returns IMovie[]
    */
-  static async fetchTopMovies_Job(): Promise<IMovie[]> {
+  static async fetchBestMoviesByType_Job(bestMoviesType: BestMoviesTypes): Promise<IMovie[]> {
     const movieList: IMovie[] = [];
     const promises: Promise<void>[] = [];
     const genres = await this.fetchGenres();
@@ -64,12 +77,29 @@ export default class MoviesService {
     const nowDate = new Date(Date.now());
     const previousYear = new Date(nowDate.setFullYear(nowDate.getFullYear() - 1));
 
+    const bestMoviesFilter = (movie: IMovie): boolean => {
+      switch (bestMoviesType) {
+        case BestMoviesTypes.TopMovies:
+          return (new Date(movie.release_date) >= previousYear) && (movie.vote_count >= 1000 && movie.vote_average >= 7);
+        case BestMoviesTypes.TrendingMovies: {
+          const date = new Date(movie.release_date);
+          if (movie.title === 'Palmer') console.log(movie);
+
+          return (date >= previousYear) && 
+            (movie.vote_average >= 7) &&
+            (movie.vote_count >= 50);
+        }
+        default: 
+          return false;
+      }
+    };
+
     // This function is a wrapper and will help the parallel execution of the promises
     const filterByReleaseDate = async (promise: Promise<AxiosResponse<IMovieRequest>>) => {
       const res = await promise;
 
       const filteredMovies: IMovie[] = res.data.results
-        .filter(movie => (new Date(movie.release_date) >= previousYear) && (movie.vote_count >= 1000 && movie.vote_average >= 7))
+        .filter(movie => bestMoviesFilter(movie))
         .map(movie => ({
           ...movie,
           genre_names: movie.genre_ids.map(id => genres.find(item => item.id === id)?.name ?? '')
@@ -119,12 +149,21 @@ export default class MoviesService {
     }
 
     await executeByParallelChunks();
-    const topMovies = movieList
-      .sort((a, b) => b.vote_count - a.vote_count)
-      .slice(0, 10)
-      .sort((a, b) => b.vote_average - a.vote_average);
 
-    return Promise.resolve<IMovie[]>(topMovies);
+    switch (bestMoviesType) {
+      case BestMoviesTypes.TopMovies: 
+        return movieList
+          .sort((a, b) => b.vote_count - a.vote_count)
+          .slice(0, 10)
+          .sort((a, b) => b.vote_average - a.vote_average)
+      case BestMoviesTypes.TrendingMovies:
+        return movieList
+          .sort((a, b) => new Date(b.release_date) >= new Date(a.release_date) ? 1 : -1)
+          .slice(0, 10)
+          .sort((a, b) => b.vote_average - a.vote_average)
+      default:
+        throw new Error('The given type is not a valid BestMoviesType');
+    }
   }
 
   /**
