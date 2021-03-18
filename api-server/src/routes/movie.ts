@@ -29,4 +29,14 @@ router.get('/movie-details/:id', async (ctx, next) => {
   }
 });
 
+router.get('/popular-movies', async (ctx, next) => {
+  const popularMovies = await MoviesService.fetchTrendingMovies().catch((error: AxiosError | Error) => {
+    console.error(`Error when fetching popular movies. Message: ${error.message}`);
+    ctx.throw(500);
+  });
+
+  ctx.body = popularMovies;
+  ctx.status = 200;
+});
+
 export default router;
