@@ -15,8 +15,9 @@ model Session {
   session Json
 }
 
-model TopMovies {
-  id Int @id
-  topMovies Json
+model BestMovies {
+  id Int @id @default(autoincrement())
+  movies Json
   updateDate DateTime
+  type String
 }
