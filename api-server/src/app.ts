@@ -5,9 +5,9 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
 
-import {topMoviesJob} from './jobs/top-movies';
+import {bestMoviesJob} from './jobs/best-movies';
 // this will execute immediatly the job
-topMoviesJob.invoke();
+bestMoviesJob.invoke();
 
 import Koa from 'koa';
 import KoaLogger from 'koa-logger';
