@@ -2,22 +2,25 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { ActionsObservable, combineEpics, createEpicMiddleware, StateObservable } from "redux-observable";
 import { catchError } from "rxjs/operators";
 import authSlice from "../auth/auth-slice";
-import { fetchTop10MoviesEpic, Top10MoviesActions } from "../services/epics/movies";
-import {top10MoviesSlice} from '../services/slices-selectors/movies';
+import { Top10PopularActions, fetchTop10PopularEpic } from "../services/epics/popular-movies";
+import { Top10TrendingActions, fetchTop10TrendingEpic } from "../services/epics/trending-movies";
+import {top10PopularSlice, top10TrendingSlice} from '../services/slices-selectors/movies';
 
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
-  top10Movies: top10MoviesSlice.reducer
+  top10Popular: top10PopularSlice.reducer,
+  top10Trending: top10TrendingSlice.reducer
 });
 
-type Actions = Top10MoviesActions;
+type Actions = Top10PopularActions | Top10TrendingActions;
 
 export const rootEpic = (
   action$: ActionsObservable<Actions>,
   store$: StateObservable<any>,
   dependecies: any
 ) => combineEpics(
-  fetchTop10MoviesEpic
+  fetchTop10PopularEpic,
+  fetchTop10TrendingEpic
 )(action$, store$, dependecies).pipe(catchError((error, source) => {
   console.log(error);
   return source;
