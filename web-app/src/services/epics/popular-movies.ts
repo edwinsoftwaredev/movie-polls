@@ -34,7 +34,7 @@ export const fetchTop10PopularEpic: Epic<Top10PopularActions> =
   ): Observable<Top10PopularActions> => action$.pipe(
     ofType<Top10PopularActions, IFetchTop10PopularAction>(ActionTypes.FETCH_TOP10POPULAR),
     switchMap(async (action: IFetchTop10PopularAction) => {
-      const res = await Axios.get(`${process.env.REACT_APP_API_SERVER}/api/movies/top-movies`);
+      const res = await Axios.get(`${process.env.REACT_APP_API_SERVER}/api/movies/top-popular-movies`);
       return setTop10Popular(res.data);
     })
   );
