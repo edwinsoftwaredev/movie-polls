@@ -5,13 +5,13 @@ import MoviesService from '../services/movie-service';
 
 const router = new Router<Koa.DefaultState, Koa.DefaultContext>({prefix: '/movies'});
 
-router.get('/top-movies', async (ctx, next) => {
-  const topMovies = await MoviesService.fetchTopMovies().catch((error: AxiosError | Error) => {
-    console.error(`Error when fetching Top Movies. Message: ${error.message}`);
+router.get('/top-popular-movies', async (ctx, next) => {
+  const movies = await MoviesService.fetchTopPopularMovies().catch((error: AxiosError | Error) => {
+    console.error(`Error when fetching top popular movies. Message: ${error.message}`);
     ctx.throw(500);
   });
 
-  ctx.body = topMovies;
+  ctx.body = movies;
   ctx.status = 200;
 });
 
@@ -29,13 +29,23 @@ router.get('/movie-details/:id', async (ctx, next) => {
   }
 });
 
-router.get('/popular-movies', async (ctx, next) => {
-  const popularMovies = await MoviesService.fetchTrendingMovies().catch((error: AxiosError | Error) => {
-    console.error(`Error when fetching popular movies. Message: ${error.message}`);
+router.get('/top-trending-movies', async (ctx, next) => {
+  const movies = await MoviesService.fetchTopTrendingMovies().catch((error: AxiosError | Error) => {
+    console.error(`Error when fetching top trending movies. Message: ${error.message}`);
     ctx.throw(500);
   });
 
-  ctx.body = popularMovies;
+  ctx.body = movies;
+  ctx.status = 200;
+});
+
+router.get('/now-playing', async (ctx, next) => {
+  const movies = await MoviesService.fetchNowPlayingMovies_job().catch((error: AxiosError | Error) => {
+    console.error(`Error when fetching now playing movies. Message: ${error.message}`);
+    ctx.throw(500);
+  });
+
+  ctx.body = movies;
   ctx.status = 200;
 });
 
