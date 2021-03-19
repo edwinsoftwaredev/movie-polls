@@ -1,17 +1,17 @@
 import prisma from '../prisma-client';
 import schedule from 'node-schedule';
 import MoviesService from '../services/movie-service';
-import { BestMoviesTypes } from '../shared/cache-movie-types';
+import { MoviesTypes } from '../shared/cache-movie-types';
 
 const rule = new schedule.RecurrenceRule();
 rule.minute = 0; // this will schedule to execute the job every hour at minute 0
 
 // this job is executed every hours
-export const bestMoviesJob = schedule.scheduleJob(rule, async () => {
-  console.info('Executing bestMoviesJob');
+export const moviesJob = schedule.scheduleJob(rule, async () => {
+  console.info('Executing MoviesJob');
   const today = new Date().setHours(0, 0, 0, 0);
 
-  const updateByType = async (type: BestMoviesTypes) => {
+  const updateByType = async (type: MoviesTypes) => {
     const cache = await prisma.bestMovies.findFirst({where: {type: type}});
 
     if (cache) {
@@ -19,7 +19,7 @@ export const bestMoviesJob = schedule.scheduleJob(rule, async () => {
   
       if (today - cacheDate > 0) {
         console.info(`Updating ${type} movies cache.`);
-        const bestMovies = await MoviesService.fetchBestMoviesByType_Job(type);
+        const bestMovies = await MoviesService.fetchMoviesByType_Job(type);
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const object: any = {result: bestMovies};
@@ -33,7 +33,7 @@ export const bestMoviesJob = schedule.scheduleJob(rule, async () => {
       }
     } else {
       console.log(`Caching ${type} movies.`);
-      const bestMovies = await MoviesService.fetchBestMoviesByType_Job(type);
+      const bestMovies = await MoviesService.fetchMoviesByType_Job(type);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const object: any = {result: bestMovies};
@@ -47,6 +47,8 @@ export const bestMoviesJob = schedule.scheduleJob(rule, async () => {
     }
   }
 
-  await updateByType(BestMoviesTypes.TopMovies);
-  await updateByType(BestMoviesTypes.TrendingMovies);
+  await updateByType(MoviesTypes.TopPopularMovies);
+  await updateByType(MoviesTypes.TopTrendingMovies);
+
+  console.log('Movies cache is updated.');
 });
