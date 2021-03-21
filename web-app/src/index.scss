@@ -12,10 +12,7 @@ body {
   background-color: rgba(0, 0, 10, 0.9);
   color: white;
   height: 100%;
-}
-
-#root {
-  height: 100%;
+  position: relative;
 }
 
 code {
@@ -25,5 +22,8 @@ code {
 
 html {
   font-size: 10px;
-  height: 100%;
+}
+
+#root {
+  position: relative;
 }
