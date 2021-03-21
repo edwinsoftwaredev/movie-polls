@@ -26,6 +26,10 @@ const Slider: React.FC<ISlider> = (props: ISlider) => {
       setCardWidth((listWidth - 4*props.cardAmount) / props.cardAmount);
     };
 
+    setTimeout(() => {
+      handleWindowResize();
+    }, 10);
+    
     window.addEventListener('resize', handleWindowResize);
 
     return () => {
