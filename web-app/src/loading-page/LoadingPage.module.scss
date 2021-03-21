@@ -3,6 +3,7 @@
     width: 100vw;
     display: flex;
     flex-direction: column;
+    position: fixed; // check this on an actual phone browser (android chrome)
 
     .container {
         margin: auto;
