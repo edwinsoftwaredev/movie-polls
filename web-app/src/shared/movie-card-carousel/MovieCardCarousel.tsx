@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { IMovie } from '../interfaces/movie-types';
-import CardOverlay from './card-overlay/CardOverlay';
+import CardOverlayPortal from './card-overlay/card-overlay-portal/CardOverlayPortal';
 import style from './MovieCardCarousel.module.scss';
 import Slider from './slider/Slider';
 
@@ -169,6 +169,7 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
 
 	useEffect(() => {
 		const handleResize = () => {
+      clearCardOverlay();
 			let numberCards = 6;
 			const windowWidth = window.innerWidth;
 
@@ -201,11 +202,11 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
 
 	return (
     <Fragment>
-      <CardOverlay 
-        card={activeCard}
-        clearCardOverlay={clearCardOverlay}
-        movie={activeMovie}
+      <CardOverlayPortal 
+        activeCard={activeCard}
+        activeMovie={activeMovie} 
         isMobile={isMobile}
+        clearCardOverlay={clearCardOverlay} 
       />
       <div className={style['container']}>
         <div className={style['header']}>
