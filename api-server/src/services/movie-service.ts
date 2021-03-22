@@ -101,19 +101,26 @@ export default class MoviesService {
     return movies;
   }
 
+  /**
+   * Fetchs Now Playing movie from TMDB API.
+   * @returns a Promise of Now Playing movies
+   */
   static async fetchNowPlayingMovies_job(): Promise<IMovie[]> {
     const genres = await this.fetchGenres();
-    const res = await Axios.get<IMovieRequest>(`${process.env.TMDB_API_URL}/movie/now_playing`, {
+    const res = await Axios.get<IMovieRequest>(`${process.env.TMDB_API_URL}/discover/movie`, {
       params: {
         api_key: process.env.TMDB_API_KEY,
-        page: 1
+        page: 1,
+        sort_by: 'primary_release_date.desc',
+        'primary_release_date.lte': new Date().toISOString().split('T')[0],
+        'vote_average.gte': 1, 
+        'vote_count.gte': 50,
       }
     });
     const movies = res.data.results.map(movie => ({
       ...movie,
       genre_names: movie.genre_ids.map(id => genres.find(item => item.id === id)?.name ?? '')
-    }))
-    .sort((a, b) => new Date(b.release_date) >= new Date(a.release_date) ? 1 : -1);
+    }));
 
     return movies;
   }
@@ -147,6 +154,17 @@ export default class MoviesService {
   }
 
   /**
+   * Fetchs cache of Now Playing movies.
+   * @returns a Promise of Now Playing movies
+   */
+  static async fetchNowPlayingMovies(): Promise<IMovie[]> {
+    const cache = await prisma.bestMovies.findFirst({where: {type: MoviesTypes.NowPlayingMovies}});
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return cache ? cache.movies?.result : [];
+  }
+
+  /**
    * Executes a function to fetch movies based on a given type movie collection.
    * @param moviesType the type of movie collection
    * @returns a Promise of IMovie[]
@@ -158,6 +176,9 @@ export default class MoviesService {
       }
       case MoviesTypes.TopTrendingMovies: {
         return await this.fetchTopTrendingMovies_job();
+      }
+      case MoviesTypes.NowPlayingMovies: {
+        return await this.fetchNowPlayingMovies_job();
       }
       default: 
         return [];
