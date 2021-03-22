@@ -40,7 +40,7 @@ router.get('/top-trending-movies', async (ctx, next) => {
 });
 
 router.get('/now-playing', async (ctx, next) => {
-  const movies = await MoviesService.fetchNowPlayingMovies_job().catch((error: AxiosError | Error) => {
+  const movies = await MoviesService.fetchNowPlayingMovies().catch((error: AxiosError | Error) => {
     console.error(`Error when fetching now playing movies. Message: ${error.message}`);
     ctx.throw(500);
   });
