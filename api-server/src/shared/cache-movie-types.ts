@@ -1,4 +1,5 @@
 export enum MoviesTypes {
   TopPopularMovies = 'TopPopular',
-  TopTrendingMovies = 'TopTrending'
+  TopTrendingMovies = 'TopTrending',
+  NowPlayingMovies = 'NowPlayingMovies'
 }
