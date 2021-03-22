@@ -49,6 +49,7 @@ export const moviesJob = schedule.scheduleJob(rule, async () => {
 
   await updateByType(MoviesTypes.TopPopularMovies);
   await updateByType(MoviesTypes.TopTrendingMovies);
+  await updateByType(MoviesTypes.NowPlayingMovies);
 
   console.log('Movies cache is updated.');
 });
