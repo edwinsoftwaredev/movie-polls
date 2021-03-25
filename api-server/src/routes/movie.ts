@@ -49,4 +49,24 @@ router.get('/now-playing', async (ctx, next) => {
   ctx.status = 200;
 });
 
+router.get('/trending-movies', async (ctx, next) => {
+  const result = await MoviesService.fetchTrendingMoviesByGenres().catch((error: AxiosError | Error) => {
+    console.error(`Error when fetchin trending movies. Message: ${error.message}`);
+    ctx.throw(500);
+  });
+
+  ctx.body = result;
+  ctx.status = 200;
+});
+
+router.get('/genres', async (ctx, next) => {
+  const result = await MoviesService.fetchGenres().catch((error: AxiosError | Error) => {
+    console.log(`Error when fetching genres. Message: ${error.message}`);
+    ctx.throw(500);
+  });
+
+  ctx.body = result;
+  ctx.status = 200;
+});
+
 export default router;
