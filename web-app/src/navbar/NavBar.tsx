@@ -25,7 +25,7 @@ const MenuOptions: React.FC<any> = ({userAuthStatus}) => {
           <Fragment>
             <NavBarButton active={location.pathname === '/'} text='Home' callback={() => {history.push('/')}} />
             <NavBarButton text='Top Movies' callback={() => {history.push('/')}} />
-            <NavBarButton text='Trending Movies' callback={() => {history.push('/')}} />
+            <NavBarButton text='Trending Movies' callback={() => {history.push('/trending-movies')}} />
             <NavBarButton text='Random Picks' callback={() => {history.push('/')}} />
             <NavBarButton text='My Polls' callback={() => {history.push('/')}} />
             <hr style={{height: '1rem', marginTop: 'auto', marginBottom: 'auto'}}/>
