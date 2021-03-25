@@ -2,7 +2,7 @@ import { createSelector, createSlice, PayloadAction, Slice } from '@reduxjs/tool
 import { IMovie } from '../../shared/interfaces/movie-types';
 import { RootState } from '../../store/store';
 
-const initialMovies: IMovie[] = new Array(10).map((value, index) => {
+const initialMovies: IMovie[] = [...new Array(10)].map((value, index) => {
   return {title: '', id: index} as IMovie;
 });
 
