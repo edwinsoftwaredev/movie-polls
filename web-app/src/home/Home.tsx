@@ -21,7 +21,7 @@ const Home: React.FC = () => {
 
   return (
     <Fragment>
-      <div id='home-component' className={style['home-component']}>
+      <div id='sliders-container' className={style['sliders-container']}>
         <MovieCardCarousel movieList={top10Popular} title='Top 10 Best Popular Movies'/>
         <MovieCardCarousel movieList={top10Trending} title='Top 10 Best Trending Movies'/>
         <MovieCardCarousel movieList={nowPlaying} title='Now Playing' />
