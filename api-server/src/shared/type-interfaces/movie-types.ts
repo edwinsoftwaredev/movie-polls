@@ -58,3 +58,8 @@ export interface IGenre {
     id: number;
     name: string;
 }
+
+export interface IMoviesByGenre {
+    genre_name: string;
+    results: IMovie[];
+}
