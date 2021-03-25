@@ -13,6 +13,8 @@ import { setAuthStateObserver } from './firebase-config';
 import NavBar from './navbar/NavBar';
 import TopMovies from './top-movies/TopMovies';
 import Interceptors from './auth/security/interceptors';
+import TrendingMovies from './trending-movies/TrendingMovies';
+import { sliderPropertiesSlice } from './services/slices-selectors/slider-properties';
 
 const InitialPage: React.FC = () => {
   const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
@@ -38,6 +40,61 @@ function App() {
 
   }, [dispatch]);
 
+  useEffect(() => {
+		const handleResize = () => {
+      const sliderWidth = document.body.clientWidth - (document.body.clientWidth/100)*4*2;
+			const windowWidth = window.innerWidth;
+
+			if (windowWidth >= 1440) {
+			 	const numberCards = 6;
+        const cardWidth = (sliderWidth - 4*numberCards) / numberCards;
+        dispatch(sliderPropertiesSlice.actions.setSliderProperties({
+          cardWidth: cardWidth,
+          isMobile: false,
+          numberCards: numberCards
+        }));
+			} else if (windowWidth >= 1360 && windowWidth < 1440) {
+				const numberCards = 5;
+        const cardWidth = (sliderWidth - 4*numberCards) / numberCards;
+        dispatch(sliderPropertiesSlice.actions.setSliderProperties({
+          cardWidth: cardWidth,
+          isMobile: false,
+          numberCards: numberCards
+        }));
+			} else if (windowWidth >= 769 && windowWidth < 1360) {
+				const numberCards = 4;
+        const cardWidth = (sliderWidth - 4*numberCards) / numberCards;
+        dispatch(sliderPropertiesSlice.actions.setSliderProperties({
+          cardWidth: cardWidth,
+          isMobile: false,
+          numberCards: numberCards
+        }));
+			} else {
+				const numberCards = 0;
+        const cardWidth = (sliderWidth - 4*numberCards) / numberCards;
+        dispatch(sliderPropertiesSlice.actions.setSliderProperties({
+          cardWidth: cardWidth,
+          isMobile: true,
+          numberCards: numberCards
+        }));
+			}
+		};
+
+    // this should be fixed.
+    const timeoutId = setTimeout(() => {
+      handleResize();
+    }, 1500);
+
+		handleResize();
+
+		window.addEventListener('resize', handleResize);
+
+		return () => {
+			window.removeEventListener('resize', handleResize);
+      clearTimeout(timeoutId);
+		}
+	}, [dispatch]);
+
   return (
     <Fragment>
       <Router>
@@ -54,6 +111,9 @@ function App() {
           </ProtectedRoute>
           <ProtectedRoute exact path='/top-movies'>
             <TopMovies />
+          </ProtectedRoute>
+          <ProtectedRoute exact path='/trending-movies'>
+            <TrendingMovies />
           </ProtectedRoute>
         </Switch>
       </Router>
