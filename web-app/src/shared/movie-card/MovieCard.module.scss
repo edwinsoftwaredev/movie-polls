@@ -1,5 +1,7 @@
 .movie-card-container {
     padding: 0 2px;
+    display: flex;
+    flex-direction: row;
 
     @media screen and (max-width: 768px) {
         padding: 0 0.25rem;
@@ -20,6 +22,17 @@
         position: absolute;
         z-index: 0;
         border-radius: 5px;
+        overflow: hidden;
+
+        img {
+            width: inherit;
+            opacity: 0;
+            transition: opacity 450ms ease-out;
+
+            &.loaded {
+                opacity: 1;
+            }
+        }
 
         &::after {
             content: '';
