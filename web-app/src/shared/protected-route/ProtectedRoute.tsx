@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, Route } from 'react-router-dom';
 import { userAuthenticationStatusSelector } from '../../auth/auth-selectors';
+import LoadingPage from '../../loading-page/LoadingPage';
 import { USER_AUTHENTICATION_STATUS } from '../utils/enums';
 
 const ProtectedRoute: React.FC<any> = ({children, ...rest}) => {
@@ -9,12 +10,7 @@ const ProtectedRoute: React.FC<any> = ({children, ...rest}) => {
 
   if (userAuthenticationStatus === USER_AUTHENTICATION_STATUS.NOT_FETCHED) {
     return (
-      <Route
-        {...rest}
-        render={
-          ({location}) => <div>Show some kind of loading widget!</div>
-        }
-      />
+      <LoadingPage />
     );
   } else if (userAuthenticationStatus === USER_AUTHENTICATION_STATUS.NOT_SIGNED) {
     return (
