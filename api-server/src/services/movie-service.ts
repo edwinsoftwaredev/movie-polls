@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import prisma from '../prisma-client';
 import { MoviesTypes } from '../shared/cache-movie-types';
-import { IGenre, IGenreRequest, IMovie, IMovieDetail, IMovieRequest } from "../shared/type-interfaces/movie-types";
+import { IGenre, IGenreRequest, IMovie, IMovieDetail, IMovieRequest, IMoviesByGenre } from "../shared/type-interfaces/movie-types";
 
 // TODO: Make this class use the sigleton pattern if it is required.
 export default class MoviesService {
@@ -66,6 +66,44 @@ export default class MoviesService {
     .sort((a, b) => b.vote_average - a.vote_average);
 
     return movies;
+  }
+
+  static async fetchTrendingMoviesByGenres(): Promise<IMoviesByGenre[]> {
+    const genres = await this.fetchGenres();
+    const promises: Promise<IMoviesByGenre>[] = [];
+
+    const fetchPageByGenreId = async (id: number): Promise<IMoviesByGenre> => {
+      const res  = await Axios.get<IMovieRequest>(`${process.env.TMDB_API_URL}/discover/movie`, {
+        params: {
+          api_key: process.env.TMDB_API_KEY,
+          sort_by: 'primary_release_date.desc',
+          page: 1,
+          'with_genres': `${id}`,
+          'vote_average.gte': 1, 
+          'vote_count.gte': 50
+        }
+      });
+
+      const movies = res.data.results.map(movie => ({
+        ...movie,
+        genre_names: movie.genre_ids.map(id => genres.find(item => item.id === id)?.name ?? '')
+      }));
+
+      const result: IMoviesByGenre = {
+        genre_name: genres.find(item => item.id === id)?.name ?? '', 
+        results: movies
+      }
+
+      return result; 
+    };
+
+    genres.forEach(genre => {
+      promises.push(fetchPageByGenreId(genre.id));
+    });
+
+    const result = await Promise.all(promises);
+
+    return result;
   }
 
   /**
