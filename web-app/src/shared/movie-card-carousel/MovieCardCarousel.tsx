@@ -1,4 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { sliderPropertiesSelector } from '../../services/slices-selectors/slider-properties';
 import { IMovie } from '../interfaces/movie-types';
 import CardOverlayPortal from './card-overlay/card-overlay-portal/CardOverlayPortal';
 import style from './MovieCardCarousel.module.scss';
@@ -26,7 +28,6 @@ interface IMovieCarousel {
 const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
 	const listRef = useRef<HTMLDivElement>(null);
   const [slider, setSlider] = useState<ISlider>(initialSlider);
-	const [cardAmount, setCardAmount] = useState(0);
 	const [idx, setIdx] = useState(0);
   const [touched, setTouched] = useState(false);
   const listReference = listRef.current;
@@ -34,7 +35,7 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
   const [transitionStarted, setTransitionStarted] = useState(false);
   const [activeCard, setActiveCard] = useState<HTMLDivElement | undefined | null>();
   const [activeMovie, setActiveMovie] = useState<any>();
-  const [isMobile, setIsMobile] = useState(false);
+  const sliderProperties = useSelector(sliderPropertiesSelector);
 
 	const handleFowardMovement = () => {
     if (!transitionStarted) {
@@ -42,13 +43,13 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
       if (!touched) {
         setTouched(true);
       }
-      setIdx(state => state + cardAmount - movieList.length*(Math.trunc((state + cardAmount) / movieList.length)));
+      setIdx(state => state + sliderProperties.numberCards - movieList.length*(Math.trunc((state + sliderProperties.numberCards) / movieList.length)));
   
       setSlider(state => ({
         ...state, 
         posX: state.posX - 100,
         transitionTime: 800,
-        controlCounter: state.controlCounter + cardAmount
+        controlCounter: state.controlCounter + sliderProperties.numberCards
       }));
     } 
 	};
@@ -56,13 +57,13 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
 	const handleBackwardMovement = () => {
     if (!transitionStarted) {
       setTransitionStarted(true);
-      setIdx(state => state - cardAmount + movieList.length*(state - cardAmount >= 0 ? 0 : 1));
+      setIdx(state => state - sliderProperties.numberCards + movieList.length*(state - sliderProperties.numberCards >= 0 ? 0 : 1));
     
       setSlider(state => ({
         ...state, 
         posX: state.posX + 100, 
         transitionTime: 800,
-        controlCounter: state.controlCounter - cardAmount
+        controlCounter: state.controlCounter - sliderProperties.numberCards
       }));
     }
   };
@@ -94,17 +95,17 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
   };
 
 	useEffect(() => {
-    if (!touched && cardAmount) {
+    if (!touched && sliderProperties.numberCards) {
 
       let slice: typeof movieList = [];
 
-      if (cardAmount >= movieList.length) {
+      if (sliderProperties.numberCards >= movieList.length) {
         slice = [
-          ...getSlice(idx, cardAmount, movieList)
+          ...getSlice(idx, sliderProperties.numberCards, movieList)
         ];
       } else {
         slice = [
-          ...getSlice(idx, cardAmount, movieList),
+          ...getSlice(idx, sliderProperties.numberCards, movieList),
         ];
       }
 
@@ -115,30 +116,30 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
         }
       ));
     }
-	}, [cardAmount, idx, touched, movieList]);
+	}, [idx, touched, movieList, sliderProperties]);
 
   useEffect(() => {
     const handleTranslationFinished = () => {
-      if (touched && !isMobile) {
+      if (touched && !sliderProperties.isMobile) {
         const start =
-          idx - cardAmount - 1 + movieList.length*(idx - cardAmount - 1 >= 0 ? 0 : 1);
+          idx - sliderProperties.numberCards - 1 + movieList.length*(idx - sliderProperties.numberCards - 1 >= 0 ? 0 : 1);
 
         let slice: typeof movieList = [];
 
-        if (cardAmount >= movieList.length) {
+        if (sliderProperties.numberCards >= movieList.length) {
           slice = [
-            ...getSlice(0, cardAmount, movieList)
+            ...getSlice(0, sliderProperties.numberCards, movieList)
           ];
         } else {
           slice = [
-            ...getSlice(start, cardAmount, movieList),
+            ...getSlice(start, sliderProperties.numberCards, movieList),
           ];
         }
 
         setSlider(state => ({
           ...state,
-          list: slice.map((value, index) => ({...value, key: state.controlCounter + index - cardAmount})),
-          posX: movieList.length > cardAmount ? -100 - (1/cardAmount)*100 : 0,
+          list: slice.map((value, index) => ({...value, key: state.controlCounter + index - sliderProperties.numberCards})),
+          posX: movieList.length > sliderProperties.numberCards ? -100 - (1/sliderProperties.numberCards)*100 : 0,
           transitionTime: 0
         }));
 
@@ -146,7 +147,7 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
       }
     };
 
-    if (isMobile) {
+    if (sliderProperties.isMobile) {
       setSlider(state => ({
         ...state,
         list: getSlice(0, movieList.length, movieList).map((value, index) => ({...value, key: index})),
@@ -155,7 +156,7 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
       }));
     }
 
-    if (!listAdjusted && !isMobile) {
+    if (!listAdjusted && !sliderProperties.isMobile) {
       handleTranslationFinished();
       setListAdjusted(true);
     }
@@ -165,29 +166,13 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
     return () => {
       listReference?.removeEventListener('transitionend', handleTranslationFinished);
     };
-  }, [idx, cardAmount, touched, listReference, listAdjusted, isMobile, movieList]);
+  }, [idx, sliderProperties, touched, listReference, listAdjusted, movieList]);
 
 	useEffect(() => {
 		const handleResize = () => {
+      // when resizing if cardOverlay is open
+      // the next line will close it.
       clearCardOverlay();
-			let numberCards = 6;
-			const windowWidth = window.innerWidth;
-
-			if (windowWidth >= 1440) {
-				numberCards = 6;
-        setIsMobile(false);
-			} else if (windowWidth >= 1360 && windowWidth < 1440) {
-				numberCards = 5;
-        setIsMobile(false);
-			} else if (windowWidth >= 769 && windowWidth < 1360) {
-				numberCards = 4;
-        setIsMobile(false);
-			} else {
-				numberCards = 0;
-        setIsMobile(true);
-			}
-
-			setCardAmount(numberCards);
       setListAdjusted(false);
 		};
 
@@ -204,17 +189,16 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
     <Fragment>
       <CardOverlayPortal 
         activeCard={activeCard}
-        activeMovie={activeMovie} 
-        isMobile={isMobile}
+        activeMovie={activeMovie}
         clearCardOverlay={clearCardOverlay} 
       />
       <div className={style['container']}>
         <div className={style['header']}>
-          <div className={style['title']}>{title}</div>
+          <div className={style['title']}>{title ? title : ' '}</div>
         </div>
         <div className={style['list-container']}>
           {
-            touched && !isMobile && cardAmount < movieList.length ? (
+            touched && !sliderProperties.isMobile && sliderProperties.numberCards < movieList.length ? (
               <div className={style['backward']} onClick={handleBackwardMovement}>
                 <span></span>
                 <span></span>
@@ -223,14 +207,13 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
           }
           <Slider 
             movieSlice={slider.list}
-            cardAmount={cardAmount}
             sliderRef={listRef}
             posX={slider.posX}
             transitionTime={slider.transitionTime}
             handleOverlay={handleOverlay}
           />
           {
-            !isMobile && cardAmount < movieList.length ? (
+            !sliderProperties.isMobile && sliderProperties.numberCards < movieList.length ? (
               <div className={style['forward']} onClick={handleFowardMovement}>
                 <span></span>
                 <span></span>

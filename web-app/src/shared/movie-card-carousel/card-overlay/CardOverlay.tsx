@@ -75,7 +75,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
         }
       }
 
-      const el = document.getElementById('home-component');
+      const el = document.getElementById('sliders-container');
       if (el) {
         setWindowScrollY(window.scrollY);
         el.style.top = `-${window.scrollY}px`;
@@ -91,7 +91,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
 
     const handleTransionEnd = () => {
       if (!active) {
-        const el = document.getElementById('home-component');
+        const el = document.getElementById('sliders-container');
 
         if (window.innerHeight < document.body.clientHeight) {
           document.body.style.overflowY = 'auto';
@@ -145,7 +145,6 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                 (active ? style['active'] : '')
               }
               style={{
-                  // height: props.card?.getBoundingClientRect().height ?? 0,
                   width: props.card?.getBoundingClientRect().width - 4 ?? 0, // - 4 => padding
                   left: props.card?.getBoundingClientRect().left + 2 ?? 0, // + 2 => padding
                   top: props.card?.getBoundingClientRect().top ?? 0

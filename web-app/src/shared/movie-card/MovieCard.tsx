@@ -2,17 +2,19 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import style from './MovieCard.module.scss';
 import popularyIcon from '../resources/icons/star-struck.png';
 import { IMovie } from '../interfaces/movie-types';
+import { useSelector } from 'react-redux';
+import { sliderPropertiesSelector } from '../../services/slices-selectors/slider-properties';
 
 interface IMovieCard {
   movie: IMovie,
-  width: number,
   handleOverlay: (card: HTMLDivElement | undefined | null, movie: IMovie) => void
 }
 
 const MovieCard: React.FC<IMovieCard> = (props: IMovieCard) => {
   const cardReference = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
   const [isMovie, setIsMovie] = useState(false);
+  const sliderProperties = useSelector(sliderPropertiesSelector);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const movie = props.movie;
@@ -29,24 +31,10 @@ const MovieCard: React.FC<IMovieCard> = (props: IMovieCard) => {
       e.stopPropagation();
     };
 
-    const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        setIsMobile(true);
-      } else {
-        setIsMobile(false);
-      }
-    }
-
     ref?.addEventListener('transitionend', handleTransitionEnd);
-    window.addEventListener('resize', handleResize);
-
-    if (window.innerWidth <= 768) {
-      setIsMobile(true);
-    } 
 
     return () => {
       ref?.removeEventListener('transitionend', handleTransitionEnd);
-      window.removeEventListener('resize', handleResize);
     }
   }, []);
 
@@ -56,7 +44,7 @@ const MovieCard: React.FC<IMovieCard> = (props: IMovieCard) => {
       ref={cardReference}
     >
       <div
-        style={{width: props.width + 'px', height: (props.width*9)/16 + 'px'}}
+        style={{width: sliderProperties.cardWidth + 'px', height: (sliderProperties.cardWidth*9)/16 + 'px'}}
         className={style['movie-card-component']}
         onClick={e => {
           if (isMovie) {
@@ -68,16 +56,30 @@ const MovieCard: React.FC<IMovieCard> = (props: IMovieCard) => {
         {
           isMovie ? (
             <Fragment>
-              <div 
+              <div
+                className={style['before']}
+              >
+                <img 
+                  className={loaded ? style['loaded'] : ''}
+                  alt={props.movie.title}
+                  src={
+                    sliderProperties.isMobile ?
+                    `${process.env.REACT_APP_TMDB_API_POSTER_URL}/${props.movie.poster_path}` : 
+                    `${process.env.REACT_APP_TMDB_API_BACKDROP_URL}/${props.movie.backdrop_path}`                   
+                  }
+                  onLoad={e => setLoaded(true)}
+                />
+              </div>
+              {/*<div
                 className={style['before']} 
                 style={{
                   backgroundImage: (
-                    isMobile ? 
+                    sliderProperties.isMobile ? 
                       `url(${process.env.REACT_APP_TMDB_API_POSTER_URL}/${props.movie.poster_path})` : 
                       `url(${process.env.REACT_APP_TMDB_API_BACKDROP_URL}/${props.movie.backdrop_path})`
                   ) 
                 }}
-              ></div>
+              ></div>*/}
               <div className={style['header']}>
                 <div className={style['title']}>{props.movie.title}</div>
                 <div className={style['space']}></div>

@@ -1,11 +1,12 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment } from 'react';
+import { useSelector } from 'react-redux';
+import { sliderPropertiesSelector } from '../../../services/slices-selectors/slider-properties';
 import { IMovie } from '../../interfaces/movie-types';
 import MovieCard from '../../movie-card/MovieCard';
 import style from './Slider.module.scss';
 
 interface ISlider {
   movieSlice: IMovie[];
-  cardAmount: number;
   sliderRef: React.RefObject<HTMLDivElement>;
   posX: number;
   transitionTime: number;
@@ -13,29 +14,7 @@ interface ISlider {
 }
 
 const Slider: React.FC<ISlider> = (props: ISlider) => {
-  const [cardWidth, setCardWidth] = useState(0);
-
-  useEffect(() => {
-    const listWidth = props.sliderRef.current?.getBoundingClientRect().width ?? 0;
-    setCardWidth((listWidth - 4*props.cardAmount) / props.cardAmount);
-  }, [props.cardAmount, props.sliderRef]);
-
-  useEffect(() => {
-    const handleWindowResize = () => {
-      const listWidth = props.sliderRef.current?.getBoundingClientRect().width ?? 0;
-      setCardWidth((listWidth - 4*props.cardAmount) / props.cardAmount);
-    };
-
-    setTimeout(() => {
-      handleWindowResize();
-    }, 10);
-    
-    window.addEventListener('resize', handleWindowResize);
-
-    return () => {
-      window.removeEventListener('resize', handleWindowResize);
-    }
-  }, [props.cardAmount, props.sliderRef]);
+  const sliderProperties = useSelector(sliderPropertiesSelector);
 
   return (
     <div
@@ -43,7 +22,8 @@ const Slider: React.FC<ISlider> = (props: ISlider) => {
       ref={props.sliderRef}
       style={{
         transform: `translate3d(${props.posX}%, 0, 0)`,
-        transition: `${props.transitionTime}ms ease`
+        transition: `${props.transitionTime}ms ease`,
+        minHeight: (sliderProperties.cardWidth*9)/16 + 'px'
       }}
     >
       {
@@ -51,7 +31,6 @@ const Slider: React.FC<ISlider> = (props: ISlider) => {
           <Fragment key={item.key}>
             <MovieCard    
               movie={item}
-              width={cardWidth}
               handleOverlay={props.handleOverlay}
             />
           </Fragment>
