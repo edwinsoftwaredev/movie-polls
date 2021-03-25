@@ -21,9 +21,11 @@
             font-weight: 600;
             padding: 1rem 0;
             color: rgba(255, 255, 255, 0.8);
+            height: calc(1rem + 1.1vw);
 
             @media screen and (max-width: 768px) {
-                font-size: calc(1.5rem + 1.1vw);
+                font-size: calc(1.5rem + 1.5vw);
+                height: calc(2.5rem + 1.5vw);
                 padding: 0.3rem;
             }
         }
