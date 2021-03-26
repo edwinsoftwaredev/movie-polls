@@ -1,0 +1,51 @@
+.filters-bar-container {
+    margin: 1rem 5rem;
+    padding: 1rem 3rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+    font-family: 'PT Sans Narrow';
+    color: white;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 8rem;
+
+    .title {
+        font-size: calc(0.5rem + 1.1vw);
+        font-weight: 600;
+    }
+
+    .filters-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 1rem;
+
+        label {
+            font-family: inherit;
+            font-weight: 600;
+            font-size: calc(0.5rem + 1.1vw);
+        }
+
+        .year-filter {
+            select {
+                margin-left: 0.5rem;
+                padding: 0 2rem;
+                font-family: inherit;
+                font-size: calc(0.5rem + 1.1vw);
+                font-weight: 600;
+                background-color: transparent;
+                color: inherit;
+                outline: none;
+
+                option {
+                    background-color: rgba(0, 0, 0, 1);
+
+                    &:hover {
+                        background-color: red !important;
+                    }
+                }
+            }
+        }
+    }
+}
