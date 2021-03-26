@@ -68,16 +68,23 @@ export default class MoviesService {
     return movies;
   }
 
+  /**
+   * Fetchs a list of trending movies gruped by genre.
+   * @returns a Promise of IMoviesByGenres[]
+   */
   static async fetchTrendingMoviesByGenres(): Promise<IMoviesByGenre[]> {
     const genres = await this.fetchGenres();
     const promises: Promise<IMoviesByGenre>[] = [];
+    const now = new Date(Date.now());
+    const fromDate = new Date(now.setFullYear(now.getFullYear() - 2));
 
     const fetchPageByGenreId = async (id: number): Promise<IMoviesByGenre> => {
       const res  = await Axios.get<IMovieRequest>(`${process.env.TMDB_API_URL}/discover/movie`, {
         params: {
           api_key: process.env.TMDB_API_KEY,
-          sort_by: 'primary_release_date.desc',
+          sort_by: 'popularity.desc',
           page: 1,
+          // 'primary_release_date.gte': fromDate.toISOString().split('T')[0],
           'with_genres': `${id}`,
           'vote_average.gte': 1, 
           'vote_count.gte': 50
@@ -92,12 +99,12 @@ export default class MoviesService {
       const result: IMoviesByGenre = {
         genre_name: genres.find(item => item.id === id)?.name ?? '', 
         results: movies
-      }
+      };
 
-      return result; 
+      return result;
     };
 
-    genres.forEach(genre => {
+    genres.filter(genre => genre.name !== 'Documentary').forEach(genre => {
       promises.push(fetchPageByGenreId(genre.id));
     });
 
