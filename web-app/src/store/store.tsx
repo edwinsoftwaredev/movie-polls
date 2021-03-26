@@ -8,6 +8,8 @@ import { Top10TrendingActions, fetchTop10TrendingEpic, TrendingActions, fetchTre
 import { sliderPropertiesSlice } from "../services/slices-selectors/slider-properties";
 import {nowPlayingSlice, top10PopularSlice, top10TrendingSlice} from '../services/slices-selectors/movies';
 import { trendingSlice } from "../services/slices-selectors/trending-movies";
+import { topMovies } from "../services/slices-selectors/top-movies";
+import { fetchTopMoviesEpic, TopMoviesAction } from "../services/epics/top-movies";
 
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
@@ -15,10 +17,11 @@ const rootReducer = combineReducers({
   top10Trending: top10TrendingSlice.reducer,
   nowPlaying: nowPlayingSlice.reducer,
   trending: trendingSlice.reducer,
-  sliderProperties: sliderPropertiesSlice.reducer
+  topMovies: topMovies.reducer,
+  sliderProperties: sliderPropertiesSlice.reducer,
 });
 
-type Actions = Top10PopularActions | Top10TrendingActions | NowPlayingActions | TrendingActions;
+type Actions = Top10PopularActions | Top10TrendingActions | NowPlayingActions | TrendingActions | TopMoviesAction;
 
 export const rootEpic = (
   action$: ActionsObservable<Actions>,
@@ -28,7 +31,8 @@ export const rootEpic = (
   fetchTop10PopularEpic,
   fetchTop10TrendingEpic,
   fetchNowPlayingEpic,
-  fetchTrendingEpic
+  fetchTrendingEpic,
+  fetchTopMoviesEpic
 )(action$, store$, dependecies).pipe(catchError((error, source) => {
   console.log(error);
   return source;
