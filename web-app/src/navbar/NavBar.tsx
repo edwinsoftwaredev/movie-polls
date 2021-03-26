@@ -24,7 +24,7 @@ const MenuOptions: React.FC<any> = ({userAuthStatus}) => {
         userAuthStatus === USER_AUTHENTICATION_STATUS.SIGNED ? (
           <Fragment>
             <NavBarButton active={location.pathname === '/'} text='Home' callback={() => {history.push('/')}} />
-            <NavBarButton text='Top Movies' callback={() => {history.push('/')}} />
+            <NavBarButton text='Top Movies' callback={() => {history.push('/top-movies')}} />
             <NavBarButton text='Trending Movies' callback={() => {history.push('/trending-movies')}} />
             <NavBarButton text='Random Picks' callback={() => {history.push('/')}} />
             <NavBarButton text='My Polls' callback={() => {history.push('/')}} />
