@@ -59,6 +59,21 @@ router.get('/trending-movies', async (ctx, next) => {
   ctx.status = 200;
 });
 
+router.get('/top-movies-year', async (ctx, next) => {
+  const year = ctx.query.year;
+  if (year && typeof year === 'string') {
+    const result = await MoviesService.fetchTopMoviesByGenresAndYear(year).catch((error: AxiosError | Error) => {
+      console.log(`Error when fetching top movies by year. Message: ${error.message}`);
+      ctx.throw(500);
+    });
+
+    ctx.body = result;
+    ctx.status = 200;
+  } else {
+    ctx.throw(400);
+  }
+});
+
 router.get('/genres', async (ctx, next) => {
   const result = await MoviesService.fetchGenres().catch((error: AxiosError | Error) => {
     console.log(`Error when fetching genres. Message: ${error.message}`);
