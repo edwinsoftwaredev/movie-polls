@@ -17,6 +17,8 @@ const CardOverlayPortal: React.FC<ICardOverlayPortal> = (props: ICardOverlayPort
 
   useEffect(() => {
     const el = document.createElement('div');
+    el.style.top = '0';
+    el.style.position = 'absolute';
     if (!elRef.current && props.activeCard) {
       elRef.current = el;
       document.body.appendChild(el);
