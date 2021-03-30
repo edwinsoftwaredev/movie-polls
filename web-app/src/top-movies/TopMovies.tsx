@@ -21,8 +21,8 @@ const TopMovies: React.FC = () => {
 
   return (
     <div className={style['topmovies-component']}>
-      <FiltersBar callbackYear={yearFilterClbk}/>
       <div id='sliders-container' className={style['sliders-container']}>
+        <FiltersBar callbackYear={yearFilterClbk}/>
         {
           topMovies.map((item, idx) => (
             <Fragment key={idx}>
