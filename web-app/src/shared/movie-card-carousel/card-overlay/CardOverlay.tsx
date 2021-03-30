@@ -14,8 +14,14 @@ interface ICardOverlay {
   isMobile: boolean
 }
 
+enum CardActive {
+  NOT_SET,
+  ACTIVE,
+  INACTIVE
+}
+
 const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(CardActive.NOT_SET);
   const [transitionEnded, setTransitionEnded] = useState(true);
   const overlayRef = useRef<HTMLDivElement>(null);
   const [cast, setCast] = useState<string[]>([]);
@@ -26,7 +32,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
   const mountedRef = useRef<boolean>(false);
 
   const handleOverlayClick = () => {
-    setActive(false);
+    setActive(CardActive.INACTIVE);
   };
 
   useEffect(() => {
@@ -61,13 +67,13 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
 
   useEffect(() => {
     if (props.card) {
-      setActive(true);
+      setActive(CardActive.ACTIVE);
       setTransitionEnded(false);
     }
   }, [props.card]);
 
   useEffect(() => {
-    if (active) {
+    if (active === CardActive.ACTIVE) {
       if (window.innerHeight < document.body.clientHeight) {
         document.body.style.overflowY = 'scroll';
         if (overlayRef.current) {
@@ -78,7 +84,8 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
       const el = document.getElementById('sliders-container');
       if (el) {
         setWindowScrollY(window.scrollY);
-        el.style.top = `-${window.scrollY}px`;
+        const y = window.scrollY - el.offsetTop;
+        el.style.top = (y <= 0 ? `${el.offsetTop - window.scrollY}px` : `-${y}px`);
         el.style.position = 'fixed';
         el.style.width = '100%';
         el.style.height = '100%';
@@ -90,7 +97,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
     const ref = overlayRef.current;
 
     const handleTransionEnd = () => {
-      if (!active) {
+      if (!(active === CardActive.ACTIVE)) {
         const el = document.getElementById('sliders-container');
 
         if (window.innerHeight < document.body.clientHeight) {
@@ -118,11 +125,13 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
       ref?.removeEventListener('animationend', handleTransionEnd);
     };
   }, [active, props, windowScrollY]);
-
+  
   return (
     <Fragment>
       <div className={
-          style['overlay-background'] + ' ' + (active ? style['active'] : '')
+          style['overlay-background'] + ' ' + 
+          (active === CardActive.ACTIVE ? style['active'] : '') + ' ' +
+          (active === CardActive.INACTIVE ? style['inactive'] : '')
         }
         onClick={handleOverlayClick}
       >
@@ -130,7 +139,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
       <div 
         className={
           style['card-overlay-component'] + ' ' +
-          (active ? style['active'] : '')
+          (active === CardActive.ACTIVE ? style['active'] : '')
         }
         style={{
           zIndex: (transitionEnded ? -100 : 100)
@@ -142,7 +151,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
             <div
               className={
                 style['card-overlay'] + ' ' +
-                (active ? style['active'] : '')
+                (active === CardActive.ACTIVE ? style['active'] : '')
               }
               style={{
                   width: props.card?.getBoundingClientRect().width - 4 ?? 0, // - 4 => padding
@@ -167,7 +176,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                 <div 
                 className={
                     style['content'] + ' ' +
-                    (active ? style['active'] : '')
+                    (active === CardActive.ACTIVE ? style['active'] : '')
                   }
                 >
                   <div className={style['primary-info']}>
@@ -216,7 +225,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                 </div>
                 <div className={
                   style['movie-poll-menu'] + ' ' +
-                  (active ? style['active'] : '')
+                  (active === CardActive.ACTIVE ? style['active'] : '')
                 }>
                   <div className={style['menu']}>
                     <div className={style['title']}>

@@ -1,9 +1,7 @@
 .overlay-background {
     position: fixed;
     height: 100%;
-    width: 100%;
-    animation: default-frames 350ms ease-out;
-    animation-fill-mode: forwards;
+    width: 100%;    
     
     &.active {
         animation: active-frames 350ms ease-out;
@@ -11,32 +9,37 @@
         animation-delay: 150ms;
     }
 
+    &.inactive {
+        animation: default-frames 350ms ease-out;
+        animation-fill-mode: forwards;    
+    }
+
     @keyframes default-frames {
         0% {
-            z-index: 100;
             background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
         }
 
         99% {
-            z-index: 100;
             background-color: rgba(0, 0, 0, 0);
+            z-index: 100;
         }
 
         100% {
-            z-index: -100;
             background-color: rgba(0, 0, 0, 0);
+            z-index: -100;
         }
     }
 
     @keyframes active-frames {
         0% {
-            z-index: 100;
             background-color: rgba(0, 0, 0, 0);
+            z-index: 100;
         }
 
         100% {
-            z-index: 100;
             background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
         }
     }
 }
