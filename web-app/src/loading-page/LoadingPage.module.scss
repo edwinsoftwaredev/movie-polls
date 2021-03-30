@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     position: fixed; // check this on an actual phone browser (android chrome)
+    top: 0;
 
     .container {
         margin: auto;
