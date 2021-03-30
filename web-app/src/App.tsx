@@ -15,6 +15,7 @@ import TopMovies from './top-movies/TopMovies';
 import Interceptors from './auth/security/interceptors';
 import TrendingMovies from './trending-movies/TrendingMovies';
 import { sliderPropertiesSlice } from './services/slices-selectors/slider-properties';
+import style from './App.module.scss';
 
 const InitialPage: React.FC = () => {
   const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
@@ -96,7 +97,7 @@ function App() {
 	}, [dispatch]);
 
   return (
-    <Fragment>
+    <div className={style['app-component']}>
       <Router>
         <NavBar />
         <Switch>
@@ -117,7 +118,7 @@ function App() {
           </ProtectedRoute>
         </Switch>
       </Router>
-    </Fragment>
+    </div>
   );
 };
 
