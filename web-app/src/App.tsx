@@ -16,6 +16,7 @@ import Interceptors from './auth/security/interceptors';
 import TrendingMovies from './trending-movies/TrendingMovies';
 import { sliderPropertiesSlice } from './services/slices-selectors/slider-properties';
 import style from './App.module.scss';
+import ScrollToTop from './shared/utils/scroll-to-top/ScrollToTop';
 
 const InitialPage: React.FC = () => {
   const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
@@ -104,6 +105,7 @@ function App() {
   return (
     <div className={style['app-component']}>
       <Router>
+        <ScrollToTop />
         <NavBar />
         <Switch>
           <Route exact path='/'>
