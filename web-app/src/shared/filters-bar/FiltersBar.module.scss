@@ -6,6 +6,11 @@
     font-family: 'PT Sans Narrow';
     color: white;
 
+    @media screen and (max-width: 768px) {
+        margin: 0 1rem;
+        padding: 0.5rem 1rem;
+    }
+
     .title {
         font-size: calc(0.5rem + 1.1vw);
         font-weight: 600;
@@ -21,6 +26,10 @@
             font-family: inherit;
             font-weight: 600;
             font-size: calc(0.5rem + 1.1vw);
+
+            @media screen and (max-width: 768px) {
+                font-size: calc(1rem + 1.4vw);
+            }
         }
 
         .year-filter {
@@ -33,6 +42,10 @@
                 background-color: transparent;
                 color: inherit;
                 outline: none;
+
+                @media screen and (max-width: 768px) {
+                    font-size: calc(1rem + 1.4vw);                    
+                }
 
                 option {
                     background-color: rgba(0, 0, 0, 1);
