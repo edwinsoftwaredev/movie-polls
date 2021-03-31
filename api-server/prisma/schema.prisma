@@ -21,3 +21,30 @@ model BestMovies {
   updateDate DateTime
   type String
 }
+
+model Poll {
+  id Int @id @default(autoincrement())
+  name String
+  userId String
+  movies MoviePoll[]
+  tokens Token[]
+  createdAt DateTime @default(now())
+  endsAt DateTime?
+  isOpen Boolean @default(true)
+}
+
+// If movies in polls have to be filtered for example by genre then
+// consider creating a new table("Movie") with the extra columns required for filtering.
+model MoviePoll {
+  @@id([pollId, movieId])
+  poll Poll @relation(fields: [pollId], references: [id])
+  pollId Int
+  movieId Int
+  voteCount Int
+}
+
+model Token {
+  uuid String @id
+  poll Poll @relation(fields: [pollId], references: [id])
+  pollId Int
+}
