@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { userAuthenticationStatusSelector } from '../auth/auth-selectors';
@@ -24,8 +24,8 @@ const MenuOptions: React.FC<any> = ({userAuthStatus}) => {
         userAuthStatus === USER_AUTHENTICATION_STATUS.SIGNED ? (
           <Fragment>
             <NavBarButton active={location.pathname === '/'} text='Home' callback={() => {history.push('/')}} />
-            <NavBarButton text='Top Movies' callback={() => {history.push('/top-movies')}} />
-            <NavBarButton text='Trending Movies' callback={() => {history.push('/trending-movies')}} />
+            <NavBarButton active={location.pathname === '/top-movies'} text='Top Movies' callback={() => {history.push('/top-movies')}} />
+            <NavBarButton active={location.pathname === '/trending-movies'} text='Trending Movies' callback={() => {history.push('/trending-movies')}} />
             <NavBarButton text='Random Picks' callback={() => {history.push('/')}} />
             <NavBarButton text='My Polls' callback={() => {history.push('/')}} />
             <hr style={{height: '1rem', marginTop: 'auto', marginBottom: 'auto'}}/>

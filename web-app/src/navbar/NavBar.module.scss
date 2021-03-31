@@ -258,6 +258,12 @@ button {
                     // background-color: rgba(245, 245, 245, 0.3);
                 }
             }
+
+            &.active {
+                button {
+                    color: gold !important;
+                }
+            }
         }
 
         .drawer-space {
