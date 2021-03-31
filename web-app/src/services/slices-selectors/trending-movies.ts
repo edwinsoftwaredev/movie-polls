@@ -5,7 +5,7 @@ import { RootState } from '../../store/store';
 // new Array(10) will return an object without keys(an array without indexes)
 // using map directly will not work because it will not iterate because there are not keys.
 // using [...new Array(10)] will generate a proper array with indexes. 
-const initialState: IMoviesByGenre[] = [...new Array(10)].map((item, idx) => {
+const initialState: IMoviesByGenre[] = [...new Array(1)].map((item, idx) => {
   return {
     genre_name: '',
     results: [...new Array(10)].map((value, index) => {
