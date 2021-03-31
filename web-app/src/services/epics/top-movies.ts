@@ -2,8 +2,8 @@ import { Action } from "@reduxjs/toolkit";
 import { Epic, ofType } from "redux-observable";
 import { Observable } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import { IMoviesByGenre } from "../../shared/interfaces/movie-types";
 import Axios from 'axios';
+import { ITopMovies } from "../../shared/interfaces/movie-poll-types";
 
 enum ActionTypes {
   SAVE_TOPMOVIES = 'topMovies/setTopMovies',
@@ -16,7 +16,7 @@ export interface ITopMoviesParams {
 
 interface ISetTopMoviesAction extends Action {
   type: ActionTypes.SAVE_TOPMOVIES;
-  payload: IMoviesByGenre[];
+  payload: ITopMovies;
 } 
 
 interface IFetchTopMoviesAction extends Action {
@@ -24,7 +24,7 @@ interface IFetchTopMoviesAction extends Action {
   payload: ITopMoviesParams
 }
 
-const setTopMovies = (movies: IMoviesByGenre[]): ISetTopMoviesAction => ({
+const setTopMovies = (movies: ITopMovies): ISetTopMoviesAction => ({
   type: ActionTypes.SAVE_TOPMOVIES,
   payload: movies
 });
@@ -47,6 +47,11 @@ export const fetchTopMoviesEpic: Epic<TopMoviesAction> = (
       }
     });
 
-    return setTopMovies(res.data);
+    const topMovies: ITopMovies = {
+      filters: {year: action.payload.year},
+      moviesByGenres: res.data
+    };
+
+    return setTopMovies(topMovies);
   })
 );
