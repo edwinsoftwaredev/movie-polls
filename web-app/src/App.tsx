@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import Auth from './auth/Auth';
 import LandingPage from './landing-page/LandingPage';
@@ -81,18 +81,23 @@ function App() {
 			}
 		};
 
-    // this should be fixed.
-    const timeoutId = setTimeout(() => {
+    /**
+     * this will observe and execute a callback when a resize event is detected
+     * on an element even when the event is not triggered by the user.
+     */
+    const resizeObserver = new ResizeObserver(() => {
+      // Unexpected behaviour happens when the card overlay is open.
+      // Therefore the existence of that overlay is checked to determine if
+      // handleResize function has to be executed.
+      const el = document.getElementById('card-overlay-portal');
+      if (el) return;
       handleResize();
-    }, 1500);
+    });
 
-		handleResize();
-
-		window.addEventListener('resize', handleResize);
+    resizeObserver.observe(document.body);
 
 		return () => {
-			window.removeEventListener('resize', handleResize);
-      clearTimeout(timeoutId);
+      resizeObserver.disconnect();
 		}
 	}, [dispatch]);
 
