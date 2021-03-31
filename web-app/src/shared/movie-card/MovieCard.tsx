@@ -18,7 +18,7 @@ const MovieCard: React.FC<IMovieCard> = (props: IMovieCard) => {
 
   useEffect(() => {
     const movie = props.movie;
-    if (movie.title && movie.genre_names) {
+    if (movie.title && movie.genre_names && movie.vote_average) {
       setIsMovie(true);
     }
   }, [props.movie]);
@@ -59,27 +59,17 @@ const MovieCard: React.FC<IMovieCard> = (props: IMovieCard) => {
               <div
                 className={style['before']}
               >
-                <img 
-                  className={loaded ? style['loaded'] : ''}
-                  alt={props.movie.title}
-                  src={
-                    sliderProperties.isMobile ?
-                    `${process.env.REACT_APP_TMDB_API_POSTER_URL}/${props.movie.poster_path}` : 
-                    `${process.env.REACT_APP_TMDB_API_BACKDROP_URL}/${props.movie.backdrop_path}`                   
-                  }
-                  onLoad={e => setLoaded(true)}
-                />
+              <img 
+                className={loaded ? style['loaded'] : ''}
+                alt={props.movie.title}
+                src={
+                  sliderProperties.isMobile ?
+                  `${process.env.REACT_APP_TMDB_API_POSTER_URL}/${props.movie.poster_path}` : 
+                  `${process.env.REACT_APP_TMDB_API_BACKDROP_URL}/${props.movie.backdrop_path}`                   
+                }
+                onLoad={e => setLoaded(true)}
+              />
               </div>
-              {/*<div
-                className={style['before']} 
-                style={{
-                  backgroundImage: (
-                    sliderProperties.isMobile ? 
-                      `url(${process.env.REACT_APP_TMDB_API_POSTER_URL}/${props.movie.poster_path})` : 
-                      `url(${process.env.REACT_APP_TMDB_API_BACKDROP_URL}/${props.movie.backdrop_path})`
-                  ) 
-                }}
-              ></div>*/}
               <div className={style['header']}>
                 <div className={style['title']}>{props.movie.title}</div>
                 <div className={style['space']}></div>
