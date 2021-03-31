@@ -194,7 +194,7 @@ const MovieCarousel: React.FC<IMovieCarousel> = ({title, movieList}) => {
       />
       <div className={style['container']}>
         <div className={style['header']}>
-          <div className={style['title']}>{title ? title : ' '}</div>
+          <div className={style['title'] + ' ' + (!title ? style['empty']: '')}>{title ? title : 'Title'}</div>
         </div>
         <div className={style['list-container']}>
           {
