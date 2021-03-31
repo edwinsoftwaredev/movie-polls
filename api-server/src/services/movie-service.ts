@@ -123,7 +123,7 @@ export default class MoviesService {
     const genres = await this.fetchGenres();
     const promises: Promise<IMoviesByGenre>[] = [];
     const now = new Date(Date.now());
-    const fromDate = new Date(now.setFullYear(now.getFullYear() - 2));
+    const fromDate = new Date(now.setFullYear(now.getFullYear() - 1));
 
     const fetchPageByGenreId = async (id: number): Promise<IMoviesByGenre> => {
       const res  = await Axios.get<IMovieRequest>(`${process.env.TMDB_API_URL}/discover/movie`, {
@@ -131,7 +131,7 @@ export default class MoviesService {
           api_key: process.env.TMDB_API_KEY,
           sort_by: 'popularity.desc',
           page: 1,
-          // 'primary_release_date.gte': fromDate.toISOString().split('T')[0],
+          'primary_release_date.gte': fromDate.toISOString().split('T')[0],
           'with_genres': `${id}`,
           'vote_average.gte': 1, 
           'vote_count.gte': 50
