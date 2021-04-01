@@ -18,6 +18,7 @@ import prisma from './prisma-client';
 import * as admin from 'firebase-admin';
 
 import {default as initRoutes} from './routes/init';
+import bodyParser from 'koa-bodyparser';
 
 /** Apps initialization block **/
 const app = new Koa();
@@ -55,11 +56,15 @@ const sessionConfig: Partial<session.opts> = {
   }
 };
 
+// custom context attributes
+app.context.userId = '';
+
 initRoutes(router);
 
 app.use(KoaLogger());
 app.use(cors(corsConfig));
 app.use(session(sessionConfig, app)); // Prefer a store like Redis - MySql is in used.
+app.use(bodyParser());
 app.use(router.routes());
 
 app.listen(process.env.PORT);
