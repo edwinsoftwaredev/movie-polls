@@ -43,6 +43,7 @@ const firebaseTokenValidatorMiddleware = async (
     });
 
   if (idTokenDecoded) {
+    ctx.userId = idTokenDecoded.uid;
     await next();
   }
 };
