@@ -2,6 +2,7 @@ import Router from "@koa/router";
 import CSRF from 'koa-csrf';
 import csrfTokenRouter from './csrf_token';
 import movieRouter from './movie';
+import pollRouter from './poll';
 import Koa from 'koa';
 import * as admin from 'firebase-admin';
 
@@ -54,6 +55,7 @@ const init = (router: Router<Koa.DefaultState, Koa.DefaultContext>): void => {
   // for each route in ascending order.
   router.use('/api', csrfMiddlewareGenerator, csrfTokenRouter.routes(), csrfTokenRouter.allowedMethods());
   router.use('/api', csrfMiddleware, firebaseTokenValidatorMiddleware, movieRouter.routes(), movieRouter.allowedMethods());
+  router.use('/api', csrfMiddleware, firebaseTokenValidatorMiddleware, pollRouter.routes(), pollRouter.allowedMethods());
 };
 
 export default init;
