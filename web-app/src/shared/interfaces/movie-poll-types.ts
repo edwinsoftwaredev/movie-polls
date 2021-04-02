@@ -1,9 +1,10 @@
-import { IMoviesByGenre } from "./movie-types";
+import { IMovie, IMoviesByGenre } from "./movie-types";
 export interface IPoll {
     id?: number;
     name: string;
     movies: {
         movieId: number,
+        movie?: IMovie,
         voteCount?: number
     }[];
     tokens?: {
