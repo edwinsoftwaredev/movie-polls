@@ -2,10 +2,9 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import style from './CardOverlay.module.scss';
 import popularityIcon from '../../resources/icons/star-struck.png';
 import { IMovie } from '../../interfaces/movie-types';
-import Button from "../../button/Button.test";
-import TextInput from "../../inputs/text-input/TextInput";
 import AvailablePollList from './available-polls-list/AvailablePollList';
 import MovieService from '../../../services/movie-service';
+import PollForm from './poll-form/PollForm';
 
 interface ICardOverlay {
   card: HTMLDivElement | undefined | null,
@@ -233,28 +232,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                     </div>
                     <div className={style['available-polls-container']}>
                       <div className={style['poll-options']}>
-                        <div className={style['header']}>
-                          Create a New Poll
-                        </div>
-                        <form
-                          className={style['new-poll-form']}
-                          onSubmit={e => e.preventDefault()}
-                        >
-                          <TextInput
-                            name={'poll-name'}
-                            placeholder={'Type the name of the new poll'}
-                            otherProperties={{
-                              required: true,
-                              autoComplete: 'off',
-                              pattern: '[0-9A-Za-z]*'
-                            }}
-                          />
-                          <Button
-                            name={'Add To A New Poll'}
-                            type={"submit"}
-                            classType={"default"}
-                          />
-                        </form>
+                        <PollForm movieId={props.movie.id} />
                       </div>
                       <hr/>
                       <div className={style['available-poll-details']}>
