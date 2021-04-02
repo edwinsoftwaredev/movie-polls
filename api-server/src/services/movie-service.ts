@@ -246,6 +246,16 @@ export default class MoviesService {
   }
 
   /**
+   * Gets a list genre names
+   * @param genres_ids a list of genre ids
+   * @returns a list of genres names
+   */
+  static async getGenresName(genres_ids: number[]): Promise<string[]> {
+    const genres = await this.fetchGenres();
+    return genres_ids.map(id => genres.find(genre => genre.id === id)?.name ?? '');
+  }
+
+  /**
    * Fetchs cache of Now Playing movies.
    * @returns a Promise of Now Playing movies
    */
