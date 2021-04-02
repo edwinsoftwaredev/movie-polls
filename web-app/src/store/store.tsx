@@ -10,6 +10,8 @@ import {nowPlayingSlice, top10PopularSlice, top10TrendingSlice} from '../service
 import { trendingSlice } from "../services/slices-selectors/trending-movies";
 import { topMovies } from "../services/slices-selectors/top-movies";
 import { fetchTopMoviesEpic, TopMoviesAction } from "../services/epics/top-movies";
+import { pollsSlice } from "../services/slices-selectors/polls";
+import { setPollEpic, PollActionTypes } from "../services/epics/polls";
 
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
@@ -19,9 +21,15 @@ const rootReducer = combineReducers({
   trending: trendingSlice.reducer,
   topMovies: topMovies.reducer,
   sliderProperties: sliderPropertiesSlice.reducer,
+  polls: pollsSlice.reducer
 });
 
-type Actions = Top10PopularActions | Top10TrendingActions | NowPlayingActions | TrendingActions | TopMoviesAction;
+type Actions = Top10PopularActions | 
+  Top10TrendingActions | 
+  NowPlayingActions | 
+  TrendingActions | 
+  TopMoviesAction |
+  PollActionTypes;
 
 export const rootEpic = (
   action$: ActionsObservable<Actions>,
@@ -32,7 +40,8 @@ export const rootEpic = (
   fetchTop10TrendingEpic,
   fetchNowPlayingEpic,
   fetchTrendingEpic,
-  fetchTopMoviesEpic
+  fetchTopMoviesEpic,
+  setPollEpic
 )(action$, store$, dependecies).pipe(catchError((error, source) => {
   console.log(error);
   return source;
