@@ -1,13 +1,17 @@
 import { IMoviesByGenre } from "./movie-types";
-
 export interface IPoll {
-    id: number;
+    id?: number;
     name: string;
-    movieList: {
-        id: number;
-        title: string;
-    }[]; // this is temporary
-    // movieList: IMovie[]
+    movies: {
+        movieId: number,
+        voteCount?: number
+    }[];
+    tokens?: {
+        uuid: string
+    }[];
+    isOpen?: boolean;
+    createdAt?: Date;
+    endsAt?: Date;
 };
 
 interface ITopMoviesFilters {
