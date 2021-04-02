@@ -1,7 +1,28 @@
 import { Prisma } from ".prisma/client";
+import { IMovie } from "./movie-types";
 
 export type Poll = Prisma.PollGetPayload<{
   include: {movies: true, tokens: true}
 }>;
 
+export interface PollVM extends Omit<Poll, 'movies' | 'userId'> {
+  movies: {
+    movieId: number,
+    movie?: IMovie,
+    voteCount: number,
+  }[]
+}
+
 export type PollInput = Prisma.PollCreateInput;
+
+export const getPollVMFromPoll = (poll: Poll): PollVM => {
+  return {
+    createdAt: poll.createdAt,
+    endsAt: poll.endsAt,
+    id: poll.id,
+    isOpen: poll.isOpen,
+    movies: poll.movies,
+    name: poll.name,
+    tokens: poll.tokens
+  }
+}
