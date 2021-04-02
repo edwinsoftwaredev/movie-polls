@@ -49,7 +49,7 @@ const AvailablePollList: React.FC = () => {
                   // replace this by the name of the movie
                   item.movies.map(movie => (
                     <div key={movie.movieId}>
-                      {movie.movieId}
+                      {movie.movie?.title ?? 'NO TITLE'}
                     </div>
                   ))
                 }
