@@ -9,7 +9,7 @@ export interface IMovie {
     adult: boolean;
     backdrop_path: string;
     genre_ids: number[];
-    genre_names: string[]; // this is a custom property
+    genre_names?: string[]; // this is a custom property
     id: number;
     original_language: string;
     original_title: string;
@@ -21,11 +21,14 @@ export interface IMovie {
     video: boolean;
     vote_average: number;
     vote_count: number;
-    // key: number; // this is a custom property
 }
 
-export interface IMovieDetail {
+export interface IMovieDetail extends IMovie {
     homepage: string;
+    genres: {
+        id: number,
+        name: string,
+    }[],
     production_countries: {
         iso_3166_1: string;
         name: string
@@ -63,3 +66,23 @@ export interface IMoviesByGenre {
     genre_name: string;
     results: IMovie[];
 }
+
+export const getMovieFromMovieDetails = (movie: IMovieDetail): IMovie => {
+    return {
+        adult: movie.adult,
+        backdrop_path: movie.backdrop_path,
+        genre_ids: movie.genres.map(genre => genre.id),
+        id: movie.id,
+        original_language: movie.original_language,
+        original_title: movie.original_title,
+        overview: movie.overview,
+        popularity: movie.popularity,
+        poster_path: movie.poster_path,
+        release_date: movie.release_date,
+        title: movie.title,
+        video: movie.video,
+        vote_average: movie.vote_average,
+        vote_count: movie.vote_count,
+        genre_names: movie.genres.map(genre => genre.name)
+    }
+};
