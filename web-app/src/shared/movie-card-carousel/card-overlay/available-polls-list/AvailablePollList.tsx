@@ -1,64 +1,14 @@
 import React, { useState } from 'react';
-import { IPoll } from '../../../interfaces/movie-poll-types';
 import style from './AvailablePollList.module.scss';
 import {ReactComponent as ChevronDownVector} from '../../../resources/vectors/chevron-down.svg';
 import {ReactComponent as PlusVector} from '../../../resources/vectors/plus.svg';
-
-
-const initialData: IPoll[] = [{
-  id: 1,
-  name: 'Friday Night',
-  movieList: [{
-    id: 1,
-    title: 'Mulan'
-  }, {
-    id: 2,
-    title: 'Wonder Woman 1984'
-  }]
-},
-{
-  id: 2,
-  name: 'Saturday Night',
-  movieList: [{
-    id: 1,
-    title: 'Mulan',
-  }, {
-    id: 3,
-    title: 'Tenet'
-  }, {
-    id: 4,
-    title: 'The Old Guard'
-  }]
-},
-{
-  id: 3,
-  name: 'Saturday Afternoon',
-  movieList: [{
-    id: 3,
-    title: 'Tenet'
-  }, {
-    id: 5,
-    title: 'Soul'
-  }]
-},
-{
-  id: 4,
-  name: 'Friends Party',
-  movieList: [{
-    id: 6,
-    title: 'Enola Holmes'
-  }, {
-    id: 7,
-    title: 'Extraction'
-  }, {
-    id: 3,
-    title: 'Tenet'
-  }]
-}];
+import { useSelector } from 'react-redux';
+import { pollsSelector } from '../../../../services/slices-selectors/polls';
 
 // icons from https://feathericons.com/
 const AvailablePollList: React.FC = () => {
   const [activePoll, setActivePoll] = useState<number>(-1);
+  const polls = useSelector(pollsSelector);
 
   const handleChevronDownClick = (id: number) => {
     setActivePoll(id);
@@ -67,11 +17,12 @@ const AvailablePollList: React.FC = () => {
   return (
     <div className={style['available-polls-list-component']}>
       {
-        initialData.map(item => (
+        // all polls with id are stored in db.
+        polls.filter(item => item.id).map(item => (
           <div key={item.id} className={style['poll-item-container']}>
             <div className={style['poll-item']}>
               <div className={style['name']}>{item.name}</div>
-              <div className={style['counter']}>({item.movieList.length})</div>
+              <div className={style['counter']}>({item.movies.length})</div>
               <div className={style['space']}></div>
               <div 
                 title='Deploy'
@@ -80,7 +31,7 @@ const AvailablePollList: React.FC = () => {
                   style['btn'] + ' ' +
                   (activePoll === item.id ? style['active'] : '')
                 }
-                onClick={e => handleChevronDownClick(item.id)}
+                onClick={e => handleChevronDownClick(item.id as number)}
               >
                 <ChevronDownVector />
               </div>
@@ -95,9 +46,10 @@ const AvailablePollList: React.FC = () => {
                 (activePoll === item.id ? style['active'] : '')
               }>
                 {
-                  item.movieList.map(movie => (
-                    <div key={movie.id}>
-                      {movie.title}
+                  // replace this by the name of the movie
+                  item.movies.map(movie => (
+                    <div key={movie.movieId}>
+                      {movie.movieId}
                     </div>
                   ))
                 }
