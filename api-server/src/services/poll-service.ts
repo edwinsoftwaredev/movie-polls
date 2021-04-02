@@ -1,17 +1,27 @@
 import { Poll, PollInput } from "../shared/type-interfaces/movie-poll-types";
 import prisma from '../prisma-client';
+import { Prisma } from ".prisma/client";
 
 export default class PollService {
-	static async createPoll(poll: Poll): Promise<void> {
+	static async createPoll(poll: Poll, userId: string): Promise<Poll> {
+		const initialMovies: Prisma.MoviePollCreateWithoutPollInput[] = poll.movies.map(movie => ({
+			movieId: movie.movieId,
+			voteCount: movie.voteCount
+		}));
+
+
 		const data: PollInput = {
-			...poll,
-			movies: poll.movies ? {create: poll.movies} : undefined,
-			tokens: poll.tokens ? {create: poll.tokens} : undefined
+			name: poll.name,
+			movies: initialMovies ? {create: initialMovies} : undefined,
+			tokens: undefined,
+			userId: userId
 		};
 
-		await prisma.poll.create({
+		const res = await prisma.poll.create({
 			data: data,
 			include: {movies: true, tokens: true}
 		});
+
+		return res;
 	}
 }
