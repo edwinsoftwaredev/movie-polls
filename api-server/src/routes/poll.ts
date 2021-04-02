@@ -7,12 +7,13 @@ const router = new Router<Koa.DefaultState, Koa.DefaultContext>({prefix: '/polls
 
 router.post('/poll', async (ctx, next) => {
   const poll: Poll = ctx.request.body;
-  await PollService.createPoll(poll).catch((err: Error) => {
+  const res = await PollService.createPoll(poll, ctx.userId).catch((err: Error) => {
     console.log(`There was an error when createPoll was executed. Message: ${err.message}`);
     ctx.throw(500);
   });
 
   ctx.status = 201;
+  ctx.body = res;
 });
 
 export default router;
