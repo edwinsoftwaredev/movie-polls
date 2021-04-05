@@ -8,7 +8,7 @@ const router = new Router<Koa.DefaultState, Koa.DefaultContext>({
   methods: ['GET']
 });
 
-router.get('/csrf-token', async (
+router.get('/token', async (
   ctx,
   next
 ) => {

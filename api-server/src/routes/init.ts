@@ -40,7 +40,7 @@ const firebaseTokenValidatorMiddleware = async (
   const idTokenDecoded = await admin.auth().verifyIdToken(idToken)
     .catch(reason => {
       console.warn(`Firebase IdToken validation failed. From: ${ctx.ip}, Destination: ${ctx.url}`);
-      ctx.status = 401;
+      ctx.throw(401);
     });
 
   if (idTokenDecoded) {
@@ -53,9 +53,17 @@ const init = (router: Router<Koa.DefaultState, Koa.DefaultContext>): void => {
   // The order of this middleware list
   // is based on the level of protection determined 
   // for each route in ascending order.
-  router.use('/api', csrfMiddlewareGenerator, csrfTokenRouter.routes(), csrfTokenRouter.allowedMethods());
-  router.use('/api', csrfMiddleware, firebaseTokenValidatorMiddleware, movieRouter.routes(), movieRouter.allowedMethods());
-  router.use('/api', csrfMiddleware, firebaseTokenValidatorMiddleware, pollRouter.routes(), pollRouter.allowedMethods());
+
+  // Always use a unique prefix for each router.
+  // Doing that will prevent the execution of middlewares used for multiple routers
+  // beign called multiple times in a single request.
+  //
+  // '/api/csrf-token', '/api/movies' and '/api/polls' are the unique prefixes 
+  // If these prefixes were all setted just like '/api', which is not OK, the firebaseTokenValidatorMiddleware
+  // will be called more than once because the middleware is placed before the nested routes.
+  router.use('/api/csrf-token', csrfMiddlewareGenerator, csrfTokenRouter.routes(), csrfTokenRouter.allowedMethods());
+  router.use('/api/movies', csrfMiddleware, firebaseTokenValidatorMiddleware, movieRouter.routes(), movieRouter.allowedMethods());
+  router.use('/api/polls', csrfMiddleware, firebaseTokenValidatorMiddleware, pollRouter.routes(), pollRouter.allowedMethods());
 };
 
 export default init;

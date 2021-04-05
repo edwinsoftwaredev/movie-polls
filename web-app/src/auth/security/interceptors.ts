@@ -23,14 +23,14 @@ export default class CsrfToken {
         // THE REQUEST MUST BE IMMEDIATLY RETURNED !!!
         // !!! IF THIS CONDITION IS OMITED THIS INTERCEPTOR WILL BE EXECUTED
         // INDEFINITE TIMES !!!
-        if (request.url === `${process.env.REACT_APP_API_SERVER}/api/csrf-token`)
+        if (request.url === `${process.env.REACT_APP_API_SERVER}/api/csrf-token/token`)
           return request;
 
         let csrfToken = window.sessionStorage.getItem('csrf-token');
 
         if (!csrfToken) {
           await Axios.get(
-            `${process.env.REACT_APP_API_SERVER}/api/csrf-token`,
+            `${process.env.REACT_APP_API_SERVER}/api/csrf-token/token`,
             {withCredentials: true}
           );
 

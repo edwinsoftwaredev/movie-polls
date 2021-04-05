@@ -3,7 +3,7 @@ import Router from '@koa/router';
 import PollService from '../services/poll-service';
 import { PollVM } from '../shared/type-interfaces/movie-poll-types';
 
-const router = new Router<Koa.DefaultState, Koa.DefaultContext>({prefix: '/polls'});
+const router = new Router<Koa.DefaultState, Koa.DefaultContext>();
 
 router.post('/poll', async (ctx, next) => {
   const poll: PollVM = ctx.request.body;

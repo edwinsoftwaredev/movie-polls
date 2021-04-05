@@ -3,7 +3,7 @@ import Router from '@koa/router';
 import { AxiosError } from 'axios';
 import MoviesService from '../services/movie-service';
 
-const router = new Router<Koa.DefaultState, Koa.DefaultContext>({prefix: '/movies'});
+const router = new Router<Koa.DefaultState, Koa.DefaultContext>();
 
 router.get('/top-popular-movies', async (ctx, next) => {
   const movies = await MoviesService.fetchTopPopularMovies().catch((error: AxiosError | Error) => {
