@@ -11,6 +11,13 @@ export const pollsSlice = createSlice({
     addPoll: (state: IPoll[], action: PayloadAction<IPoll>) => {
       state = [...state, action.payload];
       return state;
+    },
+    setOpenedPolls: (state: IPoll[], action: PayloadAction<IPoll[]>) => {
+      state = [...state.filter(poll => !poll.isOpen), ...action.payload];
+      return state;
+    },
+    setNotOpenedPolls: (state: IPoll[], action: PayloadAction<IPoll[]>) => {
+      state = [...state.filter(poll => poll.isOpen), ...action.payload];
     }
   }
 });
