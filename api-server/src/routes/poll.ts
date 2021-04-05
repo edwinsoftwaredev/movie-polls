@@ -16,4 +16,15 @@ router.post('/poll', async (ctx, next) => {
   ctx.body = res;
 });
 
+router.get('/my-polls', async (ctx, next) => {
+  const opened = ctx.query.opened === 'true' ? true : false;
+  const res = await PollService.getPollsByUserAndOpenedStatus(ctx.userId, opened).catch((error: Error) => {
+    console.log(`An error occurred when getOpenPollsByUser was executed. Message: ${error.message}`);
+    ctx.throw(500);
+  });
+
+  ctx.status = 200;
+  ctx.body = res;
+});
+
 export default router;
