@@ -1,4 +1,4 @@
-import { getPollVMFromPoll, Poll, PollInput, PollVM } from "../shared/type-interfaces/movie-poll-types";
+import { getPollVMFromPoll, PollInput, PollVM } from "../shared/type-interfaces/movie-poll-types";
 import prisma from '../prisma-client';
 import { Prisma } from ".prisma/client";
 import { getMovieFromMovieDetails } from "../shared/type-interfaces/movie-types";
@@ -51,8 +51,8 @@ export default class PollService {
    * @returns a Promise of a list of open polls
    */
 	static async getPollsByUserAndOpenedStatus(userId: string, opened: boolean): Promise<PollVM[]> {
-		const res = await prisma.poll.findMany({
-      where: {userId: userId, AND: {isOpen: true}},
+    const res = await prisma.poll.findMany({
+      where: {userId: userId, AND: {isOpen: opened}},
       include: {movies: true, tokens: true}
     });
 
