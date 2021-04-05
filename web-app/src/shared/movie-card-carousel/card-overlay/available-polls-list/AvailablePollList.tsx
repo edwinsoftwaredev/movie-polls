@@ -1,24 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import style from './AvailablePollList.module.scss';
 import {ReactComponent as ChevronDownVector} from '../../../resources/vectors/chevron-down.svg';
 import {ReactComponent as PlusVector} from '../../../resources/vectors/plus.svg';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { pollsSelector } from '../../../../services/slices-selectors/polls';
+import { fetchPolls } from '../../../../services/epics/polls';
 
 // icons from https://feathericons.com/
 const AvailablePollList: React.FC = () => {
   const [activePoll, setActivePoll] = useState<number>(-1);
+  const dispatch = useDispatch();
   const polls = useSelector(pollsSelector);
 
   const handleChevronDownClick = (id: number) => {
     setActivePoll(id);
   };
-  
+
+  useEffect(() => {
+    // retrive only opened polls
+    const opened = true;
+    dispatch(fetchPolls(opened));
+  }, [dispatch]);
+
   return (
     <div className={style['available-polls-list-component']}>
       {
         // all polls with id are stored in db.
-        polls.filter(item => item.id).map(item => (
+        polls.filter(item => item.id && item.isOpen).map(item => (
           <div key={item.id} className={style['poll-item-container']}>
             <div className={style['poll-item']}>
               <div className={style['name']}>{item.name}</div>
