@@ -9,7 +9,15 @@ export const pollsSlice = createSlice({
   initialState: initialState,
   reducers: {
     addPoll: (state: IPoll[], action: PayloadAction<IPoll>) => {
-      state = [...state, action.payload];
+      state = [...state.map(poll => {
+        // By doing this the items will have the same
+        // position or index in the array
+        if (poll.id === action.payload.id) 
+          return action.payload;
+
+        return poll;
+      })];
+
       return state;
     },
     setOpenedPolls: (state: IPoll[], action: PayloadAction<IPoll[]>) => {
