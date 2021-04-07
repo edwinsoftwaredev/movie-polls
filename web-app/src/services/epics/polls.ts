@@ -10,7 +10,8 @@ enum ActionTypes {
   SET_POLL = 'polls/setPoll', // Reducer
   FETCH_POLLS = 'polls/fetchPolls',
   SET_OPENED_POLLS = 'polls/setOpenedPolls',
-  SET_NOT_OPENED_POLLS = 'polls/setNotOpenedPolls'
+  SET_NOT_OPENED_POLLS = 'polls/setNotOpenedPolls',
+  ADD_MOVIE = 'polls/addMovie'
 }
 
 interface IAddPollAction extends Action {
@@ -38,6 +39,11 @@ interface ISetNotOpenedPolls extends Action {
   payload: IPoll[]
 }
 
+interface IAddMovie extends Action {
+  type: ActionTypes.ADD_MOVIE,
+  payload: {pollId: number, movieId: number}
+}
+
 export const setPoll = (poll: IPoll): ISetPollAction => ({
   type: ActionTypes.SET_POLL,
   payload: poll
@@ -63,11 +69,17 @@ const setNotOpenedPolls = (polls: IPoll[]): ISetNotOpenedPolls => ({
   payload: polls
 });
 
+export const addMovie = (payload: {pollId: number, movieId: number}): IAddMovie => ({
+  type: ActionTypes.ADD_MOVIE,
+  payload: payload
+}); 
+
 export type PollActionTypes = IFetchPollsAction | 
   IAddPollAction | 
   ISetPollAction | 
   ISetOpenedPolls | 
-  ISetNotOpenedPolls;
+  ISetNotOpenedPolls |
+  IAddMovie;
 
 // Use switchMap when getting data(read)
 // Use either mergeMap or concatMap when posting data(write)
@@ -83,6 +95,18 @@ export const setPollEpic: Epic<PollActionTypes> = (
     return addPoll(res);
   })
 );
+
+export const addMovieEpic: Epic<PollActionTypes> = (
+  action$: ActionsObservable<PollActionTypes>
+): Observable<PollActionTypes> => action$.pipe(
+  ofType<PollActionTypes, IAddMovie>(ActionTypes.ADD_MOVIE),
+  concatMap(async (action: IAddMovie) => {
+    const pollId = action.payload.pollId;
+    const movieId = action.payload.movieId;
+    const res = await PollService.addMovie(pollId, movieId);
+    return addPoll(res);
+  })
+)
 
 export const fetchPollsEpic: Epic<PollActionTypes> = (
   action$: ActionsObservable<PollActionTypes>
