@@ -240,7 +240,7 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                           Available Polls
                         </div>
                         <div className={style['poll-list']}>
-                          <AvailablePollList />
+                          <AvailablePollList movie={props.movie} />
                         </div>
                       </div>
                     </div>
