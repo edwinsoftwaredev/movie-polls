@@ -4,16 +4,25 @@ import {ReactComponent as ChevronDownVector} from '../../../resources/vectors/ch
 import {ReactComponent as PlusVector} from '../../../resources/vectors/plus.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { pollsSelector } from '../../../../services/slices-selectors/polls';
-import { fetchPolls } from '../../../../services/epics/polls';
+import { addMovie, fetchPolls } from '../../../../services/epics/polls';
+import { IMovie } from '../../../interfaces/movie-types';
+
+interface IAvailablePollList {
+  movie: IMovie
+}
 
 // icons from https://feathericons.com/
-const AvailablePollList: React.FC = () => {
+const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollList) => {
   const [activePoll, setActivePoll] = useState<number>(-1);
   const dispatch = useDispatch();
   const polls = useSelector(pollsSelector);
 
   const handleChevronDownClick = (id: number) => {
-    setActivePoll(id);
+    setActivePoll(activePoll => id === activePoll ? -1 : id);
+  };
+
+  const handleAddMovie = (pollId: number) => {
+    dispatch(addMovie({pollId: pollId, movieId: props.movie.id}));
   };
 
   useEffect(() => {
@@ -46,6 +55,7 @@ const AvailablePollList: React.FC = () => {
               <div 
                 title='Add this movie to this poll'
                 className={style['add-btn'] + ' ' + style['btn']}
+                onClick={e => handleAddMovie(item.id as number)}
               >
                 <PlusVector />
               </div>
