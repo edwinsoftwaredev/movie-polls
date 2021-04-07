@@ -27,4 +27,20 @@ router.get('/my-polls', async (ctx, next) => {
   ctx.body = res;
 });
 
+router.post('/add-movie', async (ctx, next) => {
+  const data: {pollId: string, movieId: string} = ctx.request.body;
+  const pollId = Number.parseInt(data.pollId);
+  const movieId = Number.parseInt(data.movieId);
+  if (isNaN(pollId) || isNaN(movieId))
+    ctx.throw(500);
+
+  const res = await PollService.addMovie(pollId, movieId, ctx.userId).catch((error: Error) => {
+    console.log(`An error accurred when addMovieToPoll was executed: Message: ${error.message}`);
+    ctx.throw(500);
+  });
+
+  ctx.status = 200;
+  ctx.body = res;
+}); 
+
 export default router;
