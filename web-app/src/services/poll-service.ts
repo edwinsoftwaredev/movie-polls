@@ -19,4 +19,13 @@ export default class PollService {
 
     return res.data;
   }
+
+  static async addMovie(pollId: number, movieId: number): Promise<IPoll> {
+    const res = await Axios.post<IPoll>(
+      `${process.env.REACT_APP_API_SERVER}/api/polls/add-movie`,
+      {pollId: pollId, movieId: movieId}
+    );
+
+    return res.data;
+  }
 }
