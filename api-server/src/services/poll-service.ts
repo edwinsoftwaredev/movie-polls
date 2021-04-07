@@ -46,6 +46,47 @@ export default class PollService {
 	}
 
   /**
+   * Add a movie to a poll.
+   * @param pollId The Id of the Poll
+   * @param movieId The Id of the movie
+   * @param userId The current usedId
+   * @returns 
+   */
+  static async addMovie(pollId: number, movieId: number, userId: string): Promise<PollVM> {
+    const poll = await prisma.poll.findFirst({
+      where: {id: pollId, AND: {userId: userId}}
+    });
+
+    if (!poll)
+      throw new Error('NOT_VALID_USER');
+    
+    const movie: Prisma.MoviePollCreateNestedManyWithoutPollInput = {
+      create: {
+        movieId: movieId
+      }
+    };
+
+    const data = { movies: movie };
+  
+    const res = await prisma.poll.update({
+      where: {id: pollId},
+      data: data,
+      include: {movies: true, tokens: true}
+    });
+
+    const pollVM = getPollVMFromPoll(res);
+    const pollResult: PollVM = {
+      ...pollVM,
+      movies: await Promise.all(pollVM.movies.map(async movie => ({
+        ...movie,
+        movie: getMovieFromMovieDetails(await MoviesService.fetchMovieDetails(movie.movieId)) 
+      })))
+    };
+
+    return pollResult;
+  }
+
+  /**
    * Gets the open polls of a user.
    * @param userId the id of the user who created the polls
    * @returns a Promise of a list of open polls
