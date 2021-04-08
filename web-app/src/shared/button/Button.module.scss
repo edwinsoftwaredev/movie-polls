@@ -8,10 +8,15 @@
     padding: 0.7rem 2rem;
     text-transform: capitalize;
     min-width: 15rem !important;
+    height: calc(1rem + 2vw);
     border-radius: 5px;
     border-style: none;
     outline: none;
     transition: 300ms ease;
+
+    @media screen and (max-width: 768px) {
+      height: calc(1rem + 7vw);      
+    }
 
     &:hover {
       cursor: pointer;
