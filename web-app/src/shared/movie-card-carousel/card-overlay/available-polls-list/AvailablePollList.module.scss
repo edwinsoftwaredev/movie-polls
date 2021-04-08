@@ -54,10 +54,12 @@
         }
 
         .more-info-btn {
-            animation: inactiveb 350ms ease-out;
-            animation-fill-mode: forwards;
+            // animation: inactiveb 350ms ease-out;
+            // animation-fill-mode: forwards;
+            transform: rotate(0deg);
+            transition: transform 350ms ease-out;
 
-            @keyframes inactiveb {
+            /*@keyframes inactiveb {
                 0% {
                     transform: rotate(-180deg);
                 }
@@ -65,10 +67,11 @@
                 100% {
                     transform: rotate(0deg);
                 }
-            }
+            }*/
 
             &.active {
-                animation: activeb 350ms ease-out;
+                transform: rotate(-180deg);
+                /*animation: activeb 350ms ease-out;
                 animation-fill-mode: forwards;
 
                 @keyframes activeb {
@@ -79,7 +82,7 @@
                     100% {
                         transform: rotate(-180deg);
                     }
-                }
+                }*/
             }
         }
 
@@ -97,6 +100,11 @@
                 height: calc(3rem + 1vw);
             }
 
+            &.inactive {
+                cursor: default !important;
+                color: rgb(88, 88, 88) !important;
+            }
+
             &:hover {
                 cursor: pointer;
                 color: gold;
@@ -109,42 +117,46 @@
         }
 
         .poll-item-detail {
-            font-size: calc(1rem + 0.4vw);
             background-color: black;
             grid-column-start: 1;
             grid-column-end: 5 span;
             border-radius: 5px;
             box-sizing: border-box;
-            animation: inactive 350ms ease-out;
-            animation-fill-mode: forwards;
-            animation-delay: 0;
+            font-size: 0;
+            opacity: 0;
+            padding: 0;
+            margin-top: 0;
+            animation-fill-mode: forwards !important;
 
-            @keyframes inactive {
-                0% {
-                    opacity: 1;
-                    font-size: calc(1rem + 0.4vw);
-                    padding: 0.7rem;
-                    margin-top: 1rem;
-                }
+            &.inactive {
+                animation: inactive 350ms ease-out;
 
-                50% {
-                    font-size: calc(1rem + 0.4vw);
-                    padding: 0.7rem;
-                    margin-top: 1rem;
-                    opacity: 0;
-                }
-
-                100% {
-                    font-size: 0;
-                    opacity: 0;
-                    padding: 0;
-                    margin-top: 0;
+                @keyframes inactive {
+                    0% {
+                        opacity: 1;
+                        font-size: calc(1rem + 0.4vw);
+                        padding: 0.7rem;
+                        margin-top: 1rem;
+                    }
+    
+                    50% {
+                        font-size: calc(1rem + 0.4vw);
+                        padding: 0.7rem;
+                        margin-top: 1rem;
+                        opacity: 0;
+                    }
+    
+                    100% {
+                        font-size: 0;
+                        opacity: 0;
+                        padding: 0;
+                        margin-top: 0;
+                    }
                 }
             }
 
             &.active {
                 animation: active 350ms ease-out;
-                animation-fill-mode: forwards;
 
                 @keyframes active {
                     0% {
@@ -162,6 +174,7 @@
                     }
 
                     100% {
+                        font-size: calc(1rem + 0.4vw);
                         padding: 0.7rem;
                         margin-top: 1rem;
                         opacity: 1;

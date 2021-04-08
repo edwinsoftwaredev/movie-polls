@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { pollsSelector } from '../../../../services/slices-selectors/polls';
 import { addMovie, fetchPolls } from '../../../../services/epics/polls';
 import { IMovie } from '../../../interfaces/movie-types';
+import Spinner from '../../../spinners/Spinners';
 
 interface IAvailablePollList {
   movie: IMovie
@@ -13,17 +14,24 @@ interface IAvailablePollList {
 
 // icons from https://feathericons.com/
 const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollList) => {
-  const [activePoll, setActivePoll] = useState<number>(-1);
+  const [activePoll, setActivePoll] = useState<number>(-2);
   const dispatch = useDispatch();
   const polls = useSelector(pollsSelector);
+  // sPollId = Submitted Poll Id
+  const [sPollId, setSPollId] = useState<number>();
 
   const handleChevronDownClick = (id: number) => {
     setActivePoll(activePoll => id === activePoll ? -1 : id);
   };
 
   const handleAddMovie = (pollId: number) => {
+    setSPollId(pollId);
     dispatch(addMovie({pollId: pollId, movieId: props.movie.id}));
   };
+
+  useEffect(() => {
+    setSPollId(undefined);
+  }, [polls])
 
   useEffect(() => {
     // retrive only opened polls
@@ -52,17 +60,32 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
               >
                 <ChevronDownVector />
               </div>
-              <div 
+              <div
                 title='Add this movie to this poll'
-                className={style['add-btn'] + ' ' + style['btn']}
-                onClick={e => handleAddMovie(item.id as number)}
+                className={
+                  style['add-btn'] + ' ' + 
+                  style['btn'] + ' ' +
+                  (
+                    sPollId === item.id || 
+                    item.movies.find(movie => movie.movieId === props.movie.id) ? 
+                    style['inactive'] : ''
+                  )
+                }
+                onClick={e => 
+                  sPollId !== item.id && !item.movies.find(movie => movie.movieId === props.movie.id) ? 
+                  handleAddMovie(item.id as number) : null
+                }
               >
-                <PlusVector />
+                {
+                  sPollId === item.id ? <Spinner /> : <PlusVector />
+                }
               </div>
-              <div className={
-                style['poll-item-detail'] + ' ' +
-                (activePoll === item.id ? style['active'] : '')
-              }>
+              <div 
+                className={
+                  style['poll-item-detail'] + ' ' +
+                  (activePoll === item.id ? style['active'] : style['inactive'])
+                }
+              >
                 {
                   // replace this by the name of the movie
                   item.movies.map(movie => (
