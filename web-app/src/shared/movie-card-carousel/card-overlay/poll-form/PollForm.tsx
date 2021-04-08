@@ -1,6 +1,7 @@
-import React, { Fragment, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { Fragment, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { setPoll } from '../../../../services/epics/polls';
+import { pollsSelector } from '../../../../services/slices-selectors/polls';
 import Button from '../../../button/Button';
 import TextInput from '../../../inputs/text-input/TextInput';
 import style from './PollForm.module.scss';
@@ -12,8 +13,11 @@ interface IPollForm {
 const PollForm: React.FC<IPollForm> = (props: IPollForm) => {
   const dispatch = useDispatch();
   const [name, setName] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const polls = useSelector(pollsSelector);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    setSubmitted(true);
     dispatch(setPoll({
       name: name,
       movies: [{
@@ -23,6 +27,10 @@ const PollForm: React.FC<IPollForm> = (props: IPollForm) => {
     e.preventDefault();
   };
 
+  useEffect(() => {
+    setSubmitted(false);
+  }, [polls]);
+
   return (
     <Fragment>
       <div className={style['header']}>
@@ -30,7 +38,7 @@ const PollForm: React.FC<IPollForm> = (props: IPollForm) => {
       </div>
       <form
         className={style['new-poll-form']}
-        onSubmit={handleSubmit}
+        onSubmit={e => submitted ? null : handleSubmit(e)}
       >
         <TextInput
           name={'poll-name'}
@@ -46,6 +54,7 @@ const PollForm: React.FC<IPollForm> = (props: IPollForm) => {
           name={'Add To A New Poll'}
           type={"submit"}
           classType={"default"}
+          spinnered={submitted}
         />
       </form>
     </Fragment>
