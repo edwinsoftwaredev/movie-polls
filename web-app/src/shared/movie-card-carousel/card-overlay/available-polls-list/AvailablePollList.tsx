@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import style from './AvailablePollList.module.scss';
 import {ReactComponent as ChevronDownVector} from '../../../resources/vectors/chevron-down.svg';
 import {ReactComponent as PlusVector} from '../../../resources/vectors/plus.svg';
+import {ReactComponent as CheckVector} from '../../../resources/vectors/check.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { pollsSelector } from '../../../../services/slices-selectors/polls';
 import { addMovie } from '../../../../services/epics/polls';
@@ -114,7 +115,11 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
                 }
               >
                 {
-                  sPollId === item.id ? <Spinner /> : <PlusVector />
+                  sPollId === item.id ? 
+                    <Spinner /> : 
+                    item.movies.find(movie => movie.movieId === props.movie.id) ? 
+                      <CheckVector /> : 
+                      <PlusVector />
                 }
               </div>
               <div 

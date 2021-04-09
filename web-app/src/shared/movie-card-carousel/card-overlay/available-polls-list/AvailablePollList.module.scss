@@ -1,6 +1,6 @@
 .poll-item-container {
     hr {
-        border-color: rgba(255, 255, 255, 0.2) !important;
+        border-color: rgba(255, 255, 255, 0.03) !important;
     }
 }
 
@@ -90,6 +90,7 @@
             width: calc(1.5rem + 1vw);
             height: calc(1.5rem + 1vw);
             background-color: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.5);
 
             @media screen and (max-width: 768px) {
                 width: calc(3rem + 1vw);
@@ -98,7 +99,7 @@
 
             &.inactive {
                 cursor: default !important;
-                color: rgb(88, 88, 88) !important;
+                color: rgba(255, 255, 255, 0.5) !important;
             }
 
             &:hover {
