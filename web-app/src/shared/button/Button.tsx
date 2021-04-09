@@ -12,7 +12,11 @@ interface IButton {
 const Button: React.FC<IButton> = (props: IButton) => {
   return (
     <div className={style['button-container']}>
-      <button className={style[props.classType]} type={props.type}>
+      <button 
+        className={style[props.classType] + ' ' + (props.spinnered ? style['inactive'] : '')} 
+        type={props.type}
+        disabled={props.spinnered}
+      >
         {
           !props.spinnered ? props.name : <Spinner />
         }
