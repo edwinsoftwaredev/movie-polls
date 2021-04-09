@@ -6,12 +6,11 @@ import { IPoll } from "../../shared/interfaces/movie-poll-types";
 import PollService from "../poll-service";
 
 enum ActionTypes {
-  ADD_POLL = 'polls/addPoll', // EPIC
-  SET_POLL = 'polls/setPoll', // Reducer
+  ADD_POLL = 'polls/addPoll', // reducer
+  SET_POLL = 'polls/setPoll', // Epic
   FETCH_POLLS = 'polls/fetchPolls',
-  SET_OPENED_POLLS = 'polls/setOpenedPolls',
-  SET_NOT_OPENED_POLLS = 'polls/setNotOpenedPolls',
-  ADD_MOVIE = 'polls/addMovie'
+  ADD_MOVIE = 'polls/addMovie',
+  SET_POLLS = 'polls/setPolls'
 }
 
 interface IAddPollAction extends Action {
@@ -26,16 +25,10 @@ interface ISetPollAction extends Action {
 
 interface IFetchPollsAction extends Action {
   type: ActionTypes.FETCH_POLLS;
-  payload: boolean;
 }
 
-interface ISetOpenedPolls extends Action {
-  type: ActionTypes.SET_OPENED_POLLS,
-  payload: IPoll[]
-}
-
-interface ISetNotOpenedPolls extends Action {
-  type: ActionTypes.SET_NOT_OPENED_POLLS,
+interface ISetPolls extends Action {
+  type: ActionTypes.SET_POLLS,
   payload: IPoll[]
 }
 
@@ -54,18 +47,12 @@ const addPoll = (poll: IPoll): IAddPollAction => ({
   payload: poll
 });
 
-export const fetchPolls = (opened: boolean): IFetchPollsAction => ({
-  type: ActionTypes.FETCH_POLLS,
-  payload: opened
+export const fetchPolls = (): IFetchPollsAction => ({
+  type: ActionTypes.FETCH_POLLS
 });
 
-const setOpenedPolls = (polls: IPoll[]): ISetOpenedPolls => ({
-  type: ActionTypes.SET_OPENED_POLLS,
-  payload: polls
-});
-
-const setNotOpenedPolls = (polls: IPoll[]): ISetNotOpenedPolls => ({
-  type: ActionTypes.SET_NOT_OPENED_POLLS,
+const setPolls = (polls: IPoll[]): ISetPolls => ({
+  type: ActionTypes.SET_POLLS,
   payload: polls
 });
 
@@ -77,8 +64,7 @@ export const addMovie = (payload: {pollId: number, movieId: number}): IAddMovie 
 export type PollActionTypes = IFetchPollsAction | 
   IAddPollAction | 
   ISetPollAction | 
-  ISetOpenedPolls | 
-  ISetNotOpenedPolls |
+  ISetPolls |
   IAddMovie;
 
 // Use switchMap when getting data(read)
@@ -106,14 +92,14 @@ export const addMovieEpic: Epic<PollActionTypes> = (
     const res = await PollService.addMovie(pollId, movieId);
     return addPoll(res);
   })
-)
+);
 
 export const fetchPollsEpic: Epic<PollActionTypes> = (
   action$: ActionsObservable<PollActionTypes>
 ): Observable<PollActionTypes> => action$.pipe(
   ofType<PollActionTypes, IFetchPollsAction>(ActionTypes.FETCH_POLLS),
   switchMap(async (action: IFetchPollsAction) => {
-    const polls = await PollService.getPolls(action.payload);
-    return action.payload ? setOpenedPolls(polls) : setNotOpenedPolls(polls)
+    const polls = await PollService.getPolls();
+    return setPolls(polls);
   })
-)
+);
