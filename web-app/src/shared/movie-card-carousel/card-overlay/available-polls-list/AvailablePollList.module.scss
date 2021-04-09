@@ -1,3 +1,9 @@
+.poll-item-container {
+    hr {
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+}
+
 .available-polls-list-component {
     display: flex;
     flex-direction: column;
@@ -25,6 +31,16 @@
         padding-right: 0;
     }
 
+    .no-polls-text {
+        padding: 1rem;
+        font-family: 'PT Sans Narrow';
+        font-size: calc(1rem + 0.7vw);
+        font-weight: 600;
+        margin: auto;
+        color: rgb(150, 150, 150);
+        border: 1px solid rgb(150, 150, 150);
+    }
+
     .poll-item {
         display: grid;
         grid-template-columns: auto auto 1fr auto auto;
@@ -34,6 +50,10 @@
         font-size: calc(1rem + 0.7vw);
         padding: 0.7rem 0.5rem;
         border-radius: 5px;
+
+        &.active {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
 
         @media screen and (max-width: 768px) {
             font-size: calc(1rem + 2vw);
@@ -54,35 +74,11 @@
         }
 
         .more-info-btn {
-            // animation: inactiveb 350ms ease-out;
-            // animation-fill-mode: forwards;
             transform: rotate(0deg);
             transition: transform 350ms ease-out;
 
-            /*@keyframes inactiveb {
-                0% {
-                    transform: rotate(-180deg);
-                }
-
-                100% {
-                    transform: rotate(0deg);
-                }
-            }*/
-
             &.active {
                 transform: rotate(-180deg);
-                /*animation: activeb 350ms ease-out;
-                animation-fill-mode: forwards;
-
-                @keyframes activeb {
-                    0% {
-                        transform: rotate(0deg);
-                    }
-
-                    100% {
-                        transform: rotate(-180deg);
-                    }
-                }*/
             }
         }
 
@@ -109,11 +105,6 @@
                 cursor: pointer;
                 color: gold;
             }
-        }
-
-        &:hover {
-            background-color: rgba(255, 255, 255, 0.4);
-            cursor: pointer;
         }
 
         .poll-item-detail {

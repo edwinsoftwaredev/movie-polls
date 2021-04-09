@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import style from './AvailablePollList.module.scss';
 import {ReactComponent as ChevronDownVector} from '../../../resources/vectors/chevron-down.svg';
 import {ReactComponent as PlusVector} from '../../../resources/vectors/plus.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { pollsSelector } from '../../../../services/slices-selectors/polls';
-import { addMovie, fetchPolls } from '../../../../services/epics/polls';
+import { addMovie } from '../../../../services/epics/polls';
 import { IMovie } from '../../../interfaces/movie-types';
 import Spinner from '../../../spinners/Spinners';
 
@@ -15,14 +15,43 @@ interface IAvailablePollList {
 // icons from https://feathericons.com/
 const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollList) => {
   const [activePoll, setActivePoll] = useState<number>(-2);
+  const refElement = useRef<Element>();
   const dispatch = useDispatch();
   const polls = useSelector(pollsSelector);
   // sPollId = Submitted Poll Id
   const [sPollId, setSPollId] = useState<number>();
 
-  const handleChevronDownClick = (id: number) => {
-    setActivePoll(activePoll => id === activePoll ? -1 : id);
+  const handleChevronDownClick = (id: number, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const el = e.currentTarget.nextElementSibling?.nextElementSibling;
+    setActivePoll(activePoll => {
+      // By doing this the css animations are not executed when the component
+      // load or mount
+      if (el) {
+        if (refElement.current && id !== activePoll) {
+          refElement.current.className =
+            refElement.current.className.replace(style['active'], style['inactive']);
+          refElement.current = el;
+        }   
+
+        if (!refElement.current)
+          refElement.current = el;
+
+        if (id !== activePoll) {
+          el.className = el.className + ' ' + style['active'];
+        } else {
+          el.className = el.className.replace(style['active'], style['inactive']);
+        }
+      }
+
+      return id === activePoll ? -1 : id;
+    });
   };
+
+  useEffect(() => {
+    return () => {
+      refElement.current = undefined;
+    };
+  }, []);
 
   const handleAddMovie = (pollId: number) => {
     setSPollId(pollId);
@@ -31,21 +60,29 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
 
   useEffect(() => {
     setSPollId(undefined);
-  }, [polls])
-
-  useEffect(() => {
-    // retrive only opened polls
-    const opened = true;
-    dispatch(fetchPolls(opened));
-  }, [dispatch]);
+  }, [polls]);
 
   return (
     <div className={style['available-polls-list-component']}>
       {
+        !polls ? (
+          <Spinner />
+        ) : null
+      }
+      {
+        (polls?.filter(item => item.id && item.isOpen).length === 0) ? (
+            <div className={style['no-polls-text']}>Create a Poll to Add It Here</div>
+          ) : null
+      }
+      {
         // all polls with id are stored in db.
-        polls.filter(item => item.id && item.isOpen).map(item => (
+        polls?.filter(item => item.id && item.isOpen).map(item => (
           <div key={item.id} className={style['poll-item-container']}>
-            <div className={style['poll-item']}>
+            <div className={
+                style['poll-item'] + ' ' +
+                (activePoll === item.id ? style['active'] : '') 
+              }
+            >
               <div className={style['name']}>{item.name}</div>
               <div className={style['counter']}>({item.movies.length})</div>
               <div className={style['space']}></div>
@@ -56,7 +93,7 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
                   style['btn'] + ' ' +
                   (activePoll === item.id ? style['active'] : '')
                 }
-                onClick={e => handleChevronDownClick(item.id as number)}
+                onClick={e => handleChevronDownClick(item.id as number, e)}
               >
                 <ChevronDownVector />
               </div>
@@ -82,8 +119,7 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
               </div>
               <div 
                 className={
-                  style['poll-item-detail'] + ' ' +
-                  (activePoll === item.id ? style['active'] : style['inactive'])
+                  style['poll-item-detail']
                 }
               >
                 {
@@ -96,6 +132,7 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
                 }
               </div>
             </div>
+            <hr />
           </div>
         ))
       }
