@@ -91,10 +91,11 @@ export default class PollService {
    * @param userId the id of the user who created the polls
    * @returns a Promise of a list of open polls
    */
-	static async getPollsByUserAndOpenedStatus(userId: string, opened: boolean): Promise<PollVM[]> {
+	static async getPollsByUser(userId: string): Promise<PollVM[]> {
     const res = await prisma.poll.findMany({
-      where: {userId: userId, AND: {isOpen: opened}},
-      include: {movies: true, tokens: true}
+      where: {userId: userId},
+      include: {movies: true, tokens: true},
+      orderBy: [{createdAt: 'desc'}]
     });
 
     /*
