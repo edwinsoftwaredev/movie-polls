@@ -1,39 +1,41 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction, SliceCaseReducers } from "@reduxjs/toolkit";
 import { IPoll } from "../../shared/interfaces/movie-poll-types";
 import { RootState } from "../../store/store";
 
-const initialState: IPoll[] = [];
+// The value null represents the -> intentional <- absence of any object value.
+const initialState: IPoll[] | null = null; 
 
-export const pollsSlice = createSlice({
+export const pollsSlice = createSlice<IPoll[] | null, SliceCaseReducers<IPoll[] | null>>({
   name: 'polls',
   initialState: initialState,
   reducers: {
-    addPoll: (state: IPoll[], action: PayloadAction<IPoll>) => {
-      if (state.find(poll => action.payload.id === poll.id)) {
-        state = state.map(poll => {
+    addPoll: (state: IPoll[] | null, action: PayloadAction<IPoll>) => {
+      if (state?.find(poll => action.payload.id === poll.id)) {
+        state = state?.map(poll => {
           // By doing this the items will have the same
           // position or index in the array
           if (poll.id === action.payload.id)
             return action.payload;
-  
+
           return poll;
         });
       } else {
-        state = [action.payload, ...state];
+        if (!state) {
+          state = [action.payload]
+        } else {
+          state = [action.payload, ...state];
+        }
       }
       return state;
     },
-    setOpenedPolls: (state: IPoll[], action: PayloadAction<IPoll[]>) => {
-      state = [...state.filter(poll => !poll.isOpen), ...action.payload];
+    setPolls: (state: IPoll[] | null, action: PayloadAction<IPoll[]>) => {
+      state = action.payload;
       return state;
-    },
-    setNotOpenedPolls: (state: IPoll[], action: PayloadAction<IPoll[]>) => {
-      state = [...state.filter(poll => poll.isOpen), ...action.payload];
     }
   }
 });
 
 export const pollsSelector = createSelector(
   (state: RootState) => state.polls,
-  (res: IPoll[]) => res
+  (res: IPoll[] | null) => res
 );
