@@ -17,6 +17,7 @@ import TrendingMovies from './trending-movies/TrendingMovies';
 import { sliderPropertiesSlice } from './services/slices-selectors/slider-properties';
 import style from './App.module.scss';
 import ScrollToTop from './shared/utils/scroll-to-top/ScrollToTop';
+import { fetchPolls } from './services/epics/polls';
 
 const InitialPage: React.FC = () => {
   const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
@@ -34,6 +35,7 @@ const InitialPage: React.FC = () => {
 
 function App() {
   const dispatch = useDispatch();
+  const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
 
   useEffect(() => {
     // this will initialize the default interceptors (CSRF-Token and ID Token)
@@ -41,6 +43,13 @@ function App() {
     setAuthStateObserver(dispatch);
 
   }, [dispatch]);
+
+  useEffect(() => {
+    if (userAuthenticationStatus === USER_AUTHENTICATION_STATUS.SIGNED) {
+      // fetch all polls
+      dispatch(fetchPolls());
+    }
+  }, [userAuthenticationStatus, dispatch]);
 
   useEffect(() => {
 		const handleResize = () => {
