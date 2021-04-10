@@ -2,7 +2,7 @@ import { Action } from "@reduxjs/toolkit";
 import { ActionsObservable, Epic, ofType } from "redux-observable";
 import { Observable } from "rxjs";
 import { concatMap, switchMap } from "rxjs/operators";
-import { IPoll } from "../../shared/interfaces/movie-poll-types";
+import { IPoll, IRemoveMovie } from "../../shared/interfaces/movie-poll-types";
 import PollService from "../poll-service";
 
 enum ActionTypes {
@@ -10,7 +10,9 @@ enum ActionTypes {
   SET_POLL = 'polls/setPoll', // Epic
   FETCH_POLLS = 'polls/fetchPolls',
   ADD_MOVIE = 'polls/addMovie',
-  SET_POLLS = 'polls/setPolls'
+  SET_POLLS = 'polls/setPolls',
+  REMOVE_MOVIE_EPIC = 'polls/removeMovie_epic',
+  REMOVE_MOVIE = 'polls/removeMovie'
 }
 
 interface IAddPollAction extends Action {
@@ -37,6 +39,16 @@ interface IAddMovie extends Action {
   payload: {pollId: number, movieId: number}
 }
 
+interface IRemoveMovieEpic extends Action {
+  type: ActionTypes.REMOVE_MOVIE_EPIC;
+  payload: IRemoveMovie;
+}
+
+interface IRemoveMovieAction extends Action {
+  type: ActionTypes.REMOVE_MOVIE;
+  payload: IRemoveMovie;
+}
+
 export const setPoll = (poll: IPoll): ISetPollAction => ({
   type: ActionTypes.SET_POLL,
   payload: poll
@@ -61,11 +73,23 @@ export const addMovie = (payload: {pollId: number, movieId: number}): IAddMovie 
   payload: payload
 }); 
 
+export const deleteMovie = (payload: IRemoveMovie): IRemoveMovieEpic => ({
+  type: ActionTypes.REMOVE_MOVIE_EPIC,
+  payload: payload
+});
+
+const removeMovie = (payload: IRemoveMovie): IRemoveMovieAction => ({
+  type: ActionTypes.REMOVE_MOVIE,
+  payload: payload
+});
+
 export type PollActionTypes = IFetchPollsAction | 
   IAddPollAction | 
   ISetPollAction | 
   ISetPolls |
-  IAddMovie;
+  IAddMovie |
+  IRemoveMovieAction |
+  IRemoveMovieEpic;
 
 // Use switchMap when getting data(read)
 // Use either mergeMap or concatMap when posting data(write)
@@ -103,3 +127,13 @@ export const fetchPollsEpic: Epic<PollActionTypes> = (
     return setPolls(polls);
   })
 );
+
+export const removeMovieEpic: Epic<PollActionTypes> = (
+  action$: ActionsObservable<PollActionTypes>
+): Observable<PollActionTypes> => action$.pipe(
+  ofType<PollActionTypes, IRemoveMovieEpic>(ActionTypes.REMOVE_MOVIE_EPIC),
+  concatMap(async (action: IRemoveMovieEpic) => {
+    const res = await PollService.removeMovie(action.payload);
+    return removeMovie(res);
+  })
+)
