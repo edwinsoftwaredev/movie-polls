@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import style from './AvailablePollList.module.scss';
 import {ReactComponent as ChevronDownVector} from '../../../resources/vectors/chevron-down.svg';
 import {ReactComponent as PlusVector} from '../../../resources/vectors/plus.svg';
 import {ReactComponent as CheckVector} from '../../../resources/vectors/check.svg';
+import {ReactComponent as DeleteVector} from '../../../resources/vectors/delete.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { pollsSelector } from '../../../../services/slices-selectors/polls';
-import { addMovie } from '../../../../services/epics/polls';
+import { addMovie, deleteMovie } from '../../../../services/epics/polls';
 import { IMovie } from '../../../interfaces/movie-types';
 import Spinner from '../../../spinners/Spinners';
 
@@ -53,6 +54,10 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
       refElement.current = undefined;
     };
   }, []);
+
+  const handleRemoveMovie = (pollId: number, movieId: number) => {
+    dispatch(deleteMovie({pollId: pollId, movieId: movieId}));
+  }
 
   const handleAddMovie = (pollId: number) => {
     setSPollId(pollId);
@@ -130,9 +135,18 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
                 {
                   // replace this by the name of the movie
                   item.movies.map(movie => (
-                    <div key={movie.movieId}>
-                      {movie.movie?.title ?? 'NO TITLE'}
-                    </div>
+                    <Fragment key={movie.movieId}>
+                      <button 
+                        className={style['delete-movie-btn']}
+                        type={'button'}
+                        onClick={e => handleRemoveMovie(item.id as number, movie.movieId)}
+                      >
+                        <DeleteVector />
+                      </button>
+                      <div className={style['movie-title']}>
+                        {movie.movie?.title ?? 'NO TITLE'}
+                      </div>
+                    </Fragment>
                   ))
                 }
               </div>
