@@ -1,4 +1,4 @@
-import { IPoll } from "../shared/interfaces/movie-poll-types";
+import { IPoll, IRemoveMovie } from "../shared/interfaces/movie-poll-types";
 import Axios from 'axios';
 
 export default class PollService {
@@ -23,6 +23,15 @@ export default class PollService {
     const res = await Axios.post<IPoll>(
       `${process.env.REACT_APP_API_SERVER}/api/polls/add-movie`,
       {pollId: pollId, movieId: movieId}
+    );
+
+    return res.data;
+  }
+
+  static async removeMovie(payload: IRemoveMovie): Promise<IRemoveMovie> {
+    const res = await Axios.delete<IRemoveMovie>(
+      `${process.env.REACT_APP_API_SERVER}/api/polls/movie/${payload.movieId}`,
+      {params: {pollId: payload.pollId}}
     );
 
     return res.data;
