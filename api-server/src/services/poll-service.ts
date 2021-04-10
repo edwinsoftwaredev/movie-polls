@@ -1,6 +1,6 @@
 import { getPollVMFromPoll, PollInput, PollVM } from "../shared/type-interfaces/movie-poll-types";
 import prisma from '../prisma-client';
-import { Prisma } from ".prisma/client";
+import { MoviePoll, Prisma } from ".prisma/client";
 import { getMovieFromMovieDetails } from "../shared/type-interfaces/movie-types";
 import MoviesService from "./movie-service";
 
@@ -122,4 +122,33 @@ export default class PollService {
 
     return polls;
 	}
+
+  /**
+   * Removes a movie from a poll.
+   * @param pollId The id of the poll
+   * @param movieId The id of the movie
+   * @param userId The userId of the authenticated user
+   * @returns a Promise containing a MoviePoll object 
+   */
+  static async removeMovie(pollId: number, movieId: number, userId: string): Promise<MoviePoll> {
+    const poll = await prisma.poll.findFirst({
+      where: {
+        userId: userId,
+        AND: {
+          id: pollId
+        }
+      }
+    });
+
+    if (!poll) 
+      throw new Error('USER_POLL_BAD_ACCESS');
+    
+    const res = await prisma.moviePoll.delete({
+      where: {
+        pollId_movieId: {pollId: pollId, movieId: movieId}
+      }
+    });
+
+    return res;
+  }
 }
