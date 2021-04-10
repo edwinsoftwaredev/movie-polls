@@ -1,5 +1,5 @@
 import { createSelector, createSlice, PayloadAction, SliceCaseReducers } from "@reduxjs/toolkit";
-import { IPoll } from "../../shared/interfaces/movie-poll-types";
+import { IPoll, IRemoveMovie } from "../../shared/interfaces/movie-poll-types";
 import { RootState } from "../../store/store";
 
 // The value null represents the -> intentional <- absence of any object value.
@@ -30,6 +30,20 @@ export const pollsSlice = createSlice<IPoll[] | null, SliceCaseReducers<IPoll[] 
     },
     setPolls: (state: IPoll[] | null, action: PayloadAction<IPoll[]>) => {
       state = action.payload;
+      return state;
+    },
+    removeMovie: (state: IPoll[] | null, action: PayloadAction<IRemoveMovie>) => {
+      if (state) {
+        state = state.map(poll => {
+          if (poll.id === action.payload.pollId) {
+            poll.movies = 
+              poll.movies.filter(movie => movie.movieId !== action.payload.movieId)
+          }
+
+          return poll;
+        }).filter(poll => poll.movies.length !== 0)
+      }
+
       return state;
     }
   }
