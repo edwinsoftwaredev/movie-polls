@@ -2,6 +2,7 @@ import Koa from 'koa';
 import Router from '@koa/router';
 import PollService from '../services/poll-service';
 import { PollVM } from '../shared/type-interfaces/movie-poll-types';
+import { MoviePoll } from '.prisma/client';
 
 const router = new Router<Koa.DefaultState, Koa.DefaultContext>();
 
@@ -41,5 +42,24 @@ router.post('/add-movie', async (ctx, next) => {
   ctx.status = 200;
   ctx.body = res;
 }); 
+
+router.delete('/movie/:id', async (ctx, next) => {
+  const movieId = Number.parseInt(ctx.params.id);
+  const pollId =
+    ctx.query.pollId && typeof ctx.query.pollId === 'string' ? 
+      Number.parseInt(ctx.query.pollId) : NaN;
+  if (isNaN(movieId) || isNaN(pollId)) {
+    console.error('Bad request when deleting movie. Reason: movie id or poll id are not valid.');
+    ctx.throw(500);
+  }
+
+  const res = await PollService.removeMovie(pollId, movieId, ctx.userId).catch((error: Error) => {
+    console.log(`An error occurred when removeMovie was executed. Reason: ${error.message}`);
+    ctx.throw(500);
+  });
+
+  ctx.body = res;
+  ctx.status = 200;
+});
 
 export default router;
