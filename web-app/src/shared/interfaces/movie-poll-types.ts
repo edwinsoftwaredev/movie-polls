@@ -22,3 +22,9 @@ export interface ITopMovies {
     filters: ITopMoviesFilters,
     moviesByGenres: IMoviesByGenre[]
 }
+
+export interface IRemoveMovie {
+    movieId: number;
+    pollId: number;
+}
+  
