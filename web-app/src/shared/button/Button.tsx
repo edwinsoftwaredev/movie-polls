@@ -5,7 +5,7 @@ import style from './Button.module.scss';
 interface IButton {
   name: string;
   type: 'button' | 'submit';
-  classType: 'default' | 'contained';
+  classType: 'default' | 'contained' | 'radial';
   spinnered: boolean
 }
 
@@ -18,7 +18,7 @@ const Button: React.FC<IButton> = (props: IButton) => {
         disabled={props.spinnered}
       >
         {
-          !props.spinnered ? props.name : <Spinner />
+          !props.spinnered ? props.name : <Spinner color={'white'}/>
         }
       </button>
     </div>

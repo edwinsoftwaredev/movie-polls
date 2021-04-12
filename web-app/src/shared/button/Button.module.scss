@@ -51,5 +51,25 @@
       cursor: default;
       background-color: rgba(255, 255, 255, 0.3);
     }
+
+    
+    &.radial {
+        min-height: calc(1.5rem + 1vw) !important;
+        height: calc(1.5rem + 1vw) !important;
+        margin: auto;
+        color: rgb(220, 0, 0);
+        padding: 0;
+
+        &:hover {
+          border: 1px solid rgb(220, 0, 0) !important;
+        }
+
+        @media screen and (max-width: 768px) {
+          min-width: calc(3rem + 1vw);
+          width:  calc(3rem + 1vw);
+          min-height: calc(3rem + 1vw);
+          height: calc(3rem + 1vw);
+      }
+    }
   }
 }
