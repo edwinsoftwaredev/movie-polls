@@ -9,6 +9,7 @@ import { pollsSelector } from '../../../../services/slices-selectors/polls';
 import { addMovie, deleteMovie } from '../../../../services/epics/polls';
 import { IMovie } from '../../../interfaces/movie-types';
 import Spinner from '../../../spinners/Spinners';
+import Button from '../../../button/Button';
 
 interface IAvailablePollList {
   movie: IMovie
@@ -22,6 +23,7 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
   const polls = useSelector(pollsSelector);
   // sPollId = Submitted Poll Id
   const [sPollId, setSPollId] = useState<number>();
+  const [removeFlags, setRemoveFlags] = useState<{pollId: number, movieId: number}[]>();
 
   const handleChevronDownClick = (id: number, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const el = e.currentTarget.nextElementSibling?.nextElementSibling;
@@ -56,6 +58,9 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
   }, []);
 
   const handleRemoveMovie = (pollId: number, movieId: number) => {
+    setRemoveFlags(state => (
+      state ? [...state, {pollId: pollId, movieId: movieId}] : [{pollId: pollId, movieId: movieId}]
+    ));
     dispatch(deleteMovie({pollId: pollId, movieId: movieId}));
   }
 
@@ -66,13 +71,16 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
 
   useEffect(() => {
     setSPollId(undefined);
+    setRemoveFlags(state => state ? [
+      ...state.filter(obj => polls?.find(poll => poll.id === obj.pollId && poll.movies.find(movie => movie.movieId === obj.movieId)))
+    ] : state);
   }, [polls]);
 
   return (
     <div className={style['available-polls-list-component']}>
       {
         !polls ? (
-          <Spinner />
+          <Spinner color={'white'}/>
         ) : null
       }
       {
@@ -93,7 +101,7 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
               <div className={style['counter']}>({item.movies.length})</div>
               <div className={style['space']}></div>
               <div 
-                title='Deploy'
+                title='Show Movies'
                 className={
                   style['more-info-btn'] + ' ' +
                   style['btn'] + ' ' +
@@ -104,7 +112,7 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
                 <ChevronDownVector />
               </div>
               <div
-                title='Add this movie to this poll'
+                title='Add Movie'
                 className={
                   style['add-btn'] + ' ' + 
                   style['btn'] + ' ' +
@@ -121,7 +129,7 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
               >
                 {
                   sPollId === item.id ? 
-                    <Spinner /> : 
+                    <Spinner color={'white'}/> : 
                     item.movies.find(movie => movie.movieId === props.movie.id) ? 
                       <CheckVector /> : 
                       <PlusVector />
@@ -139,9 +147,23 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
                       <button 
                         className={style['delete-movie-btn']}
                         type={'button'}
+                        disabled={
+                          removeFlags && removeFlags?.filter(obj => obj.movieId === movie.movieId && obj.pollId === item.id)
+                            .length !== 0
+                        }
                         onClick={e => handleRemoveMovie(item.id as number, movie.movieId)}
+                        title={'Remove Movie'}
                       >
-                        <DeleteVector />
+                        <Fragment>
+                          {
+                            (
+                              removeFlags && removeFlags?.filter(obj => obj.movieId === movie.movieId && obj.pollId === item.id)
+                              .length !== 0
+                            ) ? (
+                              <Spinner color={'red'}/>
+                            ) : <DeleteVector />
+                          }
+                        </Fragment>
                       </button>
                       <div className={style['movie-title']}>
                         {movie.movie?.title ?? 'NO TITLE'}
@@ -149,6 +171,14 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
                     </Fragment>
                   ))
                 }
+              </div>
+              <div className={style['delete-poll-btn']}>
+                <Button 
+                  name={'Delete Poll'}
+                  classType={'radial'}
+                  spinnered={false}
+                  type={'button'}
+                />
               </div>
             </div>
             <hr />

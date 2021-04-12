@@ -60,6 +60,14 @@
             font-size: calc(1rem + 2vw);
         }
 
+        .delete-poll-btn {
+            grid-column: 1 / span 5;
+            margin: auto;
+            height: 0;
+            opacity: 0;
+            padding: 0;
+        }
+
         .name {
             margin: auto;
         }
@@ -168,6 +176,30 @@
                     padding: 0 !important;
                 }
 
+                & ~ .delete-poll-btn {
+                    animation: inactive-poll-btn 350ms linear forwards;
+
+                    @keyframes inactive-poll-btn {
+                        0% {
+                            opacity: 1;
+                            height: 3rem;
+                            padding-top: 0.7rem;
+                        }
+
+                        50% {
+                            opacity: 0;
+                            height: 3rem;
+                            padding-top: 0.7rem;
+                        }
+
+                        100% {
+                            opacity: 0;
+                            height: 0;
+                            padding-top: 0;
+                        }
+                    }
+                }
+
                 svg {
                     height: 0 !important;
                 }
@@ -208,6 +240,30 @@
 
                 svg {
                     height: calc(1rem + 0.6vw) !important;
+                }
+
+                & ~ .delete-poll-btn {
+                    animation: active-poll-btn 350ms linear forwards;
+
+                    @keyframes active-poll-btn {
+                        0% {
+                            opacity: 0;
+                            height: 0;
+                            padding-top: 0;
+                        }
+
+                        50% {
+                            opacity: 0;
+                            height: 3rem;
+                            padding-top: 0.7rem;
+                        }
+
+                        100% {
+                            opacity: 1;
+                            height: 3rem;
+                            padding-top: 0.7rem;
+                        }
+                    }
                 }
 
                 @keyframes active {
