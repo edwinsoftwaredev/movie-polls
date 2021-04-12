@@ -39,7 +39,7 @@ const PollForm: React.FC<IPollForm> = (props: IPollForm) => {
       </div>
       {
         !polls ? (
-          <Spinner />
+          <Spinner color={'white'}/>
         ) : (
           <form
             className={style['new-poll-form']}
