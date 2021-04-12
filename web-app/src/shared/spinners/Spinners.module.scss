@@ -1,10 +1,7 @@
 .spinner {
-  width: calc(0.7rem + 1vw);
-  height: calc(0.7rem + 1vw);
-  margin: 0 auto;
-  background-color: white;
-  padding: 10px;
-  box-sizing: border-box;
+  width: calc(1rem + 0.7vw);
+  height: calc(1rem + 0.7vw);
+  margin: auto;
 
   border-radius: 100%;  
   -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
