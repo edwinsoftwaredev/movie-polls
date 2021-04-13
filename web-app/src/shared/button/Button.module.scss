@@ -57,11 +57,11 @@
         min-height: calc(1.5rem + 1vw) !important;
         height: calc(1.5rem + 1vw) !important;
         margin: auto;
-        color: rgb(220, 0, 0);
+        color: rgba(220, 0, 0, 0.85);
         padding: 0;
 
         &:hover {
-          border: 1px solid rgb(220, 0, 0) !important;
+          border: 1px solid rgba(220, 0, 0, 0.6) !important;
         }
 
         @media screen and (max-width: 768px) {
