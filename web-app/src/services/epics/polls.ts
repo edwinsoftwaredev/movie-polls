@@ -12,7 +12,9 @@ enum ActionTypes {
   ADD_MOVIE = 'polls/addMovie',
   SET_POLLS = 'polls/setPolls',
   REMOVE_MOVIE_EPIC = 'polls/removeMovie_epic',
-  REMOVE_MOVIE = 'polls/removeMovie'
+  REMOVE_MOVIE = 'polls/removeMovie',
+  REMOVE_POLL_EPIC = 'polls/removePoll_epic',
+  REMOVE_POLL = 'polls/removePoll'
 }
 
 interface IAddPollAction extends Action {
@@ -49,6 +51,16 @@ interface IRemoveMovieAction extends Action {
   payload: IRemoveMovie;
 }
 
+interface IRemovePollEpicAction extends Action {
+  type: ActionTypes.REMOVE_POLL_EPIC;
+  payload: number;
+}
+
+interface IRemovePollAction extends Action {
+  type: ActionTypes.REMOVE_POLL;
+  payload: IPoll;
+}
+
 export const setPoll = (poll: IPoll): ISetPollAction => ({
   type: ActionTypes.SET_POLL,
   payload: poll
@@ -83,13 +95,25 @@ const removeMovie = (payload: IRemoveMovie): IRemoveMovieAction => ({
   payload: payload
 });
 
+const removePoll = (payload: IPoll): IRemovePollAction => ({
+  type: ActionTypes.REMOVE_POLL,
+  payload: payload
+});
+
+export const deletePoll = (pollId: number): IRemovePollEpicAction => ({
+  type: ActionTypes.REMOVE_POLL_EPIC,
+  payload: pollId
+});
+
 export type PollActionTypes = IFetchPollsAction | 
   IAddPollAction | 
   ISetPollAction | 
   ISetPolls |
   IAddMovie |
   IRemoveMovieAction |
-  IRemoveMovieEpic;
+  IRemoveMovieEpic |
+  IRemovePollAction |
+  IRemovePollEpicAction;
 
 // Use switchMap when getting data(read)
 // Use either mergeMap or concatMap when posting data(write)
@@ -136,4 +160,14 @@ export const removeMovieEpic: Epic<PollActionTypes> = (
     const res = await PollService.removeMovie(action.payload);
     return removeMovie(res);
   })
-)
+);
+
+export const removePollEpic: Epic<PollActionTypes> = (
+  action$: ActionsObservable<PollActionTypes>
+): Observable<PollActionTypes> => action$.pipe(
+  ofType<PollActionTypes, IRemovePollEpicAction>(ActionTypes.REMOVE_POLL_EPIC),
+  concatMap(async (action: IRemovePollEpicAction) => {
+    const res = await PollService.removePoll(action.payload);
+    return removePoll(res);
+  })
+);
