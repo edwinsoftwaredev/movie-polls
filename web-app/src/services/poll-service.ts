@@ -36,4 +36,12 @@ export default class PollService {
 
     return res.data;
   }
+
+  static async removePoll(pollId: number): Promise<IPoll> {
+    const res = await Axios.delete<IPoll>(
+      `${process.env.REACT_APP_API_SERVER}/api/polls/poll/${pollId}`
+    );
+
+    return res.data;
+  }
 }
