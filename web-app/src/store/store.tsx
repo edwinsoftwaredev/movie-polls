@@ -11,7 +11,7 @@ import { trendingSlice } from "../services/slices-selectors/trending-movies";
 import { topMovies } from "../services/slices-selectors/top-movies";
 import { fetchTopMoviesEpic, TopMoviesAction } from "../services/epics/top-movies";
 import { pollsSlice } from "../services/slices-selectors/polls";
-import { setPollEpic, PollActionTypes, fetchPollsEpic, addMovieEpic, removeMovieEpic } from "../services/epics/polls";
+import { setPollEpic, PollActionTypes, fetchPollsEpic, addMovieEpic, removeMovieEpic, removePollEpic } from "../services/epics/polls";
 
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
@@ -44,7 +44,8 @@ export const rootEpic = (
   setPollEpic,
   fetchPollsEpic,
   addMovieEpic,
-  removeMovieEpic
+  removeMovieEpic,
+  removePollEpic
 )(action$, store$, dependecies).pipe(catchError((error, source) => {
   console.log(error);
   return source;
