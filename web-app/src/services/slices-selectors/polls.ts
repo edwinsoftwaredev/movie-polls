@@ -70,6 +70,13 @@ export const pollsSlice = createSlice<IPoll[] | null, SliceCaseReducers<IPoll[] 
       }
 
       return state;
+    },
+    removePoll: (state: IPoll[] | null, action: PayloadAction<IPoll>) => {
+      if (!state)
+        return state;
+
+      state = state.filter(poll => poll.id !== action.payload.id);
+      return state;
     }
   }
 });
