@@ -2,7 +2,6 @@ import Koa from 'koa';
 import Router from '@koa/router';
 import PollService from '../services/poll-service';
 import { PollVM } from '../shared/type-interfaces/movie-poll-types';
-import { MoviePoll } from '.prisma/client';
 
 const router = new Router<Koa.DefaultState, Koa.DefaultContext>();
 
@@ -50,11 +49,27 @@ router.delete('/movie/:id', async (ctx, next) => {
       Number.parseInt(ctx.query.pollId) : NaN;
   if (isNaN(movieId) || isNaN(pollId)) {
     console.error('Bad request when deleting movie. Reason: movie id or poll id are not valid.');
-    ctx.throw(500);
+    ctx.throw(400);
   }
 
   const res = await PollService.removeMovie(pollId, movieId, ctx.userId).catch((error: Error) => {
     console.log(`An error occurred when removeMovie was executed. Reason: ${error.message}`);
+    ctx.throw(500);
+  });
+
+  ctx.body = res;
+  ctx.status = 200;
+});
+
+router.delete('/poll/:id', async (ctx, next) => {
+  const pollId = Number.parseInt(ctx.params.id);
+  if (isNaN(pollId)) {
+    console.error('Bad request when DELETE method was executed. Reason: Invalid parameter.');
+    ctx.throw(400);
+  }
+
+  const res = await PollService.removePoll(pollId, ctx.userId).catch((error: Error) => {
+    console.error(`An Error occurred when removePoll was executed. Reason: ${error.message}`);
     ctx.throw(500);
   });
 
