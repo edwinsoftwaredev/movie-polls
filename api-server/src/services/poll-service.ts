@@ -1,6 +1,6 @@
-import { getPollVMFromPoll, PollInput, PollVM } from "../shared/type-interfaces/movie-poll-types";
+import { getPollVMFromPoll, getPollVMWithoutMoviesAndTokens, PollInput, PollVM } from "../shared/type-interfaces/movie-poll-types";
 import prisma from '../prisma-client';
-import { MoviePoll, Prisma } from ".prisma/client";
+import { MoviePoll, Poll, Prisma } from ".prisma/client";
 import { getMovieFromMovieDetails } from "../shared/type-interfaces/movie-types";
 import MoviesService from "./movie-service";
 
@@ -87,7 +87,7 @@ export default class PollService {
   }
 
   /**
-   * Gets the open polls of a user.
+   * Gets user polls.
    * @param userId the id of the user who created the polls
    * @returns a Promise of a list of open polls
    */
@@ -150,5 +150,36 @@ export default class PollService {
     });
 
     return res;
+  }
+
+  /**
+   * Removes a poll.
+   * @param pollId the id of the poll
+   * @param userId The userId of the authenticated user
+   * @returns a Promise containing a PollVM object
+   */
+  static async removePoll(pollId: number, userId: string): Promise<Omit<PollVM, 'movies' | 'tokens'>> {
+    const poll = await prisma.poll.findFirst({where: {id: pollId}});
+
+    // checks if poll exist
+    if (!poll)
+      throw new Error('POLL_NOT_FOUND');
+    
+    // checks if the current user is the poll owner
+    if (poll.userId !== userId)
+      throw new Error('USER_POLL_BAD_ACCESS');
+    
+    // Because cascading deletes in Prisma are a FUTURE RELEASE, at the moment,
+    // deleting a poll with its own movies should be done in two operations:
+    // 1. delete all movies in MoviePoll for that poll.
+    // 2. delete the poll in question.
+    // A Transaction must be used in order to handle those operations.
+
+    const deleteMovies = prisma.moviePoll.deleteMany({where: {pollId: pollId}});
+    const deletePoll = prisma.poll.delete({where: {id: pollId}});
+
+    const res = await prisma.$transaction([deleteMovies, deletePoll]);
+
+    return getPollVMWithoutMoviesAndTokens(res[1]);
   }
 }
