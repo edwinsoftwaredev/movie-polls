@@ -6,7 +6,7 @@ import {ReactComponent as CheckVector} from '../../../resources/vectors/check.sv
 import {ReactComponent as DeleteVector} from '../../../resources/vectors/delete.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { pollsSelector } from '../../../../services/slices-selectors/polls';
-import { addMovie, deleteMovie } from '../../../../services/epics/polls';
+import { addMovie, deleteMovie, deletePoll } from '../../../../services/epics/polls';
 import { IMovie } from '../../../interfaces/movie-types';
 import Spinner from '../../../spinners/Spinners';
 import Button from '../../../button/Button';
@@ -24,6 +24,7 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
   // sPollId = Submitted Poll Id
   const [sPollId, setSPollId] = useState<number>();
   const [removeFlags, setRemoveFlags] = useState<{pollId: number, movieId: number}[]>();
+  const [removingPoll, setRemovingPoll] = useState<number | null>(null);
 
   const handleChevronDownClick = (id: number, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const el = e.currentTarget.nextElementSibling?.nextElementSibling;
@@ -64,6 +65,11 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
     dispatch(deleteMovie({pollId: pollId, movieId: movieId}));
   }
 
+  const handleRemovePoll = (pollId: number) => {
+    setRemovingPoll(pollId);
+    dispatch(deletePoll(pollId));
+  }
+
   const handleAddMovie = (pollId: number) => {
     setSPollId(pollId);
     dispatch(addMovie({pollId: pollId, movieId: props.movie.id}));
@@ -71,6 +77,7 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
 
   useEffect(() => {
     setSPollId(undefined);
+    setRemovingPoll(state => state && polls?.filter(poll => poll.id === state).length !== 0 ? state : null);
     setRemoveFlags(state => state ? [
       ...state.filter(obj => polls?.find(poll => poll.id === obj.pollId && poll.movies.find(movie => movie.movieId === obj.movieId)))
     ] : state);
@@ -176,8 +183,10 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
                 <Button 
                   name={'Delete Poll'}
                   classType={'radial'}
-                  spinnered={false}
+                  spinnered={removingPoll !== null}
                   type={'button'}
+                  spinnerColor={'red'}
+                  onClick={e => handleRemovePoll(item.id as number)}
                 />
               </div>
             </div>
