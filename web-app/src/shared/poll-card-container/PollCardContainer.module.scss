@@ -1,0 +1,21 @@
+.poll-card-container-component {
+    padding: 0 4%;
+
+    .poll-card-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .title {
+        font-family: 'PT Sans Narrow';
+        font-size: calc(1rem + 1.1vw);
+        font-weight: 600;
+        padding: 1rem 0.5rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin: auto;
+        text-align: center;
+    }
+}
