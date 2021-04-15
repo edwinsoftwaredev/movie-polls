@@ -1,0 +1,31 @@
+.progress-bar-component {
+    width: 100%;
+    padding: 0 0 1rem 0;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto;
+    column-gap: 1.5rem;
+
+    .progress-bar-container {
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.1);
+        height: 0.5rem;
+        margin: auto 0;
+        border-radius: 5px;
+
+        .progress-bar {
+            border-radius: 5px;
+            height: 0.5rem;
+            background-color: goldenrod;
+            width: 0;
+        }
+    }
+
+    .percentage-label {
+        color: white;
+        font-family: 'PT Sans Narrow';
+        font-weight: 600;
+        font-size: calc(1rem + 0.4vw);
+    }
+}

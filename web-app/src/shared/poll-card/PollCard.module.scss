@@ -1,0 +1,73 @@
+.poll-card-component {
+    padding: calc(1rem + 0.5vw);
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 5px;
+    max-width: 25vw;
+    width: 25vw;
+    min-height: calc((25vw * 0.3)*1.4*2) ;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.6);
+        cursor: pointer;
+    }
+
+    .data {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        grid-template-rows: auto;
+        gap: 1rem;
+        color:rgba(255, 255, 255, 0.8);
+        font-size: calc(0.5rem + 0.7vw);
+        font-family: 'PT Sans Narrow';
+        align-items: center;
+        min-height: calc(1rem + 0.7vw);
+        margin-bottom: 1rem;
+
+        *:not(.poll-name) {
+            margin: auto 0;
+        }
+    }
+
+    .poll-name {
+        font-family: 'PT Sans Narrow';
+        font-size: calc(1rem + 0.7vw);
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.8);
+
+        &.empty {
+            width: calc(1rem + 30%);
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+    }
+
+    .movies-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        justify-content: center;
+
+        .movie-container {
+            width: 30%;
+            height: calc((25vw * 0.3)*1.4);
+            
+            .poster {
+                border-radius: 5px;
+                width: 100%;
+            }
+
+            .empty-poster {
+                border-radius: 5px;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}
