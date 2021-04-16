@@ -6,10 +6,10 @@ const initialMovies: IMovie[] = [...new Array(10)].map((value, index) => {
   return {title: '', id: index} as IMovie;
 });
 
-const generateSlice = (name: string): Slice<IMovie[]> => {
+const generateSlice = (name: string, withInitials?: boolean): Slice<IMovie[]> => {
   return createSlice({
     name: name,
-    initialState: initialMovies,
+    initialState: withInitials ? [] : initialMovies,
     reducers: {
       setMovies: (state: IMovie[], action: PayloadAction<IMovie[]>) => {
         state = action.payload;
@@ -22,6 +22,7 @@ const generateSlice = (name: string): Slice<IMovie[]> => {
 export const top10PopularSlice = generateSlice('top10Popular');
 export const top10TrendingSlice = generateSlice('top10Trending');
 export const nowPlayingSlice = generateSlice('nowPlaying');
+export const searchResultSlice = generateSlice('searchResult', true);
 
 export const top10PopularSelector = createSelector(
   (state: RootState) => state.top10Popular,
@@ -35,5 +36,10 @@ export const top10TrendingSelector = createSelector(
 
 export const nowPlayingSelector = createSelector(
   (state: RootState) => state.nowPlaying,
+  (res: IMovie[]) => res
+);
+
+export const searchResultSelector = createSelector(
+  (state: RootState) => state.searchResult,
   (res: IMovie[]) => res
 );
