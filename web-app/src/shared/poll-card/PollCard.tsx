@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { IPoll } from '../interfaces/movie-poll-types';
 import style from './PollCard.module.scss';
 import ProgressBar from './progress-bar/ProgressBar';
@@ -8,6 +8,7 @@ interface IPollCard {
 }
 
 const PollCard: React.FC<IPollCard> = (props: IPollCard) => {
+  const [loadedImages, setLoadedImages] = useState<{pollId: number; movieId: number}[] | null>(null);
   const isPoll = props.poll.movies.filter(movie => movie.movie).length !== 0;
 
   return (
@@ -25,9 +26,24 @@ const PollCard: React.FC<IPollCard> = (props: IPollCard) => {
               {
                 movie.movie ? (
                   <img 
+                    onLoad={e => setLoadedImages(state => {
+                      if (!props.poll.id)
+                        return state;
+
+                      if (state)
+                        return [...state, {pollId: props.poll.id, movieId: movie.movieId}];
+                      
+                      return [{pollId: props.poll.id, movieId: movie.movieId}];
+                    })}
                     title={movie.movie?.title}
                     alt={movie.movie?.title}
-                    className={style['poster']} 
+                    className={
+                      style['poster'] + ' ' +
+                      (loadedImages?.filter(obj => 
+                        obj.movieId === movie.movieId && obj.pollId === props.poll.id
+                        ).length === 1 ? style['loaded'] : ''
+                      )
+                    } 
                     src={`${process.env.REACT_APP_TMDB_API_POSTER_URL}/${movie.movie?.poster_path}`}
                   />
                 ) : (
