@@ -5,7 +5,6 @@
     border-radius: 5px;
     max-width: 25vw;
     width: 25vw;
-    min-height: calc((25vw * 0.3)*1.4*2) ;
 
     &:hover {
         background-color: rgba(0, 0, 0, 0.6);
@@ -48,10 +47,14 @@
         gap: 1rem;
         align-items: center;
         justify-content: center;
+        min-height: calc(((25vw*0.3*3)/2)*2);
+        height: calc(((25vw*0.3*3)/2)*2);
 
         .movie-container {
             width: 30%;
             height: calc((25vw * 0.3)*1.4);
+            justify-self: normal;
+            align-self: flex-start;
             
             .poster {
                 border-radius: 5px;
