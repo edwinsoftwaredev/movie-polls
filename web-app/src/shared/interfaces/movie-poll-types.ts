@@ -11,7 +11,7 @@ export interface IPoll {
         uuid: string
     }[];
     isOpen?: boolean;
-    createdAt?: Date;
+    createdAt?: Date | string;
     endsAt?: Date;
 };
 
