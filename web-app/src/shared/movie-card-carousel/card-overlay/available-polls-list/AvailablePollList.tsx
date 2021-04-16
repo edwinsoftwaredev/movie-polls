@@ -4,6 +4,7 @@ import {ReactComponent as ChevronDownVector} from '../../../resources/vectors/ch
 import {ReactComponent as PlusVector} from '../../../resources/vectors/plus.svg';
 import {ReactComponent as CheckVector} from '../../../resources/vectors/check.svg';
 import {ReactComponent as DeleteVector} from '../../../resources/vectors/delete.svg';
+import {ReactComponent as CheckCircleVector} from '../../../resources/vectors/check-circle.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { pollsSelector } from '../../../../services/slices-selectors/polls';
 import { addMovie, deleteMovie, deletePoll } from '../../../../services/epics/polls';
@@ -71,6 +72,10 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
   }
 
   const handleAddMovie = (pollId: number) => {
+    const poll = polls?.filter(poll => poll.id === pollId)[0];
+    if (!poll || poll.movies.length >= 5)
+      return;
+
     setSPollId(pollId);
     dispatch(addMovie({pollId: pollId, movieId: props.movie.id}));
   };
@@ -119,12 +124,17 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
                 <ChevronDownVector />
               </div>
               <div
-                title='Add Movie'
+                title={
+                  item.movies.length >= 5 ? 'Full Poll - 5/5.' : 
+                  item.movies.find(movie => movie.movieId === props.movie.id) ? 
+                  'This movie is already added to this Poll' : ''
+                }
                 className={
                   style['add-btn'] + ' ' + 
                   style['btn'] + ' ' +
                   (
                     sPollId === item.id || 
+                    item.movies.length >= 5 ||
                     item.movies.find(movie => movie.movieId === props.movie.id) ? 
                     style['inactive'] : ''
                   )
@@ -135,7 +145,9 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
                 }
               >
                 {
-                  sPollId === item.id ? 
+                  item.movies.length >= 5 ? (
+                    <CheckCircleVector className={style['check-circle-vector']} />
+                  ) : sPollId === item.id ? 
                     <Spinner color={'white'}/> : 
                     item.movies.find(movie => movie.movieId === props.movie.id) ? 
                       <CheckVector /> : 
