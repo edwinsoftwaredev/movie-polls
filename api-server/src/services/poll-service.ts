@@ -54,12 +54,17 @@ export default class PollService {
    */
   static async addMovie(pollId: number, movieId: number, userId: string): Promise<PollVM> {
     const poll = await prisma.poll.findFirst({
-      where: {id: pollId, AND: {userId: userId}}
+      where: {id: pollId, AND: {userId: userId}},
+      include: {movies: true}
     });
 
     if (!poll)
       throw new Error('NOT_VALID_USER');
-    
+
+    // Each poll has a limit of five movies.
+    if (poll.movies.length >= 5) 
+      throw new Error('FULL_POLL');
+
     const movie: Prisma.MoviePollCreateNestedManyWithoutPollInput = {
       create: {
         movieId: movieId
@@ -137,17 +142,28 @@ export default class PollService {
         AND: {
           id: pollId
         }
-      }
+      },
+      include: {movies: true}
     });
 
     if (!poll) 
       throw new Error('USER_POLL_BAD_ACCESS');
     
+    if (poll.movies.length === 0)
+      throw new Error('EMPTY_POLL');
+
     const res = await prisma.moviePoll.delete({
       where: {
         pollId_movieId: {pollId: pollId, movieId: movieId}
       }
     });
+
+    // if a poll just has one movie, the poll is deleted.
+    if (poll.movies.length === 1 && poll.movies[0].movieId === movieId) {
+      await prisma.poll.delete({
+        where: {id: pollId}
+      });
+    }
 
     return res;
   }
