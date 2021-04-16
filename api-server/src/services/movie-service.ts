@@ -235,6 +235,30 @@ export default class MoviesService {
   }
 
   /**
+   * Searchs for a movie with a given text
+   * @param text The text required to make the search
+   * @returns a Promise of a IMovie[]
+   */
+  static async searchMovie(text: string): Promise<IMovie[]> {
+    const genres = await this.fetchGenres();
+
+    const res = await Axios.get<IMovieRequest>(
+      `${process.env.TMDB_API_URL}/search/movie` ,{
+      params: {
+        api_key: process.env.TMDB_API_KEY,
+        query: text
+      }
+    });
+
+    const movies = res.data.results.map(movie => ({
+      ...movie,
+      genre_names: movie.genre_ids.map(id => genres.find(item => item.id === id)?.name ?? '')
+    }));
+
+    return movies;
+  }
+
+  /**
    * Fetchs a list of 10 top movies from database or cache
    * @returns IMovie[]
    */
