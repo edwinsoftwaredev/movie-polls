@@ -84,4 +84,19 @@ router.get('/genres', async (ctx, next) => {
   ctx.status = 200;
 });
 
+router.get('/search', async (ctx, next) => {
+  const q = ctx.query.q;
+  if (q && typeof q === 'string') {
+    const result = await MoviesService.searchMovie(q).catch((error: Error | AxiosError ) => {
+      console.error(`Error when searching movie: Message: ${error.message}`);
+      ctx.throw(500);
+    });
+
+    ctx.body = result;
+    ctx.status = 200;
+  } else {
+    ctx.throw(400);
+  }
+});
+
 export default router;
