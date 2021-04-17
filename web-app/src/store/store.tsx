@@ -6,12 +6,13 @@ import { fetchNowPlayingEpic, NowPlayingActions } from "../services/epics/now-pl
 import { Top10PopularActions, fetchTop10PopularEpic } from "../services/epics/popular-movies";
 import { Top10TrendingActions, fetchTop10TrendingEpic, TrendingActions, fetchTrendingEpic } from "../services/epics/trending-movies";
 import { sliderPropertiesSlice } from "../services/slices-selectors/slider-properties";
-import {nowPlayingSlice, top10PopularSlice, top10TrendingSlice} from '../services/slices-selectors/movies';
+import {nowPlayingSlice, searchResultSlice, top10PopularSlice, top10TrendingSlice} from '../services/slices-selectors/movies';
 import { trendingSlice } from "../services/slices-selectors/trending-movies";
 import { topMovies } from "../services/slices-selectors/top-movies";
 import { fetchTopMoviesEpic, TopMoviesAction } from "../services/epics/top-movies";
 import { pollsSlice } from "../services/slices-selectors/polls";
 import { setPollEpic, PollActionTypes, fetchPollsEpic, addMovieEpic, removeMovieEpic, removePollEpic } from "../services/epics/polls";
+import { fetchSearchResultEpic, SearchMoviesActions } from "../services/epics/search-result-movies";
 
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
@@ -21,7 +22,8 @@ const rootReducer = combineReducers({
   trending: trendingSlice.reducer,
   topMovies: topMovies.reducer,
   sliderProperties: sliderPropertiesSlice.reducer,
-  polls: pollsSlice.reducer
+  polls: pollsSlice.reducer,
+  searchResult: searchResultSlice.reducer
 });
 
 type Actions = Top10PopularActions | 
@@ -29,7 +31,8 @@ type Actions = Top10PopularActions |
   NowPlayingActions | 
   TrendingActions | 
   TopMoviesAction |
-  PollActionTypes;
+  PollActionTypes |
+  SearchMoviesActions;
 
 export const rootEpic = (
   action$: ActionsObservable<Actions>,
@@ -45,7 +48,8 @@ export const rootEpic = (
   fetchPollsEpic,
   addMovieEpic,
   removeMovieEpic,
-  removePollEpic
+  removePollEpic,
+  fetchSearchResultEpic
 )(action$, store$, dependecies).pipe(catchError((error, source) => {
   console.log(error);
   return source;
