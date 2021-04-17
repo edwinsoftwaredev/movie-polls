@@ -18,6 +18,7 @@ import { sliderPropertiesSlice } from './services/slices-selectors/slider-proper
 import style from './App.module.scss';
 import ScrollToTop from './shared/utils/scroll-to-top/ScrollToTop';
 import { fetchPolls } from './services/epics/polls';
+import Search from './search/Search';
 
 const InitialPage: React.FC = () => {
   const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
@@ -131,6 +132,9 @@ function App() {
           </ProtectedRoute>
           <ProtectedRoute exact path='/trending-movies'>
             <TrendingMovies />
+          </ProtectedRoute>
+          <ProtectedRoute path='/search'>
+            <Search />
           </ProtectedRoute>
         </Switch>
       </Router>
