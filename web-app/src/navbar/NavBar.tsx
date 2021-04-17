@@ -3,13 +3,14 @@ import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { userAuthenticationStatusSelector } from '../auth/auth-selectors';
 import { USER_AUTHENTICATION_STATUS } from '../shared/utils/enums';
+import {ReactComponent as SearchVector} from '../shared/resources/vectors/search.svg';
 import style from './NavBar.module.scss';
 import firebase from 'firebase/app';
 
-const NavBarButton: React.FC<any> = ({text, callback, active}) => {
+const NavBarButton: React.FC<any> = ({text, callback, active, children}) => {
   return (
     <div className={style['navbar-button'] + ' ' + (active ? style['active'] : '')}>
-      <button onClick={e => callback()}>{text}</button>
+      <button onClick={e => callback()}>{children ? children : text}</button>
     </div>
   )
 };
@@ -23,10 +24,15 @@ const MenuOptions: React.FC<any> = ({userAuthStatus}) => {
       {
         userAuthStatus === USER_AUTHENTICATION_STATUS.SIGNED ? (
           <Fragment>
+            <NavBarButton active={location.pathname === '/search'} text={'Search'} callback={() => {history.push('/search')}}>
+              <div className={style['search-vector']}>
+                <SearchVector />
+              </div>
+            </NavBarButton>
             <NavBarButton active={location.pathname === '/'} text='Home' callback={() => {history.push('/')}} />
             <NavBarButton active={location.pathname === '/top-movies'} text='Top Movies' callback={() => {history.push('/top-movies')}} />
             <NavBarButton active={location.pathname === '/trending-movies'} text='Trending Movies' callback={() => {history.push('/trending-movies')}} />
-            <NavBarButton text='Random Picks' callback={() => {history.push('/')}} />
+            {/** <NavBarButton text='Random Picks' callback={() => {history.push('/')}} /> */}
             <NavBarButton text='My Polls' callback={() => {history.push('/')}} />
             <hr style={{height: '1rem', marginTop: 'auto', marginBottom: 'auto'}}/>
             <NavBarButton text='Account' callback={() => {firebase.auth().signOut()}}/>

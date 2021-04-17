@@ -2,6 +2,18 @@ button {
     font-family: 'PT Sans Narrow';
 }
 
+.search-vector {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    svg {
+        stroke-width: 3px;
+        margin: auto;
+        height: calc(0.7rem + 1vw) !important;
+    }
+}
+
 .navbar-component {
     position: fixed;
     z-index: 100;
@@ -15,7 +27,7 @@ button {
     grid-template-columns: auto 1fr auto;
     grid-template-rows: auto;
     color: white;
-    padding: 0 7rem;
+    padding: 0 5rem;
 
     @media screen and (max-width: 768px) {
         padding: 0 2rem;
