@@ -1,5 +1,5 @@
 import Axios from 'axios';
-import { IMovieDetail } from '../shared/interfaces/movie-types';
+import { IMovie, IMovieDetail } from '../shared/interfaces/movie-types';
 
 export default class MovieService {
 
@@ -11,6 +11,17 @@ export default class MovieService {
   static async getMovieDetails(id: number): Promise<IMovieDetail> {
     const res = await Axios.get(
       `${process.env.REACT_APP_API_SERVER}/api/movies/movie-details/${id}`
+    );
+
+    return res.data;
+  }
+
+  static async searchMovie(q: string): Promise<IMovie[]> {
+    const res = await Axios.get(
+      `${process.env.REACT_APP_API_SERVER}/api/movies/search`,
+      {
+        params: {q: q}
+      }
     );
 
     return res.data;
