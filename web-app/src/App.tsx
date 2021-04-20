@@ -19,6 +19,7 @@ import style from './App.module.scss';
 import ScrollToTop from './shared/utils/scroll-to-top/ScrollToTop';
 import { fetchPolls } from './services/epics/polls';
 import Search from './search/Search';
+import Footer from './footer/Footer';
 
 const InitialPage: React.FC = () => {
   const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
@@ -101,7 +102,7 @@ function App() {
       // Therefore the existence of that overlay is checked to determine if
       // handleResize function has to be executed.
       const el = document.getElementById('card-overlay-portal');
-      if (el) return;
+      if (el && window.location.pathname !== '/search') return;
       handleResize();
     });
 
@@ -137,6 +138,7 @@ function App() {
             <Search />
           </ProtectedRoute>
         </Switch>
+        <Footer />
       </Router>
     </div>
   );
