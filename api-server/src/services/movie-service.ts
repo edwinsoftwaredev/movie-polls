@@ -253,7 +253,11 @@ export default class MoviesService {
     const movies = res.data.results.map(movie => ({
       ...movie,
       genre_names: movie.genre_ids.map(id => genres.find(item => item.id === id)?.name ?? '')
-    }));
+    })).filter(movie => 
+      movie.backdrop_path && 
+      movie.poster_path && 
+      !movie.genre_names.includes('Documentary')
+    );
 
     return movies;
   }
