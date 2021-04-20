@@ -91,7 +91,11 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
         setWindowScrollY(window.scrollY);
         const y = window.scrollY - el.offsetTop;
         el.style.top = (y <= 0 ? `${el.offsetTop - window.scrollY}px` : `-${y}px`);
+        // window.scrollTo({top: 0});
         el.style.position = 'fixed';
+        if (window.innerHeight <= document.body.clientHeight) {
+          document.body.style.overflowY = 'scroll';
+        }
         el.style.width = '100%';
         el.style.height = '100%';
       }
