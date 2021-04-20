@@ -1,10 +1,19 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { userAuthenticationStatusSelector } from '../auth/auth-selectors';
+import { USER_AUTHENTICATION_STATUS } from '../shared/utils/enums';
 import style from './Footer.module.scss';
 
 const Footer: React.FC = () => {
+  const userAuthStatus = useSelector(userAuthenticationStatusSelector);
+
+  if (userAuthStatus === USER_AUTHENTICATION_STATUS.NOT_FETCHED) {
+    return null;
+  }
+  
 	return (
-		<div className={style['footer-component']}>
+		<div id='footer' className={style['footer-component']}>
 			<div className={style['app-title']}>
 				Movie Polls
 			</div>
