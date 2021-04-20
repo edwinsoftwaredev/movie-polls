@@ -81,6 +81,12 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
       }
 
       const el = document.getElementById('sliders-container');
+      const footerEl = document.getElementById('footer');
+
+      if (footerEl) {
+        footerEl.style.visibility = 'hidden';
+      }
+
       if (el) {
         setWindowScrollY(window.scrollY);
         const y = window.scrollY - el.offsetTop;
@@ -98,7 +104,11 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
     const handleTransionEnd = () => {
       if (!(active === CardActive.ACTIVE)) {
         const el = document.getElementById('sliders-container');
+        const footerEl = document.getElementById('footer');
 
+        if (footerEl) {
+          footerEl.style.visibility = 'visible';
+        }
         if (window.innerHeight < document.body.clientHeight) {
           document.body.style.overflowY = 'auto';
         }
