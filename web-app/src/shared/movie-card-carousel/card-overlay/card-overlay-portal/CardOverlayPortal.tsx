@@ -17,19 +17,20 @@ const CardOverlayPortal: React.FC<ICardOverlayPortal> = (props: ICardOverlayPort
 
   useEffect(() => {
     const el = document.createElement('div');
+    // el.style.top = `${window.scrollY >= 80 ? 80 : window.scrollY}px`;
     el.style.top = '0';
     el.style.position = 'absolute';
     el.id = 'card-overlay-portal';
 
     if (!elRef.current && props.activeCard) {
       elRef.current = el;
-      document.body.appendChild(el);
+      document.getElementById('root')?.appendChild(el);
       setIsCurrent(true);
     }
 
     return () => {
       if (elRef.current) {
-        document.body.removeChild(elRef.current);
+        document.getElementById('root')?.removeChild(elRef.current);
         elRef.current = undefined;
         setIsCurrent(false);
 
