@@ -6,7 +6,6 @@ import { nowPlayingSelector, top10PopularSelector, top10TrendingSelector } from 
 import { fetchTop10Popular } from '../services/epics/popular-movies';
 import { fetchTop10Trending } from '../services/epics/trending-movies';
 import { fetchNowPlaying } from '../services/epics/now-playing-movies';
-import { pollsSelector } from '../services/slices-selectors/polls';
 import PollCardContainer from '../shared/poll-card-container/PollCardContainer';
 
 const Home: React.FC = () => {
