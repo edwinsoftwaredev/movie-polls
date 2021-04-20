@@ -82,7 +82,9 @@ const NoResults: React.FC<any> = ({isEmpty}) => {
       <div className={style['no-result-container']}>
         <div className={style['text']}>
           {
-            isEmpty ? 'Your search did not return any results.' : 'The results will be shown here.'
+            isEmpty ? 
+              'Your search did not return any results.' : 
+              'Your search results will be shown here.'
           }
         </div>
       </div>
@@ -97,7 +99,7 @@ const SearchResult: React.FC = () => {
 
   const handleOverlay = (card: HTMLDivElement | undefined | null, movie: any) => {
     setActiveCard(card);
-    setActiveMovie(searchResult.find(item => item.id === movie.id));
+    setActiveMovie((state: any) => searchResult ? searchResult.find(item => item.id === movie.id) : state);
   };
 
   const clearCardOverlay = () => {
@@ -114,10 +116,13 @@ const SearchResult: React.FC = () => {
       />
       <div className={style['movie-cards-container']}>
         {
-          searchResult.length === 0 ? <NoResults isEmpty={true}/> : null
+          searchResult && searchResult.length === 0 ? <NoResults isEmpty={true}/> : null
         }
         {
-          searchResult.map(movie => (
+          !searchResult ? <NoResults isEmpty={false} /> : null
+        }
+        {
+          searchResult && searchResult.map(movie => (
             <Fragment key={movie.id}>
               <MovieCard movie={movie} handleOverlay={handleOverlay} />
             </Fragment>
