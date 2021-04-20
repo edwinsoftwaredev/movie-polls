@@ -1,6 +1,6 @@
 .footer-component {
     background-color: rgba(0, 0, 0, 0.3);
-    min-height: calc(10rem + 30vh);
+    min-height: calc(10rem + 30vh); // remove this when the component is finished
     margin-top: 10rem;
     position: relative;
     padding: 5rem 7rem;
@@ -15,7 +15,7 @@
 
     .app-title {
         font-family: 'Monoton';
-        font-size: calc(2rem + 1vw);
+        font-size: calc(1rem + 1vw);
         color: gold;
         text-shadow: 1px 1px 5px black;
         flex-basis: auto;
