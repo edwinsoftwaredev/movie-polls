@@ -1,5 +1,10 @@
+.sliders-container {
+    min-height: 100vh;
+}
+
 .search-component {
     padding: 0 4%;
+    box-sizing: border-box;
 }
 
 .search-field-component {
@@ -32,5 +37,37 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+    }
+}
+
+.search-result-component {
+    .movie-cards-container {
+        padding: calc(1rem + 1.5vw) 0;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.4rem 0;
+
+        @media screen and (max-width: 768px) {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            grid-template-rows: auto;
+        }
+    }
+}
+
+.no-result-component {
+    width: 100%;
+    .no-result-container {
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 1rem;
+        box-sizing: border-box;
+        text-align: center;
+    }
+    .text {
+        font-family: 'PT Sans Narrow';
+        font-size: calc(1rem + 1vw);
+        font-weight: 600;
     }
 }

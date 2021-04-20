@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import style from './Search.module.scss';
 import {ReactComponent as SearchVector} from '../shared/resources/vectors/search.svg';
 import { useHistory } from 'react-router';
@@ -7,6 +7,8 @@ import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSearchResult } from '../services/epics/search-result-movies';
 import { searchResultSelector } from '../services/slices-selectors/movies';
+import MovieCard from '../shared/movie-card/MovieCard';
+import CardOverlayPortal from '../shared/movie-card-carousel/card-overlay/card-overlay-portal/CardOverlayPortal';
 
 const SearchField: React.FC = () => {
   const [searchControlObj, setSearchControlObj] = useState<{
@@ -74,15 +76,67 @@ const SearchField: React.FC = () => {
   );
 };
 
-const Search: React.FC = () => {
-  const searchResult = useSelector(searchResultSelector);
-
-  useEffect(() => {
-  }, [searchResult]);
-
+const NoResults: React.FC<any> = ({isEmpty}) => {
   return (
-    <div className={style['search-component']}>
+    <div className={style['no-result-component']}>
+      <div className={style['no-result-container']}>
+        <div className={style['text']}>
+          {
+            isEmpty ? 'Your search did not return any results.' : 'The results will be shown here.'
+          }
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const SearchResult: React.FC = () => {
+  const searchResult = useSelector(searchResultSelector);
+  const [activeCard, setActiveCard] = useState<HTMLDivElement | undefined | null>();
+  const [activeMovie, setActiveMovie] = useState<any>();
+
+  const handleOverlay = (card: HTMLDivElement | undefined | null, movie: any) => {
+    setActiveCard(card);
+    setActiveMovie(searchResult.find(item => item.id === movie.id));
+  };
+
+  const clearCardOverlay = () => {
+    setActiveCard(null);
+    setActiveMovie(null);
+  }
+  
+  return (
+    <div className={style['search-result-component']}>
+      <CardOverlayPortal 
+        activeCard={activeCard}
+        activeMovie={activeMovie}
+        clearCardOverlay={clearCardOverlay}
+      />
+      <div className={style['movie-cards-container']}>
+        {
+          searchResult.length === 0 ? <NoResults isEmpty={true}/> : null
+        }
+        {
+          searchResult.map(movie => (
+            <Fragment key={movie.id}>
+              <MovieCard movie={movie} handleOverlay={handleOverlay} />
+            </Fragment>
+          ))
+        }        
+      </div>
+    </div>
+  );
+}
+
+const Search: React.FC = () => {
+  // id sliders-container should be renamed
+  return (
+    <div 
+      id='sliders-container' 
+      className={style['search-component'] + ' ' + style['sliders-container']
+    }>
       <SearchField />
+      <SearchResult />
     </div>
   )
 };
