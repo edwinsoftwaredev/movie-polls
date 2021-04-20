@@ -18,7 +18,7 @@ const MovieCard: React.FC<IMovieCard> = (props: IMovieCard) => {
 
   useEffect(() => {
     const movie = props.movie;
-    if (movie.title && movie.genre_names && movie.vote_average) {
+    if (movie.title && movie.genre_names && movie.vote_average !== null) {
       setIsMovie(true);
     }
   }, [props.movie]);
