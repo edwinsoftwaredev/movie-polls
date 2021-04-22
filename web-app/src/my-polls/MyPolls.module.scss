@@ -1,0 +1,47 @@
+.sliders-container {
+    flex: 1;
+    min-height: 80vh;
+}
+
+.my-polls-component {
+    padding: 0 4%;
+    box-sizing: border-box;
+
+    .elements-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+
+        .running-polls-divider {
+            width: 100%;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-template-rows: auto;
+
+            .divider-title {
+                font-family: 'PT Sans Narrow';
+                font-size: calc(1rem + 1.5vw);
+                font-weight: 600;
+                color: rgba(255, 255, 255, 0.8);
+            }
+            
+            .divider-line {
+                padding: 1rem;
+                box-sizing: border-box;
+                width: 100%;
+                margin: auto;
+            }
+        }
+    }
+
+    .polls-container {
+        padding: 1rem 0;
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+    }
+}
