@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router';
 import { IPoll } from '../interfaces/movie-poll-types';
 import style from './PollCard.module.scss';
 import ProgressBar from './progress-bar/ProgressBar';
@@ -8,11 +9,19 @@ interface IPollCard {
 }
 
 const PollCard: React.FC<IPollCard> = (props: IPollCard) => {
-  const [loadedImages, setLoadedImages] = useState<{pollId: number; movieId: number}[] | null>(null);
+  const [loadedImages, setLoadedImages] = useState<{pollId: number; movieId: number}[] | null>(null); 
   const isPoll = props.poll.movies.filter(movie => movie.movie).length !== 0;
+  const history = useHistory();
+
+  const handlePollClick = () => {
+    history.push({
+      pathname: '/poll',
+      search: `id=${props.poll.id}`
+    });
+  };
 
   return (
-    <div className={style['poll-card-component']}>
+    <div className={style['poll-card-component']} onClick={handlePollClick}>
       <div className={style['data']}>
         <div className={style['poll-name'] + ' ' + (!props.poll.name ? style['empty'] : null)}>{props.poll.name}</div>
         <div className={style['date']}>{new Date().toDateString()}</div>
