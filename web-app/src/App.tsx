@@ -20,6 +20,8 @@ import ScrollToTop from './shared/utils/scroll-to-top/ScrollToTop';
 import { fetchPolls } from './services/epics/polls';
 import Search from './search/Search';
 import Footer from './footer/Footer';
+import MyPolls from './my-polls/MyPolls';
+import Poll from './poll/Poll';
 
 const InitialPage: React.FC = () => {
   const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
@@ -136,6 +138,12 @@ function App() {
           </ProtectedRoute>
           <ProtectedRoute path='/search'>
             <Search />
+          </ProtectedRoute>
+          <ProtectedRoute exact path='/my-polls'>
+            <MyPolls />
+          </ProtectedRoute>
+          <ProtectedRoute path='/poll'>
+            <Poll />
           </ProtectedRoute>
         </Switch>
         <Footer />
