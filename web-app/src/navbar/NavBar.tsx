@@ -33,7 +33,7 @@ const MenuOptions: React.FC<any> = ({userAuthStatus}) => {
             <NavBarButton active={location.pathname === '/top-movies'} text='Top Movies' callback={() => {history.push('/top-movies')}} />
             <NavBarButton active={location.pathname === '/trending-movies'} text='Trending Movies' callback={() => {history.push('/trending-movies')}} />
             {/** <NavBarButton text='Random Picks' callback={() => {history.push('/')}} /> */}
-            <NavBarButton text='My Polls' callback={() => {history.push('/')}} />
+            <NavBarButton active={location.pathname === '/my-polls'} text='My Polls' callback={() => {history.push('/my-polls')}} />
             <hr style={{height: '1rem', marginTop: 'auto', marginBottom: 'auto'}}/>
             <NavBarButton text='Account' callback={() => {firebase.auth().signOut()}}/>
             <NavBarButton text='Sign Out' callback={() => {firebase.auth().signOut()}}/>
