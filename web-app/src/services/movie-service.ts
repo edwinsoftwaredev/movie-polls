@@ -26,4 +26,12 @@ export default class MovieService {
 
     return res.data;
   }
+
+  static async getMovieProviders(movieId: number): Promise<any> {
+    const res = await Axios.get(
+      `${process.env.REACT_APP_API_SERVER}/api/movies/movie-providers/${movieId}`
+    );
+
+    return res.data;
+  }
 }
