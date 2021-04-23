@@ -99,4 +99,20 @@ router.get('/search', async (ctx, next) => {
   }
 });
 
+router.get('/movie-providers/:id', async (ctx, next) => {
+  const movieIdParam = ctx.params.id;
+  const movieId = Number.parseInt(movieIdParam);
+  if (movieId && !isNaN(movieId)) {
+    const result = await MoviesService.fetchMovieProviders(movieId).catch((error: AxiosError | Error) => {
+      console.error(`An error occurred when fetchMovieProviders was executed. Reason: ${error.message}`);
+      ctx.throw(500);
+    });
+
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.throw(400);
+  }
+});
+
 export default router;
