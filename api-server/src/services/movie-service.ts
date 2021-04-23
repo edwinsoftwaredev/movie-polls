@@ -235,6 +235,23 @@ export default class MoviesService {
   }
 
   /**
+   * Fetches the a list of providers of a movie.
+   * @param movieId the id of the movie
+   * @returns A promise of a list of providers.
+   */
+  static async fetchMovieProviders(movieId: number): Promise<{id: number, results: any}> {
+    const res = await Axios.get<{id: number, results: any}>(
+      `${process.env.TMDB_API_URL}/movie/${movieId}/watch/providers`, {
+        params: {
+          api_key: process.env.TMDB_API_KEY
+        }
+      }
+    );
+
+    return res.data.results;
+  }
+
+  /**
    * Searchs for a movie with a given text
    * @param text The text required to make the search
    * @returns a Promise of a IMovie[]
