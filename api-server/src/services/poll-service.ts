@@ -3,6 +3,7 @@ import prisma from '../prisma-client';
 import { MoviePoll, Prisma } from ".prisma/client";
 import { getMovieFromMovieDetails } from "../shared/type-interfaces/movie-types";
 import MoviesService from "./movie-service";
+import * as admin from 'firebase-admin';
 
 export default class PollService {
   /**
@@ -226,7 +227,7 @@ export default class PollService {
     const patchData = {
       ...(typeof pollPatch.name !== 'undefined' && {name: pollPatch.name}),
       ...(typeof pollPatch.isOpen !== 'undefined' && {isOpen: pollPatch.isOpen}),
-      ...(typeof pollPatch.endsAt !== 'undefined' && isNaN(new Date(pollPatch.endsAt).getDate()) && {endsAt: new Date(pollPatch.endsAt)})
+      ...(typeof pollPatch.endsAt !== 'undefined' && !isNaN(new Date(pollPatch.endsAt).getDate()) && {endsAt: new Date(pollPatch.endsAt)})
     };
 
     const patchedPoll = await prisma.poll.update({
@@ -235,5 +236,26 @@ export default class PollService {
     });
 
     return getPollVMWithoutMoviesAndTokens(patchedPoll);
+  }
+
+  static async getPollOwner(pollId: number): Promise<{
+    name: string | undefined,
+    photoURL: string | undefined,
+    uid: string
+  }> {
+    const res = await prisma.poll.findFirst({where: {id: pollId}, select: {userId: true}});
+
+    if (!res || !res.userId)
+      throw new Error('POLL_NOT_FOUND');
+
+    const fbUser = await admin.auth().getUser(res.userId);
+
+    const user = {
+      name: fbUser.displayName,
+      photoURL: fbUser.photoURL,
+      uid: fbUser.uid
+    };
+
+    return user;
   }
 }
