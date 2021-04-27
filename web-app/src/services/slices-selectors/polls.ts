@@ -17,7 +17,7 @@ export const pollsSlice = createSlice<IPoll[] | null, SliceCaseReducers<IPoll[] 
           // By doing this the items will have the same
           // position or index in the array
           if (poll.id === action.payload.id)
-            return action.payload;
+            return {...poll, ...action.payload};
 
           return poll;
         });
