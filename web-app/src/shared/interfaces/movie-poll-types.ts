@@ -28,3 +28,8 @@ export interface IRemoveMovie {
     pollId: number;
 }
   
+export interface IPoll_PATCH {
+    name?: string;
+    isOpen?: boolean;
+    endsAt?: Date;
+}
