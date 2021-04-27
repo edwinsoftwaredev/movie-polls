@@ -53,4 +53,16 @@ export default class PollService {
 
     return res.data;
   }
+
+  static async getPollAuthor(pollId: number): Promise<{
+    name: string | undefined,
+    photoURL: string | undefined,
+    uid: string
+  }> {
+    const res = await Axios.get(
+      `${process.env.REACT_APP_API_SERVER}/api/polls/poll/${pollId}/author`,
+    );
+
+    return res.data;
+  }
 }
