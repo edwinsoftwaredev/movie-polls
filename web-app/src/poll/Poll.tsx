@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import MovieService from '../services/movie-service';
 import { pollsSelector } from '../services/slices-selectors/polls';
 import { IPoll } from '../shared/interfaces/movie-poll-types';
@@ -9,7 +9,7 @@ import style from './Poll.module.scss';
 import {ReactComponent as EditVector} from '../shared/resources/vectors/edit-3.svg';
 import {ReactComponent as SaveVector} from '../shared/resources/vectors/save.svg';
 import Spinner from '../shared/spinners/Spinners';
-import { deleteMovie } from '../services/epics/polls';
+import { deleteMovie, patchPoll } from '../services/epics/polls';
 
 enum VOTE_STATUS {
   NOT_FETCHED,
@@ -48,12 +48,20 @@ const PollNameInput: React.FC<{
 }> = ({onChange, init, updatable}) => {
   const [editable, setEditable] = useState(false);
   const [initVal, setInitVal] = useState(init);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (!editable && initVal !== init) {
+    if (!editable && initVal !== init && !isSaving) {
+      setIsSaving(true);
       onChange(initVal);
     }
-  }, [initVal, onChange, editable, init]);
+  }, [initVal, onChange, editable, init, isSaving]);
+
+  useEffect(() => {
+    if (initVal === init && isSaving) {
+      setIsSaving(false);
+    }
+  }, [isSaving, initVal, init]);
   
   return (
     <div className={style['text-input-component']}>
@@ -72,7 +80,7 @@ const PollNameInput: React.FC<{
               className={style['edit-vector']} 
               onClick={e => setEditable(state => !state)}>
               {
-                editable ? <SaveVector /> : <EditVector /> 
+                editable ? <SaveVector /> : isSaving ? <Spinner color={'white'}/> : <EditVector /> 
               } 
             </button>
           ) : null
@@ -83,10 +91,43 @@ const PollNameInput: React.FC<{
 }
 
 const Header: React.FC<{poll: IPoll}> = ({poll}) => {
-  const [pollName, setPollName] = useState(poll.name);
-  const [endDate, setEndDate] = useState(poll.endsAt?.toISOString().split('T')[0] ?? '');
+  const [isDateUpdated, setIsDateUpdated] = useState(true);
+  const [isInvalidDate, setIsInvalidDate] = useState(false);
+  const dispatch = useDispatch();
 
   const now = new Date(new Date().setMinutes(new Date().getMinutes() + 30));
+
+  const handleNameChange = (pollName: string) => {
+    if (poll.id && pollName)
+      dispatch(patchPoll({id: poll.id, pollPatch: {name: pollName}}));
+  };
+
+  const handleEndDateChange = (endDate: string) => {
+    if (new Date(Date.now()) >= new Date(endDate)) {
+      setIsInvalidDate(true);
+    } else {
+      setIsInvalidDate(false);
+    }
+      
+
+    if (poll.id && new Date(Date.now()) <= new Date(endDate)) {
+      setIsDateUpdated(false);
+      dispatch(patchPoll({id: poll.id, pollPatch: {endsAt: new Date(endDate)}}));
+    }
+  }
+
+  const getInitEndDate = (endDate: string) => {
+    const date = new Date(endDate);
+    const year = date.getFullYear();
+    const month = date.getMonth() < 10 ? '0' + (date.getMonth() + 1)  : (date.getMonth() + 1);
+    const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+
+    return `${year}-${month}-${day}T${date.toTimeString().split(':', 2).join(':')}`;
+  };
+
+  useEffect(() => {
+    setIsDateUpdated(true);
+  }, [poll]);
 
   return (
     <Fragment>
@@ -101,7 +142,7 @@ const Header: React.FC<{poll: IPoll}> = ({poll}) => {
         }
         <PollNameInput 
           init={poll.name} 
-          onChange={value => setPollName(value)}
+          onChange={handleNameChange}
           updatable={true && !!poll.isOpen} // this should be based on the ownership of the poll
         />
         <div className={style['space']}></div>
@@ -119,11 +160,13 @@ const Header: React.FC<{poll: IPoll}> = ({poll}) => {
           <div className={style['end-date-picker']}>
             <div>Ends At: </div>
             <input 
+              className={isInvalidDate ? style['invalid-date'] : ''}
               type='datetime-local' 
-              value={endDate} 
+              value={poll.endsAt ? getInitEndDate(poll.endsAt?.toString()) : ''} 
               min={`${now.getFullYear()}-${now.getMonth() < 10 ? '0' + (now.getMonth() + 1) : now.getMonth() + 1}-${now.getDate()}T${now.getHours()}:${now.getMinutes() < 10 ? '0' + now.getMinutes() : now.getMinutes()}`}
               max={new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split(':', 2).join(':')} 
-              onChange={e => setEndDate(e.target.value)}
+              onChange={e => handleEndDateChange(e.target.value)}
+              disabled={!isDateUpdated}
             />
           </div>) : 
           (
@@ -344,7 +387,8 @@ const Poll: React.FC = () => {
   const location = useLocation(); 
   const [totalVotes, setTotalVotes] = useState(0);
   const [voted, setVoted] = useState<VOTE_STATUS>(VOTE_STATUS.NOT_FETCHED); // change to NOT_FETCHED
-
+  // const history = useHistory();
+  
   // when this component loads it does with a token
   // if the token is used then the poll must be considered 
   // as voted by the user.
@@ -356,7 +400,9 @@ const Poll: React.FC = () => {
   }, [location, polls]);
 
   useEffect(() => {
-    setPoll(state => polls?.filter(poll => poll.id === id)[0] ?? state);
+    setPoll(polls && polls.filter(poll => poll.id === id)[0]);
+    // This could leads to memory leaks. Test before implementation.
+    // history.push('/my-polls'); // this should be called for the poll author
   }, [id, polls]);
 
   useEffect(() => {
