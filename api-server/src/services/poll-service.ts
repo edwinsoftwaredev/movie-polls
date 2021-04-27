@@ -224,9 +224,9 @@ export default class PollService {
     // this way over posting is prevented
     // here the requiered fields are EXPLICITLY declared
     const patchData = {
-      ...(pollPatch.name && {name: pollPatch.name}),
-      ...(pollPatch.isOpen && {isOpen: pollPatch.isOpen}),
-      ...(pollPatch.endsAt && new Date(pollPatch.endsAt) && {endsAt: new Date(pollPatch.endsAt)})
+      ...(typeof pollPatch.name !== 'undefined' && {name: pollPatch.name}),
+      ...(typeof pollPatch.isOpen !== 'undefined' && {isOpen: pollPatch.isOpen}),
+      ...(typeof pollPatch.endsAt !== 'undefined' && isNaN(new Date(pollPatch.endsAt).getDate()) && {endsAt: new Date(pollPatch.endsAt)})
     };
 
     const patchedPoll = await prisma.poll.update({
