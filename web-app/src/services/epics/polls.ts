@@ -2,7 +2,7 @@ import { Action } from "@reduxjs/toolkit";
 import { ActionsObservable, Epic, ofType } from "redux-observable";
 import { Observable } from "rxjs";
 import { concatMap, switchMap } from "rxjs/operators";
-import { IPoll, IRemoveMovie } from "../../shared/interfaces/movie-poll-types";
+import { IPoll, IPoll_PATCH, IRemoveMovie } from "../../shared/interfaces/movie-poll-types";
 import PollService from "../poll-service";
 
 enum ActionTypes {
@@ -14,7 +14,8 @@ enum ActionTypes {
   REMOVE_MOVIE_EPIC = 'polls/removeMovie_epic',
   REMOVE_MOVIE = 'polls/removeMovie',
   REMOVE_POLL_EPIC = 'polls/removePoll_epic',
-  REMOVE_POLL = 'polls/removePoll'
+  REMOVE_POLL = 'polls/removePoll',
+  PATCH_POLL = 'polls/patchPoll'
 }
 
 interface IAddPollAction extends Action {
@@ -61,6 +62,11 @@ interface IRemovePollAction extends Action {
   payload: IPoll;
 }
 
+interface IPatchPollAction extends Action {
+  type: ActionTypes.PATCH_POLL;
+  payload: {id: number, pollPatch: IPoll_PATCH}
+}
+
 export const setPoll = (poll: IPoll): ISetPollAction => ({
   type: ActionTypes.SET_POLL,
   payload: poll
@@ -105,6 +111,11 @@ export const deletePoll = (pollId: number): IRemovePollEpicAction => ({
   payload: pollId
 });
 
+export const patchPoll = (payload: {id: number, pollPatch: IPoll_PATCH}): IPatchPollAction => ({
+  type: ActionTypes.PATCH_POLL,
+  payload: payload
+});
+
 export type PollActionTypes = IFetchPollsAction | 
   IAddPollAction | 
   ISetPollAction | 
@@ -113,7 +124,8 @@ export type PollActionTypes = IFetchPollsAction |
   IRemoveMovieAction |
   IRemoveMovieEpic |
   IRemovePollAction |
-  IRemovePollEpicAction;
+  IRemovePollEpicAction |
+  IPatchPollAction;
 
 // Use switchMap when getting data(read)
 // Use either mergeMap or concatMap when posting data(write)
@@ -169,5 +181,15 @@ export const removePollEpic: Epic<PollActionTypes> = (
   concatMap(async (action: IRemovePollEpicAction) => {
     const res = await PollService.removePoll(action.payload);
     return removePoll(res);
+  })
+);
+
+export const patchPollEpic: Epic<PollActionTypes> = (
+  action$: ActionsObservable<PollActionTypes>
+): Observable<PollActionTypes> => action$.pipe(
+  ofType<PollActionTypes, IPatchPollAction>(ActionTypes.PATCH_POLL),
+  concatMap(async (action: IPatchPollAction) => {
+    const res = await PollService.updatePoll(action.payload.id, action.payload.pollPatch);
+    return addPoll(res);
   })
 );
