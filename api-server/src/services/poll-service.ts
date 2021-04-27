@@ -1,6 +1,6 @@
-import { getPollVMFromPoll, getPollVMWithoutMoviesAndTokens, PollInput, PollVM } from "../shared/type-interfaces/movie-poll-types";
+import { getPollVMFromPoll, getPollVMWithoutMoviesAndTokens, IPoll_PATCH, PollInput, PollVM } from "../shared/type-interfaces/movie-poll-types";
 import prisma from '../prisma-client';
-import { MoviePoll, Poll, Prisma } from ".prisma/client";
+import { MoviePoll, Prisma } from ".prisma/client";
 import { getMovieFromMovieDetails } from "../shared/type-interfaces/movie-types";
 import MoviesService from "./movie-service";
 
@@ -197,5 +197,43 @@ export default class PollService {
     const res = await prisma.$transaction([deleteMovies, deletePoll]);
 
     return getPollVMWithoutMoviesAndTokens(res[1]);
+  }
+
+  /**
+   * Patches a Poll
+   * @param pollId The id of the Poll
+   * @param pollPatch The patch object to apply
+   * @param userId The User's ID
+   * @returns a Promise of a Poll
+   */
+  static async patchPoll(pollId: number, pollPatch: IPoll_PATCH, userId: string): Promise<Omit<PollVM, 'movies' | 'tokens'>> {
+    const poll = await prisma.poll.findFirst({where: {id: pollId, AND: {userId: userId}}});
+
+    if (!poll)
+      throw new Error('POLL_NOT_FOUND');
+
+    if (
+      poll.endsAt && pollPatch.endsAt && 
+      (
+        new Date(pollPatch.endsAt) <= new Date() || 
+        isNaN(new Date(pollPatch.endsAt).getDate())
+      )
+    )
+      throw new Error('INVALID_POLL_END_DATE');
+
+    // this way over posting is prevented
+    // here the requiered fields are EXPLICITLY declared
+    const patchData = {
+      ...(pollPatch.name && {name: pollPatch.name}),
+      ...(pollPatch.isOpen && {isOpen: pollPatch.isOpen}),
+      ...(pollPatch.endsAt && new Date(pollPatch.endsAt) && {endsAt: new Date(pollPatch.endsAt)})
+    };
+
+    const patchedPoll = await prisma.poll.update({
+      where: {id: pollId},
+      data: patchData
+    });
+
+    return getPollVMWithoutMoviesAndTokens(patchedPoll);
   }
 }
