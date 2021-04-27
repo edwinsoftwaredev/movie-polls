@@ -95,4 +95,20 @@ router.patch('/poll/:id', async (ctx, next) => {
   ctx.status = 200;
 });
 
+router.get('/poll/:id/author', async (ctx, next) => {
+  const pollId = Number.parseInt(ctx.params.id);
+  if (isNaN(pollId)) {
+    console.error('Bad request when GET method was executed. Reason: Invalid parameter');
+    ctx.throw(400);
+  }
+
+  const author = await PollService.getPollOwner(pollId).catch((error: Error) => {
+    console.error(`An error occurred when getPollOwner was executed. Reason: ${error.message}`);
+    ctx.throw(500);
+  });
+
+  ctx.body = author;
+  ctx.status = 200;
+});
+
 export default router;
