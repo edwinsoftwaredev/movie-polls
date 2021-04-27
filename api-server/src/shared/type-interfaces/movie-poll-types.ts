@@ -37,3 +37,9 @@ export const getPollVMWithoutMoviesAndTokens = (poll: PrismaPoll): Omit<PollVM, 
     name: poll.name
   };
 }
+
+export interface IPoll_PATCH {
+  name?: string;
+  isOpen?: boolean;
+  endsAt?: Date;
+}
