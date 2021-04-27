@@ -37,3 +37,8 @@ export const getIdToken = async () => {
 
   return idToken;
 };
+
+export const getUser = (): firebase.User | null => {
+  const user = firebase.auth().currentUser;
+  return user;
+}
