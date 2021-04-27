@@ -1,7 +1,7 @@
 import Koa from 'koa';
 import Router from '@koa/router';
 import PollService from '../services/poll-service';
-import { PollVM } from '../shared/type-interfaces/movie-poll-types';
+import { IPoll_PATCH, PollVM } from '../shared/type-interfaces/movie-poll-types';
 
 const router = new Router<Koa.DefaultState, Koa.DefaultContext>();
 
@@ -69,6 +69,24 @@ router.delete('/poll/:id', async (ctx, next) => {
   }
 
   const res = await PollService.removePoll(pollId, ctx.userId).catch((error: Error) => {
+    console.error(`An Error occurred when removePoll was executed. Reason: ${error.message}`);
+    ctx.throw(500);
+  });
+
+  ctx.body = res;
+  ctx.status = 200;
+});
+
+router.patch('/poll/:id', async (ctx, next) => {
+  const pollId = Number.parseInt(ctx.params.id);
+  const pollPatch: IPoll_PATCH = ctx.request.body;
+
+  if (isNaN(pollId)) {
+    console.error('Bad request when PATCH method was executed. Reason: Invalid parameter');
+    ctx.throw(400);
+  }
+
+  const res = await PollService.patchPoll(pollId, pollPatch, ctx.userId).catch((error: Error) => {
     console.error(`An Error occurred when removePoll was executed. Reason: ${error.message}`);
     ctx.throw(500);
   });
