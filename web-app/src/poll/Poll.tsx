@@ -10,6 +10,10 @@ import {ReactComponent as EditVector} from '../shared/resources/vectors/edit-3.s
 import {ReactComponent as SaveVector} from '../shared/resources/vectors/save.svg';
 import Spinner from '../shared/spinners/Spinners';
 import { deleteMovie, patchPoll } from '../services/epics/polls';
+import PollService from '../services/poll-service';
+import { userAuthenticationStatusSelector } from '../auth/auth-selectors';
+import { USER_AUTHENTICATION_STATUS } from '../shared/utils/enums';
+import { getUser } from '../firebase-config';
 
 enum VOTE_STATUS {
   NOT_FETCHED,
@@ -70,7 +74,7 @@ const PollNameInput: React.FC<{
           type='text' 
           onChange={e => setInitVal(e.target.value)} 
           value={initVal}
-          disabled={!editable && updatable}
+          disabled={!editable || !updatable}
         />
         {
           updatable ? (
@@ -90,9 +94,16 @@ const PollNameInput: React.FC<{
   )
 }
 
-const Header: React.FC<{poll: IPoll}> = ({poll}) => {
+const Header: React.FC<{
+  poll: IPoll, 
+  changeStatusClbk: () => void,
+  isUpdating: boolean,
+  userIsAuthor: boolean
+}> = ({poll, changeStatusClbk, isUpdating, userIsAuthor}) => {
   const [isDateUpdated, setIsDateUpdated] = useState(true);
   const [isInvalidDate, setIsInvalidDate] = useState(false);
+  const [endDate, setEndDate] = useState(poll.endsAt && new Date(poll.endsAt));
+  const [disabledButton, setDisabledButton] = useState(false);
   const dispatch = useDispatch();
 
   const now = new Date(new Date().setMinutes(new Date().getMinutes() + 30));
@@ -103,16 +114,16 @@ const Header: React.FC<{poll: IPoll}> = ({poll}) => {
   };
 
   const handleEndDateChange = (endDate: string) => {
-    if (new Date(Date.now()) >= new Date(endDate)) {
+    setEndDate(new Date(endDate));
+    if (new Date() >= new Date(endDate)) {
       setIsInvalidDate(true);
     } else {
       setIsInvalidDate(false);
-    }
       
-
-    if (poll.id && new Date(Date.now()) <= new Date(endDate)) {
-      setIsDateUpdated(false);
-      dispatch(patchPoll({id: poll.id, pollPatch: {endsAt: new Date(endDate)}}));
+      if (poll.id && endDate && new Date() <= new Date(endDate)) {
+        setIsDateUpdated(false);
+        dispatch(patchPoll({id: poll.id, pollPatch: {endsAt: new Date(endDate)}}));
+      }
     }
   }
 
@@ -125,25 +136,48 @@ const Header: React.FC<{poll: IPoll}> = ({poll}) => {
     return `${year}-${month}-${day}T${date.toTimeString().split(':', 2).join(':')}`;
   };
 
+  const handleStartPollClick = () => {
+    poll.isOpen && setDisabledButton(!!(poll.endsAt && new Date(poll.endsAt) <= new Date()));
+    changeStatusClbk();
+  };
+
   useEffect(() => {
     setIsDateUpdated(true);
+    poll.isOpen && setDisabledButton(!!(poll.endsAt && new Date(poll.endsAt) <= new Date()));
   }, [poll]);
 
   return (
     <Fragment>
       <div className={
         style['header'] + ' ' +
-        (poll.isOpen ? style['open-poll-header'] : '') 
+        // true => the user is the author of the poll
+        (userIsAuthor ? 
+          !!poll.isOpen ? 
+          style['owner-open-poll-header'] : 
+          style['owner-close-poll-header'] : 
+            !!poll.isOpen ? style['opened-poll'] : 
+            style['closed-poll']
+        ) 
       }>
         {
-          poll.isOpen ? (
-            <button className={style['release-poll-btn']}>START POLL</button>
+          userIsAuthor ? (
+            <button 
+              type={'button'} 
+              className={
+                style['release-poll-btn'] + ' ' +
+                (disabledButton || (poll.isOpen && endDate && endDate <= new Date()) ? style['disabled'] : '')
+              }
+              onClick={handleStartPollClick}
+              disabled={isUpdating || (poll.isOpen && endDate && endDate <= new Date()) || disabledButton}
+            >
+              {isUpdating ? <Spinner color={'white'}/> : poll.isOpen ? 'START POLL' : 'CLOSE POLL'}
+            </button>
           ) : null
         }
         <PollNameInput 
           init={poll.name} 
           onChange={handleNameChange}
-          updatable={true && !!poll.isOpen} // this should be based on the ownership of the poll
+          updatable={userIsAuthor && !!poll.isOpen} // this should be based on the ownership of the poll
         />
         <div className={style['space']}></div>
         {
@@ -160,20 +194,20 @@ const Header: React.FC<{poll: IPoll}> = ({poll}) => {
           <div className={style['end-date-picker']}>
             <div>Ends At: </div>
             <input 
-              className={isInvalidDate ? style['invalid-date'] : ''}
+              className={isInvalidDate || (poll.endsAt && new Date(poll.endsAt) <= new Date()) ? style['invalid-date'] : ''}
               type='datetime-local' 
-              value={poll.endsAt ? getInitEndDate(poll.endsAt?.toString()) : ''} 
+              value={endDate ? getInitEndDate(endDate.toString()) : ''}
               min={`${now.getFullYear()}-${now.getMonth() < 10 ? '0' + (now.getMonth() + 1) : now.getMonth() + 1}-${now.getDate()}T${now.getHours()}:${now.getMinutes() < 10 ? '0' + now.getMinutes() : now.getMinutes()}`}
               max={new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split(':', 2).join(':')} 
               onChange={e => handleEndDateChange(e.target.value)}
-              disabled={!isDateUpdated}
+              disabled={!isDateUpdated || isUpdating}
             />
           </div>) : 
           (
             <div className={style['end-date']}>
-              <div>Ends At: </div>
+              <div>Ends On: </div>
               <div>
-                {new Date().toDateString() + ' ' + new Date().toLocaleTimeString([], {timeStyle: 'short'})}
+                {new Date(poll.endsAt ?? '').toLocaleString([], {dateStyle: 'full', timeStyle: 'short'})}
               </div>
             </div>
           )
@@ -190,7 +224,9 @@ const Movie: React.FC<{
   isOpenPoll: boolean,
   pollId: number,
   voted: VOTE_STATUS,
-  onVote: () => void}> = ({movie, progress, votes, isOpenPoll, pollId, voted, onVote}) => {
+  votable: boolean,
+  isUpdating: boolean
+  onVote: () => void}> = ({movie, progress, votes, isOpenPoll, pollId, voted, votable, isUpdating, onVote}) => {
   const [loadedPoster, setLoadedPoster] = useState(false);
   const [cast, setCast] = useState<string[]>([]);
   const [duration, setDuration] = useState<string>('');
@@ -331,7 +367,11 @@ const Movie: React.FC<{
           </div>
           {
             isOpenPoll ? (
-              <button className={style['delete-movie-btn']} onClick={handleDelete}>
+              <button 
+                className={style['delete-movie-btn'] + ' ' + (isUpdating ? style['disabled'] : '')} 
+                onClick={handleDelete}
+                disabled={isUpdating}
+              >
                   {!showSpinner ? 'Remove' : <Spinner color={'red'} />}
               </button>
             ) : voted === VOTE_STATUS.NOT_FETCHED ? null : voted === VOTE_STATUS.VOTED ? (
@@ -348,10 +388,10 @@ const Movie: React.FC<{
               <button 
                 className={
                   style['vote-movie-button'] + ' ' +
-                  (voted === VOTE_STATUS.VOTING && !movieVoted ? style['disabled'] : '') 
+                  ((voted === VOTE_STATUS.VOTING && !movieVoted) || isUpdating ? style['disabled'] : '') 
                 } 
                 onClick={handleVote}
-                disabled={voted === VOTE_STATUS.VOTING}
+                disabled={voted === VOTE_STATUS.VOTING || isUpdating}
               >
                 {
                   voted === VOTE_STATUS.VOTING && movieVoted ? (
@@ -360,6 +400,19 @@ const Movie: React.FC<{
                 }
               </button>
             )
+          }
+          {
+            !isOpenPoll ? (
+              <div className={style['movie-poll-result']}>
+                <div className={style['movie-poll-result-title']}>
+                  Poll result for this movie: 
+                </div>
+                <MovieResult 
+                  progress={Math.trunc(Math.random()*100)}
+                  votes={Math.trunc(Math.random()*100)} 
+                />
+              </div>  
+            ) : null
           }
         </div>
       </div>
@@ -380,6 +433,22 @@ const MovieResult: React.FC<{progress: number, votes: number}> = ({progress, vot
   );
 };
 
+const PollAuthor: React.FC<{
+  name: string | undefined, 
+  photoURL: string | undefined}> = ({name, photoURL}) => {
+  return (
+    <div className={style['poll-author-component']}>
+      <div className={style['author-photo-container']}>
+        <img src={photoURL} alt={name} className={style['author-photo']} />
+        <div className={style['author-petition']}>
+          <div className={style['author-name']}>{name}</div>
+          <div className={style['author-petition-text']}>would like you to participate in this poll.</div>
+        </div>        
+      </div>
+    </div>
+  );
+};
+
 const Poll: React.FC = () => {
   const [id, setId] = useState<number | null>(null);
   const [poll, setPoll] = useState<IPoll | null>(null);
@@ -387,11 +456,49 @@ const Poll: React.FC = () => {
   const location = useLocation(); 
   const [totalVotes, setTotalVotes] = useState(0);
   const [voted, setVoted] = useState<VOTE_STATUS>(VOTE_STATUS.NOT_FETCHED); // change to NOT_FETCHED
+  const [author, setAuthor] = useState<{
+    name: string | undefined,
+    photoURL: string | undefined, 
+    uid: string}>();
+  const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
+  const [isOpen, setIsOpen] = useState<boolean | undefined>();
+  const dispatch = useDispatch();
   // const history = useHistory();
   
   // when this component loads it does with a token
   // if the token is used then the poll must be considered 
   // as voted by the user.
+
+  const changeStatusClbk = () => {
+    if (
+      poll && 
+      poll.endsAt && 
+      poll.isOpen &&
+      new Date(poll.endsAt) <= new Date()
+    ) {
+      return;
+    }
+    
+    setIsOpen(state => typeof state !== 'undefined' ? !state : state);
+  }
+
+  useEffect(() => {
+    poll &&
+    poll.id &&
+    typeof isOpen !== 'undefined' &&
+    poll.endsAt &&
+    isOpen !== poll.isOpen &&
+    (!poll.isOpen ? true : new Date(poll.endsAt) > new Date()) &&
+    author?.uid === getUser()?.uid && 
+    dispatch(patchPoll({id: poll.id, pollPatch: {isOpen: isOpen}}));
+  }, [dispatch, poll, isOpen, author]);
+
+  useEffect(() => {
+    id !== null && 
+    userAuthenticationStatus !== USER_AUTHENTICATION_STATUS.ERROR_RETRIVING && 
+    userAuthenticationStatus !== USER_AUTHENTICATION_STATUS.NOT_FETCHED &&
+    PollService.getPollAuthor(id).then(res => setAuthor(res));
+  }, [id, userAuthenticationStatus]);
 
   useEffect(() => {
     if (polls && location.search) {
@@ -411,6 +518,7 @@ const Poll: React.FC = () => {
       .map(movie => movie.voteCount)
       .reduce((prev, curr) => prev && curr && prev + curr) ?? 0
     );
+    setIsOpen(state => poll === null || typeof poll === 'undefined' ? state : typeof poll.id === 'undefined' ? state : poll.isOpen);
   }, [poll]);
 
   return (
@@ -424,7 +532,14 @@ const Poll: React.FC = () => {
       {
         !poll || !poll.id ? null : (
           <div className={style['poll-container']}>
-            <Header poll={poll}/>
+            <PollAuthor name={author?.name} photoURL={author?.photoURL} />
+            { /* author ? getUser()?.uid !== author.uid ? <PollAuthor name={author.name} photoURL={author.photoURL} /> : null : null */} 
+            <Header 
+              poll={poll} 
+              changeStatusClbk={changeStatusClbk}
+              isUpdating={isOpen !== poll.isOpen}
+              userIsAuthor={!!(author && getUser()?.uid === author.uid)}
+            />         
             <div className={style['movies-container']}>
             {
               poll.movies.filter(movie => movie.movie).map(movie => (
@@ -437,6 +552,8 @@ const Poll: React.FC = () => {
                     pollId={poll.id as number}
                     voted={voted}
                     onVote={() => setVoted(VOTE_STATUS.VOTING)}
+                    votable={!poll.isOpen && !!author && getUser()?.uid !== author.uid}
+                    isUpdating={isOpen !== poll.isOpen}
                   />
                 </Fragment>
               ))

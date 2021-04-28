@@ -14,6 +14,7 @@
     padding: 0.1vw 0.4vw;
     box-sizing: border-box;
     border-radius: 5px;
+    height: 100%;
     
     &.movie-poll-result {
         .title {
@@ -84,8 +85,20 @@
         grid-template-rows: auto;
         column-gap: 2rem;
 
-        &.open-poll-header {
-            grid-template-columns: auto auto 1fr auto;
+        &.owner-close-poll-header {
+            grid-template-columns: 15% auto 1fr 20% auto;
+        }
+
+        &.owner-open-poll-header {
+            grid-template-columns: 15% auto 1fr auto;
+        }
+
+        &.opened-poll {
+            grid-template-columns: auto 1fr auto;
+        }
+
+        &.closed-poll {
+            grid-template-columns: auto 1fr 20% auto;
         }
 
         .end-date-picker {
@@ -144,10 +157,18 @@
             border: 2px solid goldenrod;
             color: goldenrod;
             background-color: #0f0f0f;
+            min-width: fit-content;
 
             &:hover {
                 cursor: pointer;
                 background-color: #0f0f0fa4;
+            }
+
+            &.disabled {
+                background-color: rgba(15, 15, 15, 0.6);
+                cursor: default;
+                color: rgba(218, 165, 32, 0.6);
+                border: 2px solid rgba(218, 165, 32, 0.6); 
             }
         }
     }
@@ -323,6 +344,12 @@
             &:hover {
                 cursor: pointer;
                 background-color: rgba(255, 0, 0, 0.2);
+            }
+
+            &.disabled {
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                background-color: rgba(255, 255, 255, 0.1);
+                color: rgba(255, 255, 255, 0.3);
             }
         }
 
@@ -517,5 +544,42 @@
                 color: rgba(255, 255, 255, 0.8);
             }
         }
+    }
+}
+
+.poll-author-component {
+    padding: 0 0 2rem 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .author-petition {
+        display: flex;
+        flex-direction: column;
+
+        .author-petition-text {
+            font-family: 'PT Sans Narrow';
+            font-size: calc(1rem + 0.5vw);
+        }
+    }
+
+    .author-photo-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+
+        img {
+            border-radius: 50%;
+            width: calc(1rem + 5vw);
+        }
+    }
+
+    .author-name {
+        font-family: 'PT Sans Narrow';
+        font-size: calc(1rem + 1vw);
+        font-weight: 600;
     }
 }
