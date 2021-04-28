@@ -93,7 +93,7 @@ const PollCardContainer: React.FC<IPollCardContainer> = (props: IPollCardContain
   }, [originalPolls]);
 
   useEffect(() => {
-    setSelectedPolls(polls && polls.slice(0, amount))
+    setSelectedPolls(state => polls && polls.slice(0, amount).length !== 0 ? polls.slice(0, amount) : null);
   }, [polls, amount]);
 
   return (
