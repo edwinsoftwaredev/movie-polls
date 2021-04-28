@@ -153,6 +153,9 @@ export default class PollService {
     if (poll.movies.length === 0)
       throw new Error('EMPTY_POLL');
 
+    if (!poll.isOpen)
+      throw new Error('POLL_NOT_OPEN');
+
     const res = await prisma.moviePoll.delete({
       where: {
         pollId_movieId: {pollId: pollId, movieId: movieId}
@@ -218,7 +221,11 @@ export default class PollService {
       (
         new Date(pollPatch.endsAt) <= new Date() || 
         isNaN(new Date(pollPatch.endsAt).getDate())
-      )
+      ) || 
+      (poll.isOpen && typeof pollPatch.isOpen !== 'undefined' && !pollPatch.isOpen &&
+      ((poll.endsAt && typeof pollPatch.endsAt === 'undefined' && poll.endsAt <= new Date()) || 
+        (typeof pollPatch.endsAt !== 'undefined' && pollPatch.endsAt && new Date(pollPatch.endsAt) <= new Date())
+      )) 
     )
       throw new Error('INVALID_POLL_END_DATE');
 
