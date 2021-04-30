@@ -47,4 +47,5 @@ model Token {
   uuid String @id
   poll Poll @relation(fields: [pollId], references: [id])
   pollId Int
+  used Boolean @default(false)
 }
