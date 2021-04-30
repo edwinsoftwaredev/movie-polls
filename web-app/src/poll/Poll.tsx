@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
 import MovieService from '../services/movie-service';
 import { pollsSelector } from '../services/slices-selectors/polls';
-import { IPoll } from '../shared/interfaces/movie-poll-types';
+import { IPoll, IToken } from '../shared/interfaces/movie-poll-types';
 import { IMovie } from '../shared/interfaces/movie-types';
 import style from './Poll.module.scss';
 import {ReactComponent as EditVector} from '../shared/resources/vectors/edit-3.svg';
@@ -14,6 +14,12 @@ import PollService from '../services/poll-service';
 import { userAuthenticationStatusSelector } from '../auth/auth-selectors';
 import { USER_AUTHENTICATION_STATUS } from '../shared/utils/enums';
 import { getUser } from '../firebase-config';
+import {ReactComponent as DeleteVector} from '../shared/resources/vectors/delete.svg';
+import {ReactComponent as LinkVector} from '../shared/resources/vectors/link.svg';
+import {ReactComponent as CopyVector} from '../shared/resources/vectors/copy.svg';
+import {ReactComponent as ChevronVector} from '../shared/resources/vectors/chevron-down.svg';
+import { addToken } from '../services/epics/token';
+
 
 enum VOTE_STATUS {
   NOT_FETCHED,
@@ -449,6 +455,72 @@ const PollAuthor: React.FC<{
   );
 };
 
+const PollTokens: React.FC<{
+  tokens: IToken[] | undefined,
+  pollId: number
+}> = ({tokens, pollId}) => {
+  const dispatch = useDispatch();
+  const [tokensHidden, setTokensHidden] = useState(true);
+
+  const handleAddTokenClick = () => {
+    dispatch(addToken({pollId: pollId}));
+  }
+
+  return (
+    <div className={style['poll-tokens-component']}>
+      <div className={style['tokens-component-header']}>
+        <div className={style['tokens-component-header-title']}>Poll Tokens</div>
+        <button 
+          onClick={e => setTokensHidden(state => !state)} 
+          className={style['tokens-component-header-show-btn']}
+        >
+          <ChevronVector />
+        </button>
+      </div>
+      <ol className={style['tokens-container']}>
+        {
+          tokens && tokens.length !== 0 ? (
+            tokens.map((token, idx) => (
+              <li key={idx}>
+                <div key={token.uuid} className={style['token-container']}>
+                  <div className={style['token-link-icon']}>
+                    <LinkVector />
+                  </div>
+                  <div className={style['token']}>{`${window.location.host}/poll?id=${pollId}&tid=${token.uuid}`}</div>
+                  <div 
+                    className={
+                      style['token-status'] + ' ' +
+                      (token.used ? style['token-used'] : '')
+                    }
+                  >
+                    {token.used ? 'USED' : 'NOT USED'}
+                  </div>
+                  <button className={style['remove-token-btn']}>
+                    <DeleteVector />
+                  </button>
+                  <button className={style['copy-token-btn']}>
+                    <CopyVector />
+                  </button>
+                </div>
+              </li>
+            ))
+          ) : (
+            <div className={style['token-empty-list-container']}>
+              Add tokens to share with others and let them vote.
+            </div>
+          )
+        }
+      </ol>
+      <button
+        onClick={handleAddTokenClick} 
+        className={style['add-token-btn']}
+      >
+        Add New Token
+      </button>
+    </div>
+  )
+};
+
 const Poll: React.FC = () => {
   const [id, setId] = useState<number | null>(null);
   const [poll, setPoll] = useState<IPoll | null>(null);
@@ -539,7 +611,15 @@ const Poll: React.FC = () => {
               changeStatusClbk={changeStatusClbk}
               isUpdating={isOpen !== poll.isOpen}
               userIsAuthor={!!(author && getUser()?.uid === author.uid)}
-            />         
+            />
+            {
+              !poll.isOpen && author && getUser()?.uid === author.uid ? (
+                <PollTokens
+                  pollId={poll.id}
+                  tokens={poll.tokens}
+                />
+              ) : null
+            }
             <div className={style['movies-container']}>
             {
               poll.movies.filter(movie => movie.movie).map(movie => (
