@@ -4,6 +4,8 @@ import { MoviePoll, Prisma } from ".prisma/client";
 import { getMovieFromMovieDetails } from "../shared/type-interfaces/movie-types";
 import MoviesService from "./movie-service";
 import * as admin from 'firebase-admin';
+import {v4 as uuid4} from 'uuid';
+import { Token } from "@prisma/client";
 
 export default class PollService {
   /**
@@ -245,6 +247,11 @@ export default class PollService {
     return getPollVMWithoutMoviesAndTokens(patchedPoll);
   }
 
+  /**
+   * Gets the details of a Poll Author.
+   * @param pollId the id of the Poll
+   * @returns A Promise with the Poll Author's details
+   */
   static async getPollOwner(pollId: number): Promise<{
     name: string | undefined,
     photoURL: string | undefined,
@@ -264,5 +271,49 @@ export default class PollService {
     };
 
     return user;
+  }
+
+  /**
+   * Creates a Token and adds it to a Poll
+   * @param pollId The Poll id
+   * @param userId The user UUID currently authenticated
+   * @returns a Promise of a Token object
+   */
+  static async createToken(pollId: number, userId: string): Promise<Token> {
+    const poll = await prisma.poll.findFirst({where: {id: pollId, AND: {userId: userId}}});
+
+    if (!poll)
+      throw new Error('POLL_NOT_FOUND');
+    
+    const uuid = uuid4();
+    
+    const token = await prisma.token.create({
+      data: {uuid: uuid, pollId: pollId}
+    });
+
+    return token;
+  }
+
+  /**
+   * Removes a Token object linked to a Poll.
+   * @param pollId The Poll id
+   * @param tokenId The Token uuid
+   * @param userId The user's uuid
+   * @returns A Promise of a Token object removed.
+   */
+  static async removeToken(pollId: number, tokenId: string, userId: string): Promise<Token> {
+    const poll = await prisma.poll.findFirst({where: {id: pollId, AND: {userId: userId, tokens: {some: {uuid: tokenId}}}}});
+    
+    if (!poll)
+      throw new Error('POLL_OR_TOKEN_NOT_FOUND');
+
+    const token = await prisma.token.findUnique({where: {uuid: tokenId}});
+
+    if (!token || token.used)
+      throw new Error('TOKEN_NOT_FOUND_OR_TOKEN_ALREADY_USED'); 
+
+    const res = await prisma.token.delete({where: {uuid: tokenId}});
+
+    return res;
   }
 }
