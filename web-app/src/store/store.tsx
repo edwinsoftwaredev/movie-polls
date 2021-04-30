@@ -13,6 +13,7 @@ import { fetchTopMoviesEpic, TopMoviesAction } from "../services/epics/top-movie
 import { pollsSlice } from "../services/slices-selectors/polls";
 import { setPollEpic, PollActionTypes, fetchPollsEpic, addMovieEpic, removeMovieEpic, removePollEpic, patchPollEpic } from "../services/epics/polls";
 import { fetchSearchResultEpic, SearchMoviesActions } from "../services/epics/search-result-movies";
+import { addTokenEpic, removeTokenEpic, TokenActionsTypes } from "../services/epics/token";
 
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
@@ -32,7 +33,8 @@ type Actions = Top10PopularActions |
   TrendingActions | 
   TopMoviesAction |
   PollActionTypes |
-  SearchMoviesActions;
+  SearchMoviesActions |
+  TokenActionsTypes;
 
 export const rootEpic = (
   action$: ActionsObservable<Actions>,
@@ -50,7 +52,9 @@ export const rootEpic = (
   removeMovieEpic,
   removePollEpic,
   fetchSearchResultEpic,
-  patchPollEpic
+  patchPollEpic,
+  addTokenEpic,
+  removeTokenEpic
 )(action$, store$, dependecies).pipe(catchError((error, source) => {
   console.log(error);
   return source;
