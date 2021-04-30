@@ -1,0 +1,104 @@
+.header {
+    display: grid;
+    grid-template-columns: auto 1fr 20% auto;
+    grid-template-rows: auto;
+    column-gap: 2rem;
+
+    &.owner-close-poll-header {
+        grid-template-columns: 15% auto 1fr 20% auto;
+    }
+
+    &.owner-open-poll-header {
+        grid-template-columns: 15% auto 1fr auto;
+    }
+
+    &.opened-poll {
+        grid-template-columns: auto 1fr auto;
+    }
+
+    &.closed-poll {
+        grid-template-columns: auto 1fr 20% auto;
+    }
+
+    .end-date {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        justify-content: center;
+        align-items: center;
+        font-family: 'PT Sans Narrow';
+        font-size: calc(0.5rem + 1vw);
+        font-weight: 600;
+    }
+
+    .end-date-picker {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+        font-size: calc(0.5rem + 1vw);
+        font-family: 'PT Sans Narrow';
+        font-weight: 600;
+
+        input {
+            height: 100%;
+            font-family: inherit;
+            font-size: inherit;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid transparent;
+            padding: 0 calc(0.5rem + 1vw);
+            border-radius: 5px;
+            color: white;
+            font-weight: 600;
+            outline: 0;
+
+            &:hover {
+                border: 1px solid white;
+            }
+
+            &::-webkit-calendar-picker-indicator {
+                filter: invert(1);
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+
+            &.invalid-date {
+                color: red;
+                border: 1px solid rgba(255, 0, 0, 0.7);
+                background-color: rgba(255, 0, 0, 0.2);
+            }
+
+            &.saving {
+
+            }
+        }
+    }
+
+    .release-poll-btn {
+        font-size: calc(0.5rem + 1vw);
+        padding: calc(0.5rem + 0.1vw) calc(0.5rem + 1vw);
+        box-sizing: border-box;
+        font-weight: 600;
+        font-family: 'PT Sans Narrow';
+        border-radius: 5px;
+        border: 2px solid goldenrod;
+        color: goldenrod;
+        background-color: #0f0f0f;
+        min-width: fit-content;
+
+        &:hover {
+            cursor: pointer;
+            background-color: #0f0f0fa4;
+        }
+
+        &.disabled {
+            background-color: rgba(15, 15, 15, 0.6);
+            cursor: default;
+            color: rgba(218, 165, 32, 0.6);
+            border: 2px solid rgba(218, 165, 32, 0.6); 
+        }
+    }
+}
