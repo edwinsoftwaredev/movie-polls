@@ -113,6 +113,8 @@ export const pollsSlice = createSlice<IPoll[] | null, SliceCaseReducers<IPoll[] 
 
         return poll;
       });
+
+      return state;
     }
   }
 });
