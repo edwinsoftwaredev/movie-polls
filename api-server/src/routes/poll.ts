@@ -111,4 +111,33 @@ router.get('/poll/:id/author', async (ctx, next) => {
   ctx.status = 200;
 });
 
+router.post('/poll/:id/token', async (ctx, next) => {
+  const pollId = Number.parseInt(ctx.params.id);
+
+  if (isNaN(pollId)) {
+    console.error('Bad request when POST method was executed. Reason: Invalid parameter');
+    ctx.throw(400);
+  }
+
+  const res = await PollService.createToken(pollId, ctx.userId);
+
+  ctx.body = res;
+  ctx.status = 200;
+});
+
+router.delete('/poll/:id/:token', async (ctx, next) => {
+  const pollId = Number.parseInt(ctx.params.id);
+  const tokenId = ctx.params.token;
+
+  if (isNaN(pollId) || !tokenId) {
+    console.error('Bad request when DELETE method was executed. Reason: Invalid parameters');
+    ctx.throw(400);
+  }
+
+  const res = await PollService.removeToken(pollId, tokenId, ctx.userId);
+
+  ctx.body = res;
+  ctx.status = 200;
+});
+
 export default router;
