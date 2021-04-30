@@ -1,4 +1,9 @@
 import { IMovie, IMoviesByGenre } from "./movie-types";
+export interface IToken {
+    uuid: string;
+    pollId: number;
+    used: boolean;
+}
 export interface IPoll {
     id?: number;
     name: string;
@@ -7,9 +12,7 @@ export interface IPoll {
         movie?: IMovie,
         voteCount?: number
     }[];
-    tokens?: {
-        uuid: string
-    }[];
+    tokens?: IToken[];
     isOpen?: boolean;
     createdAt?: Date | string;
     endsAt?: Date;
