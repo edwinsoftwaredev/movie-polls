@@ -109,6 +109,8 @@
             font-size: calc(1rem + 1vw);
             padding: 1rem;
             box-sizing: border-box;
+            grid-column: 1 / span 2;
+            margin: auto;
         }
     }
 

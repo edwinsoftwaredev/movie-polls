@@ -32,7 +32,7 @@ const PollTokens: React.FC<{
 
   const handleCopyToClipboardClick = (text: string) => {
     setCopiedToken(text);
-    navigator.clipboard.writeText(`${window.location.host}/poll?id=${pollId}&tid=${text}`);
+    navigator.clipboard.writeText(`${window.location.host}/poll/${pollId}?tid=${text}`);
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       setCopiedToken('');
@@ -106,7 +106,7 @@ const PollTokens: React.FC<{
                       (copiedToken === token.uuid ? style['token-copied'] : '')
                     }
                   >
-                      {`${window.location.host}/poll?id=${pollId}&tid=${token.uuid}`}
+                      {`${window.location.host}/poll/${pollId}?tid=${token.uuid}`}
                   </div>
                   <div 
                     className={
