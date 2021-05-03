@@ -117,7 +117,12 @@ export default class PollService {
         ...pollVM,
         movies: await Promise.all(item.movies.map(async movie => {
           const movieDetails = await MoviesService.fetchMovieDetails(movie.movieId);
-          const movieObj = getMovieFromMovieDetails(movieDetails);
+          const movieObj = {
+            ...movieDetails,
+            genre_names: movieDetails.genres.map(genre => genre.name),
+            genre_ids: movieDetails.genres.map(genre => genre.id),
+            providers: await MoviesService.fetchMovieProviders(movie.movieId)
+          }
 
           return {
             movieId: movie.movieId,
@@ -313,6 +318,45 @@ export default class PollService {
       throw new Error('TOKEN_NOT_FOUND_OR_TOKEN_ALREADY_USED'); 
 
     const res = await prisma.token.delete({where: {uuid: tokenId}});
+
+    return res;
+  }
+
+  /**
+   * Gets a public poll. 
+   * @param pollId the poll id
+   * @param tokenId the token id
+   * @returns A Promise of a Poll with all its content(movies, the token used, etc)
+   */
+  static async getPublicPoll(pollId: number, tokenId: string): Promise<any> {
+    const poll = await prisma
+      .poll
+      .findFirst({
+        include: {movies: true}, // DOT NOT INCLUDE TOKENS HERE!!!
+        where: {id: pollId, AND: {isOpen: false, tokens: {some: {uuid: tokenId}}}}
+      });
+    
+    const token = await prisma.token.findUnique({where: {uuid: tokenId}});
+
+    if (!poll || !token)
+      throw new Error('POLL_OR_TOKEN_NOT_FOUND');
+
+    const res = {
+      ...poll,
+      movies: await Promise.all(poll.movies.map(async movie => {
+        return {
+          ...movie,
+          movie: await MoviesService.fetchMovieDetails(movie.movieId).then(async res => {
+            return {
+              ...res,
+              genre_names: res.genres.map(genre => genre.name),
+              providers: await MoviesService.fetchMovieProviders(movie.movieId)
+            };
+          })
+        } 
+      })),
+      tokens: [token] // MUST ALWAYS RETURN JUST TOKEN BEING USED NOT ALL OF THEM.
+    };
 
     return res;
   }
