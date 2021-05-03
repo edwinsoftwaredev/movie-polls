@@ -15,8 +15,7 @@ const PollCard: React.FC<IPollCard> = (props: IPollCard) => {
 
   const handlePollClick = () => {
     history.push({
-      pathname: '/poll',
-      search: `id=${props.poll.id}`
+      pathname: `/poll/${props.poll.id}`
     });
   };
 
