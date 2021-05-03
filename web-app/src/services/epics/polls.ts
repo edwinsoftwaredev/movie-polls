@@ -15,7 +15,8 @@ enum ActionTypes {
   REMOVE_MOVIE = 'polls/removeMovie',
   REMOVE_POLL_EPIC = 'polls/removePoll_epic',
   REMOVE_POLL = 'polls/removePoll',
-  PATCH_POLL = 'polls/patchPoll'
+  PATCH_POLL = 'polls/patchPoll',
+  GET_PUBLIC_POLL = 'polls/getPublicPoll'
 }
 
 interface IAddPollAction extends Action {
@@ -67,6 +68,11 @@ interface IPatchPollAction extends Action {
   payload: {id: number, pollPatch: IPoll_PATCH}
 }
 
+interface IGetPublicPoll extends Action {
+  type: ActionTypes.GET_PUBLIC_POLL,
+  payload: {pollId: number, tokenId: string}
+}
+
 export const setPoll = (poll: IPoll): ISetPollAction => ({
   type: ActionTypes.SET_POLL,
   payload: poll
@@ -116,6 +122,11 @@ export const patchPoll = (payload: {id: number, pollPatch: IPoll_PATCH}): IPatch
   payload: payload
 });
 
+export const getPublicPoll = (payload: {pollId: number, tokenId: string}): IGetPublicPoll => ({
+  type: ActionTypes.GET_PUBLIC_POLL,
+  payload: payload
+});
+
 export type PollActionTypes = IFetchPollsAction | 
   IAddPollAction | 
   ISetPollAction | 
@@ -125,7 +136,8 @@ export type PollActionTypes = IFetchPollsAction |
   IRemoveMovieEpic |
   IRemovePollAction |
   IRemovePollEpicAction |
-  IPatchPollAction;
+  IPatchPollAction |
+  IGetPublicPoll;
 
 // Use switchMap when getting data(read)
 // Use either mergeMap or concatMap when posting data(write)
@@ -190,6 +202,16 @@ export const patchPollEpic: Epic<PollActionTypes> = (
   ofType<PollActionTypes, IPatchPollAction>(ActionTypes.PATCH_POLL),
   concatMap(async (action: IPatchPollAction) => {
     const res = await PollService.updatePoll(action.payload.id, action.payload.pollPatch);
+    return addPoll(res);
+  })
+);
+
+export const getPublicPollEpic: Epic<PollActionTypes> = (
+  actions$: ActionsObservable<PollActionTypes>
+): Observable<PollActionTypes> => actions$.pipe(
+  ofType<PollActionTypes, IGetPublicPoll>(ActionTypes.GET_PUBLIC_POLL),
+  switchMap(async (action: IGetPublicPoll) => {
+    const res = await PollService.getPublicPoll(action.payload.pollId, action.payload.tokenId);
     return addPoll(res);
   })
 );
