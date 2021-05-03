@@ -142,9 +142,9 @@ function App() {
           <ProtectedRoute exact path='/my-polls'>
             <MyPolls />
           </ProtectedRoute>
-          <ProtectedRoute path='/poll'>
+          <Route path='/poll'>
             <Poll />
-          </ProtectedRoute>
+          </Route>
         </Switch>
         <Footer />
       </Router>
