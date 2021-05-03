@@ -3,6 +3,7 @@ import CSRF from 'koa-csrf';
 import csrfTokenRouter from './csrf_token';
 import movieRouter from './movie';
 import pollRouter from './poll';
+import publicPollRouter from './public-poll';
 import Koa from 'koa';
 import * as admin from 'firebase-admin';
 
@@ -63,7 +64,15 @@ const init = (router: Router<Koa.DefaultState, Koa.DefaultContext>): void => {
   // will be called more than once because the middleware is placed before the nested routes.
   router.use('/api/csrf-token', csrfMiddlewareGenerator, csrfTokenRouter.routes(), csrfTokenRouter.allowedMethods());
   router.use('/api/movies', csrfMiddleware, firebaseTokenValidatorMiddleware, movieRouter.routes(), movieRouter.allowedMethods());
-  router.use('/api/polls', csrfMiddleware, firebaseTokenValidatorMiddleware, pollRouter.routes(), pollRouter.allowedMethods());
+  router.use(
+    '/api/polls', 
+    csrfMiddleware,
+    publicPollRouter.routes(), 
+    publicPollRouter.allowedMethods(), 
+    firebaseTokenValidatorMiddleware, 
+    pollRouter.routes(), 
+    pollRouter.allowedMethods()
+  );
 };
 
 export default init;
