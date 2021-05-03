@@ -65,4 +65,13 @@ export default class PollService {
 
     return res.data;
   }
+
+  static async getPublicPoll(pollId: number, tokenId: string): Promise<IPoll> {
+    const res = await Axios.get(
+      `${process.env.REACT_APP_API_SERVER}/api/polls/poll/${pollId}`,
+      {params: {tid: tokenId}}
+    );
+
+    return res.data;
+  }
 }
