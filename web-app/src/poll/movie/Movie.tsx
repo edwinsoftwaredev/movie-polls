@@ -1,29 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { deleteMovie } from '../../services/epics/polls';
-import MovieService from '../../services/movie-service';
-import { IMovie } from '../../shared/interfaces/movie-types';
+import { IMovieDetail } from '../../shared/interfaces/movie-types';
 import Spinner from '../../shared/spinners/Spinners';
+import { VOTE_STATUS } from '../../shared/utils/enums';
 import MovieResult from '../movie-result/MovieResult';
 import style from './Movie.module.scss';
 
-enum VOTE_STATUS {
-  NOT_FETCHED,
-  VOTED,
-  NOT_VOTED,
-  VOTING
-}
-
 const Movie: React.FC<{
-  movie: IMovie,
+  movie: IMovieDetail,
   progress: number,
   votes: number,
   isOpenPoll: boolean,
   pollId: number,
   voted: VOTE_STATUS,
   votable: boolean,
-  isUpdating: boolean
-  onVote: () => void}> = ({movie, progress, votes, isOpenPoll, pollId, voted, votable, isUpdating, onVote}) => {
+  isUpdating: boolean,
+  userIsAuthor: boolean
+  onVote: () => void}> = ({movie, progress, votes, isOpenPoll, pollId, voted, votable, isUpdating, onVote, userIsAuthor}) => {
   const [loadedPoster, setLoadedPoster] = useState(false);
   const [cast, setCast] = useState<string[]>([]);
   const [duration, setDuration] = useState<string>('');
@@ -46,28 +40,26 @@ const Movie: React.FC<{
   }
 
   useEffect(() => {
-    const getDetails = async (id: number) => {
-      const details = await MovieService.getMovieDetails(id);
-      const hours = Math.floor(details.runtime / 60);
-      const mins = details.runtime % 60;
+    const getDetails = async () => {
+      const hours = Math.floor(movie.runtime / 60);
+      const mins = movie.runtime % 60;
       setDuration(hours + 'h ' + mins + 'm');
-      setCast(details.credits.cast.slice(0, 4).map(value => value.name));
-      setDirector(details.credits.crew.filter(value => value.job === 'Director')[0]?.name ?? '');
+      movie.credits && setCast(movie.credits.cast.slice(0, 4).map(value => value.name));
+      setDirector(movie.credits.crew.filter(value => value.job === 'Director')[0]?.name ?? '');
       setCertificaction(
-        details.release_dates.results
+        movie.release_dates.results
           .filter(value => value.iso_3166_1 === 'US')[0]
           ?.release_dates[0]
           .certification
       )
     };
 
-    const getProviders = async (id: number) => {
-      const result = await MovieService.getMovieProviders(id);
-      setProviders(result);
+    const getProviders = async () => {
+      setProviders(movie.providers);
     };
 
-    getDetails(movie.id);
-    getProviders(movie.id);
+    getDetails();
+    getProviders();
   }, [movie]);
 
   return (
@@ -163,7 +155,7 @@ const Movie: React.FC<{
             </div>
           </div>
           {
-            isOpenPoll ? (
+            isOpenPoll && userIsAuthor ? (
               <button 
                 className={style['delete-movie-btn'] + ' ' + (isUpdating ? style['disabled'] : '')} 
                 onClick={handleDelete}
@@ -199,7 +191,7 @@ const Movie: React.FC<{
             )
           }
           {
-            !isOpenPoll ? (
+            !isOpenPoll && userIsAuthor ? (
               <div className={style['movie-poll-result']}>
                 <div className={style['movie-poll-result-title']}>
                   Poll result for this movie: 
