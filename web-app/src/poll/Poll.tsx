@@ -3,27 +3,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
 import { pollsSelector } from '../services/slices-selectors/polls';
 import { IPoll } from '../shared/interfaces/movie-poll-types';
-import { IMovie } from '../shared/interfaces/movie-types';
+import { IMovieDetail } from '../shared/interfaces/movie-types';
 import style from './Poll.module.scss';
-import { patchPoll } from '../services/epics/polls';
+import { getPublicPoll, patchPoll } from '../services/epics/polls';
 import PollService from '../services/poll-service';
 import { userAuthenticationStatusSelector } from '../auth/auth-selectors';
-import { USER_AUTHENTICATION_STATUS } from '../shared/utils/enums';
+import { USER_AUTHENTICATION_STATUS, VOTE_STATUS } from '../shared/utils/enums';
 import { getUser } from '../firebase-config';
 import Header from './header/Header';
 import PollAuthor from './poll-author/PollAuthor';
 import PollTokens from './poll-tokens/PollTokens';
 import Movie from './movie/Movie';
 
-enum VOTE_STATUS {
-  NOT_FETCHED,
-  VOTED,
-  NOT_VOTED,
-  VOTING
-}
-
-const getId = (search: string): number | null => {
-  const value = Number.parseInt(new URLSearchParams(search).get('id') ?? ''); 
+const getId = (id: string): number | null => {
+  const value = Number.parseInt(id); 
   return Number.isNaN(value) ? null : value;
 }
 
@@ -79,13 +72,17 @@ const Poll: React.FC = () => {
   }, [id, userAuthenticationStatus]);
 
   useEffect(() => {
-    if (polls && location.search) {
-      setId(getId(location.search));
+    if (location.pathname.substring(1).split('/').length >= 2) {
+      setId(getId(location.pathname.substring(1).split('/')[1]));
     }
-  }, [location, polls]);
+  }, [location]);
 
   useEffect(() => {
-    setPoll(polls && polls.filter(poll => poll.id === id)[0]);
+    setPoll(
+      polls && 
+      (id !== null ? true : null) && 
+      polls.filter(poll => poll.id === id)[0]
+    );
     // This could leads to memory leaks. Test before implementation.
     // history.push('/my-polls'); // this should be called for the poll author
   }, [id, polls]);
@@ -96,8 +93,26 @@ const Poll: React.FC = () => {
       .map(movie => movie.voteCount)
       .reduce((prev, curr) => prev && curr && prev + curr) ?? 0
     );
+    poll && 
+    author && 
+    author.uid !== getUser()?.uid && 
+    setVoted(state => typeof poll.tokens === 'undefined' ? 
+      state : 
+      typeof poll.tokens[0] === 'undefined' ? 
+        state : 
+        poll.tokens[0].used ? 
+          VOTE_STATUS.VOTED : 
+          VOTE_STATUS.NOT_VOTED
+    );
     setIsOpen(state => poll === null || typeof poll === 'undefined' ? state : typeof poll.id === 'undefined' ? state : poll.isOpen);
-  }, [poll]);
+  }, [poll, author]);
+
+  useEffect(() => {
+    const tokenId = new URLSearchParams(location.search).get('tid');
+    if (tokenId && id && author && author.uid !== getUser()?.uid) {
+      dispatch(getPublicPoll({pollId: id, tokenId: tokenId}));
+    }
+  }, [id, location, author, dispatch]);
 
   return (
     <div
@@ -130,7 +145,7 @@ const Poll: React.FC = () => {
               poll.movies.filter(movie => movie.movie).map(movie => (
                 <Fragment key={movie.movieId}>
                   <Movie 
-                    movie={movie.movie as IMovie} 
+                    movie={movie.movie as IMovieDetail} 
                     progress={totalVotes === 0 ? 0 : Math.ceil(movie.voteCount ?? 0 / totalVotes)}
                     votes={movie.voteCount ?? 0}
                     isOpenPoll={!!poll.isOpen}
@@ -139,6 +154,7 @@ const Poll: React.FC = () => {
                     onVote={() => setVoted(VOTE_STATUS.VOTING)}
                     votable={!poll.isOpen && !!author && getUser()?.uid !== author.uid}
                     isUpdating={isOpen !== poll.isOpen}
+                    userIsAuthor={!!author && author.uid === getUser()?.uid}
                   />
                 </Fragment>
               ))
