@@ -24,7 +24,7 @@ export interface IMovie {
     key: number; // this is a custom property
 }
 
-export interface IMovieDetail {
+export interface IMovieDetail extends IMovie {
     homepage: string;
     production_countries: {
         iso_3166_1: string;
@@ -48,6 +48,7 @@ export interface IMovieDetail {
         }[];
     };
     runtime: number;
+    providers: {id: number, results: any};
 }
 
 export interface IGenreRequest {
