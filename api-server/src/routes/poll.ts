@@ -31,7 +31,7 @@ router.post('/add-movie', async (ctx, next) => {
   const pollId = Number.parseInt(data.pollId);
   const movieId = Number.parseInt(data.movieId);
   if (isNaN(pollId) || isNaN(movieId))
-    ctx.throw(500);
+    ctx.throw(400);
 
   const res = await PollService.addMovie(pollId, movieId, ctx.userId).catch((error: Error) => {
     console.log(`An error accurred when addMovieToPoll was executed: Message: ${error.message}`);
@@ -92,22 +92,6 @@ router.patch('/poll/:id', async (ctx, next) => {
   });
 
   ctx.body = res;
-  ctx.status = 200;
-});
-
-router.get('/poll/:id/author', async (ctx, next) => {
-  const pollId = Number.parseInt(ctx.params.id);
-  if (isNaN(pollId)) {
-    console.error('Bad request when GET method was executed. Reason: Invalid parameter');
-    ctx.throw(400);
-  }
-
-  const author = await PollService.getPollOwner(pollId).catch((error: Error) => {
-    console.error(`An error occurred when getPollOwner was executed. Reason: ${error.message}`);
-    ctx.throw(500);
-  });
-
-  ctx.body = author;
   ctx.status = 200;
 });
 
