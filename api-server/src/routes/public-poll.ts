@@ -40,4 +40,26 @@ router.get('/poll/:id', async (ctx, next) => {
   ctx.body = res;
 });
 
+router.patch('/poll/:id/vote', async (ctx, next) => {
+  const pollId = Number.parseInt(ctx.params.id);
+  const body: {tokenId: string, movieId: number} | undefined = ctx.request.body;
+
+  if (isNaN(pollId)) {
+    console.error('Bad Request. Reason: one or more request parameters are not valid.');
+    ctx.throw(400);
+  }
+
+  if (!body){
+    console.log('Bad Request. Reason: Request body is not valid.');
+    ctx.throw(400);
+  } else {
+    const res = await PollService.setVote(pollId, body.tokenId, body.movieId).catch((reason: Error) => {
+      console.error(`An Error occurred when setVote was executed. Reason: ${reason.message}`);
+      ctx.throw(500);
+    });
+    ctx.status = 200;
+    ctx.body = res;
+  }
+});
+
 export default router;
