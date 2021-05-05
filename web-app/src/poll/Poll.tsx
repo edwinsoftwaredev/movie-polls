@@ -33,6 +33,7 @@ const Poll: React.FC = () => {
     uid: string}>();
   const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
   const [isOpen, setIsOpen] = useState<boolean | undefined>();
+  const [tokenId, setTokenId] = useState<string | null>(null);
   const dispatch = useDispatch();
   // const history = useHistory();
   
@@ -88,10 +89,10 @@ const Poll: React.FC = () => {
   }, [id, polls]);
 
   useEffect(() => {
-    setTotalVotes(state => poll?.movies
-      .filter(movie => movie.movie)
-      .map(movie => movie.voteCount)
-      .reduce((prev, curr) => prev && curr && prev + curr) ?? 0
+    poll && setTotalVotes(state => poll.movies
+      // .filter(movie => movie.movie)
+      .map(movie => movie.voteCount ?? 0)
+      .reduce((prev, curr) => prev + curr)
     );
     poll && 
     author && 
@@ -110,6 +111,7 @@ const Poll: React.FC = () => {
   useEffect(() => {
     const tokenId = new URLSearchParams(location.search).get('tid');
     if (tokenId && id && author && author.uid !== getUser()?.uid) {
+      setTokenId(tokenId);
       dispatch(getPublicPoll({pollId: id, tokenId: tokenId}));
     }
   }, [id, location, author, dispatch]);
@@ -146,7 +148,7 @@ const Poll: React.FC = () => {
                 <Fragment key={movie.movieId}>
                   <Movie 
                     movie={movie.movie as IMovieDetail} 
-                    progress={totalVotes === 0 ? 0 : Math.ceil(movie.voteCount ?? 0 / totalVotes)}
+                    progress={totalVotes ? Math.ceil(((movie.voteCount ?? 0) / totalVotes)*100) : 0}
                     votes={movie.voteCount ?? 0}
                     isOpenPoll={!!poll.isOpen}
                     pollId={poll.id as number}
@@ -155,6 +157,8 @@ const Poll: React.FC = () => {
                     votable={!poll.isOpen && !!author && getUser()?.uid !== author.uid}
                     isUpdating={isOpen !== poll.isOpen}
                     userIsAuthor={!!author && author.uid === getUser()?.uid}
+                    tokenId={tokenId}
+                    endsAt={poll.endsAt}
                   />
                 </Fragment>
               ))
