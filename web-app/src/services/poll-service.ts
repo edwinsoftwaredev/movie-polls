@@ -1,4 +1,4 @@
-import { IPoll, IPoll_PATCH, IRemoveMovie } from "../shared/interfaces/movie-poll-types";
+import { IPoll, IPoll_PATCH, IRemoveMovie, IVote } from "../shared/interfaces/movie-poll-types";
 import Axios from 'axios';
 
 export default class PollService {
@@ -70,6 +70,15 @@ export default class PollService {
     const res = await Axios.get(
       `${process.env.REACT_APP_API_SERVER}/api/polls/poll/${pollId}`,
       {params: {tid: tokenId}}
+    );
+
+    return res.data;
+  }
+
+  static async setVote(pollId: number, tokenId: string, movieId: number): Promise<IVote> {
+    const res = await Axios.patch(
+      `${process.env.REACT_APP_API_SERVER}/api/polls/poll/${pollId}/vote`,
+      {pollId: pollId, movieId: movieId, tokenId: tokenId}
     );
 
     return res.data;
