@@ -11,7 +11,7 @@ import { trendingSlice } from "../services/slices-selectors/trending-movies";
 import { topMovies } from "../services/slices-selectors/top-movies";
 import { fetchTopMoviesEpic, TopMoviesAction } from "../services/epics/top-movies";
 import { pollsSlice } from "../services/slices-selectors/polls";
-import { setPollEpic, PollActionTypes, fetchPollsEpic, addMovieEpic, removeMovieEpic, removePollEpic, patchPollEpic, getPublicPollEpic } from "../services/epics/polls";
+import { setPollEpic, PollActionTypes, fetchPollsEpic, addMovieEpic, removeMovieEpic, removePollEpic, patchPollEpic, getPublicPollEpic, setVoteEpic } from "../services/epics/polls";
 import { fetchSearchResultEpic, SearchMoviesActions } from "../services/epics/search-result-movies";
 import { addTokenEpic, removeTokenEpic, TokenActionsTypes } from "../services/epics/token";
 
@@ -55,7 +55,8 @@ export const rootEpic = (
   patchPollEpic,
   addTokenEpic,
   removeTokenEpic,
-  getPublicPollEpic
+  getPublicPollEpic,
+  setVoteEpic
 )(action$, store$, dependecies).pipe(catchError((error, source) => {
   console.log(error);
   return source;
