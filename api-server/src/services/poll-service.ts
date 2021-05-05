@@ -57,12 +57,12 @@ export default class PollService {
    */
   static async addMovie(pollId: number, movieId: number, userId: string): Promise<PollVM> {
     const poll = await prisma.poll.findFirst({
-      where: {id: pollId, AND: {userId: userId}},
+      where: {id: pollId, AND: {userId: userId, isOpen: true}},
       include: {movies: true}
     });
 
     if (!poll)
-      throw new Error('NOT_VALID_USER');
+      throw new Error('POLL_NOT_FOUND');
 
     // Each poll has a limit of five movies.
     if (poll.movies.length >= 5) 
@@ -111,6 +111,7 @@ export default class PollService {
      * Array.map(). Just wrap "map()" function with "await Promise.all()"
      */
     const polls = await Promise.all(res.map(async item => {
+      const tokenQty = item.tokens.length;
       const pollVM = getPollVMFromPoll(item);
 
       return {
@@ -129,7 +130,8 @@ export default class PollService {
             voteCount: movie.voteCount,
             movie: movieObj
           };
-        }))
+        })),
+        tokenQty: tokenQty
       };
     }));
 
@@ -186,15 +188,11 @@ export default class PollService {
    * @returns a Promise containing a PollVM object
    */
   static async removePoll(pollId: number, userId: string): Promise<Omit<PollVM, 'movies' | 'tokens'>> {
-    const poll = await prisma.poll.findFirst({where: {id: pollId}});
+    const poll = await prisma.poll.findFirst({where: {id: pollId, userId: userId}});
 
     // checks if poll exist
     if (!poll)
       throw new Error('POLL_NOT_FOUND');
-    
-    // checks if the current user is the poll owner
-    if (poll.userId !== userId)
-      throw new Error('USER_POLL_BAD_ACCESS');
     
     // Because cascading deletes in Prisma are a FUTURE RELEASE, at the moment,
     // deleting a poll with its own movies should be done in two operations:
@@ -204,10 +202,11 @@ export default class PollService {
 
     const deleteMovies = prisma.moviePoll.deleteMany({where: {pollId: pollId}});
     const deletePoll = prisma.poll.delete({where: {id: pollId}});
+    const deleteTokens = prisma.token.deleteMany({where: {pollId: pollId}});
 
-    const res = await prisma.$transaction([deleteMovies, deletePoll]);
+    const res = await prisma.$transaction([deleteTokens, deleteMovies, deletePoll]);
 
-    return getPollVMWithoutMoviesAndTokens(res[1]);
+    return getPollVMWithoutMoviesAndTokens(res[2]);
   }
 
   /**
@@ -234,7 +233,7 @@ export default class PollService {
         (typeof pollPatch.endsAt !== 'undefined' && pollPatch.endsAt && new Date(pollPatch.endsAt) <= new Date())
       )) 
     )
-      throw new Error('INVALID_POLL_END_DATE');
+      throw new Error('INVALID_POLL_END_DATE');        
 
     // this way over posting is prevented
     // here the requiered fields are EXPLICITLY declared
@@ -243,6 +242,24 @@ export default class PollService {
       ...(typeof pollPatch.isOpen !== 'undefined' && {isOpen: pollPatch.isOpen}),
       ...(typeof pollPatch.endsAt !== 'undefined' && !isNaN(new Date(pollPatch.endsAt).getDate()) && {endsAt: new Date(pollPatch.endsAt)})
     };
+
+    // tokens are removed when the poll is changed from open to close.
+    if (typeof patchData.isOpen !== 'undefined') {
+      const deletedTokens = prisma.token.deleteMany({where: {pollId: pollId}});
+      const resetVotes = prisma.moviePoll.updateMany({
+        where: {pollId: pollId},
+        data: {voteCount: 0}
+      });
+      const patchedPoll = prisma.poll.update({
+        where: {id: pollId},
+        data: patchData    
+      });
+
+      // check returned value when transaction fails
+      const transaction = await prisma.$transaction([resetVotes, deletedTokens, patchedPoll]);
+
+      return transaction[2];
+    }
 
     const patchedPoll = await prisma.poll.update({
       where: {id: pollId},
@@ -285,10 +302,19 @@ export default class PollService {
    * @returns a Promise of a Token object
    */
   static async createToken(pollId: number, userId: string): Promise<Token> {
-    const poll = await prisma.poll.findFirst({where: {id: pollId, AND: {userId: userId}}});
+    const poll = await prisma.poll.findFirst({
+      include: {tokens: true},
+      where: {id: pollId, AND: {userId: userId}}
+    });
 
     if (!poll)
       throw new Error('POLL_NOT_FOUND');
+
+    if (poll.tokens.length >= 50)
+      throw new Error('MAX_TOKEN_REQUEST_LIMIT_REACHED');
+
+    if (poll.isOpen)
+      throw new Error('OPENED_POLL');
     
     const uuid = uuid4();
     
@@ -307,7 +333,15 @@ export default class PollService {
    * @returns A Promise of a Token object removed.
    */
   static async removeToken(pollId: number, tokenId: string, userId: string): Promise<Token> {
-    const poll = await prisma.poll.findFirst({where: {id: pollId, AND: {userId: userId, tokens: {some: {uuid: tokenId}}}}});
+    const poll = await prisma.poll.findFirst({
+      where: {
+        id: pollId, 
+        AND: {
+          userId: userId, 
+          tokens: {some: {uuid: tokenId}}
+        }
+      }
+    });
     
     if (!poll)
       throw new Error('POLL_OR_TOKEN_NOT_FOUND');
@@ -341,6 +375,8 @@ export default class PollService {
     if (!poll || !token)
       throw new Error('POLL_OR_TOKEN_NOT_FOUND');
 
+    const tokenQty = await prisma.token.count({where: {pollId: pollId}});
+
     const res = {
       ...poll,
       movies: await Promise.all(poll.movies.map(async movie => {
@@ -353,11 +389,56 @@ export default class PollService {
               providers: await MoviesService.fetchMovieProviders(movie.movieId)
             };
           })
-        } 
+        }
       })),
-      tokens: [token] // MUST ALWAYS RETURN JUST TOKEN BEING USED NOT ALL OF THEM.
+      tokens: [token], // MUST ALWAYS RETURN JUST TOKEN BEING USED NOT ALL OF THEM.
+      tokenQty: tokenQty
     };
 
     return res;
+  }
+
+  static async setVote(pollId: number, tokenId: string, movieId: number): Promise<{
+    movie: MoviePoll,
+    token: Token
+  }> {
+    const moviesInPoll = await prisma.poll.findFirst({
+      where: {
+        id: pollId, 
+        AND: {
+          isOpen: false, 
+          tokens: {
+            some: {uuid: tokenId, AND: {used: false}}
+          },
+          movies: {
+            some: {movieId: movieId}
+          },
+          endsAt: {gt: new Date()}
+        }
+      },
+      select: {movies: {where: {movieId: movieId}}}
+    });
+
+    if (!moviesInPoll || moviesInPoll.movies.length !== 1)
+      throw new Error('OBJECT_NOT_FOUND');
+
+    const token = prisma.token.update({
+      where: {uuid: tokenId},
+      data: {used: true}
+    });
+
+    const movieInPoll = moviesInPoll.movies[0];
+
+    const movie = prisma.moviePoll.update({
+      where: {pollId_movieId: {pollId: pollId, movieId: movieId}},
+      data: {voteCount: movieInPoll.voteCount + 1}
+    });
+
+    const transaction = await prisma.$transaction([token, movie]);
+
+    return {
+      movie: transaction[1],
+      token: transaction[0]
+    };
   }
 }
