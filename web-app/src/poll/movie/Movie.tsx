@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { deleteMovie } from '../../services/epics/polls';
+import { deleteMovie, vote } from '../../services/epics/polls';
 import { IMovieDetail } from '../../shared/interfaces/movie-types';
 import Spinner from '../../shared/spinners/Spinners';
 import { VOTE_STATUS } from '../../shared/utils/enums';
@@ -16,8 +16,10 @@ const Movie: React.FC<{
   voted: VOTE_STATUS,
   votable: boolean,
   isUpdating: boolean,
-  userIsAuthor: boolean
-  onVote: () => void}> = ({movie, progress, votes, isOpenPoll, pollId, voted, votable, isUpdating, onVote, userIsAuthor}) => {
+  userIsAuthor: boolean,
+  tokenId?: string | null,
+  endsAt?: Date
+  onVote: () => void}> = ({movie, progress, votes, isOpenPoll, pollId, voted, votable, isUpdating, onVote, userIsAuthor, tokenId, endsAt}) => {
   const [loadedPoster, setLoadedPoster] = useState(false);
   const [cast, setCast] = useState<string[]>([]);
   const [duration, setDuration] = useState<string>('');
@@ -36,11 +38,13 @@ const Movie: React.FC<{
   const handleVote = () => {
     onVote();
     setMovieVoted(true);
-    // dispatch(somethig);
+    votable && 
+    tokenId &&
+    dispatch(vote({pollId: pollId, movieId: movie.id, tokenId: tokenId}));
   }
 
   useEffect(() => {
-    const getDetails = async () => {
+    const getDetails = () => {
       const hours = Math.floor(movie.runtime / 60);
       const mins = movie.runtime % 60;
       setDuration(hours + 'h ' + mins + 'm');
@@ -54,7 +58,7 @@ const Movie: React.FC<{
       )
     };
 
-    const getProviders = async () => {
+    const getProviders = () => {
       setProviders(movie.providers);
     };
 
@@ -120,11 +124,11 @@ const Movie: React.FC<{
         <div className={style['poll-data']}>
           <div className={style['providers']}>
             {
-              providers && providers['US'].flatrate && <div className={style['providers-title']}>STREAMING ON</div>
+              providers && providers['US'] && providers['US'].flatrate && <div className={style['providers-title']}>STREAMING ON</div>
             }
             <div className={style['providers-container']}>
               {
-                providers && providers['US'].flatrate && providers['US'].flatrate.map((provider: any) => (
+                providers && providers['US'] && providers['US'].flatrate && providers['US'].flatrate.map((provider: any) => (
                   <div key={provider.provider_id} className={style['image-provider-container']}>
                     <img
                       className={style['provider-img']}
@@ -136,10 +140,11 @@ const Movie: React.FC<{
                 ))
               }
             </div>
-            {providers && providers['US'].rent && <div className={style['providers-title']}>AVAILABLE ON</div>}
+            {providers && providers['US'] && providers['US'].rent && <div className={style['providers-title']}>AVAILABLE ON</div>}
             <div className={style['providers-container']}>
               {
                 providers && 
+                providers['US'] &&
                 providers['US'].rent &&
                 providers['US'].rent.map((provider: any) => (
                   <div key={provider.provider_id} className={style['image-provider-container']}>
@@ -163,15 +168,15 @@ const Movie: React.FC<{
               >
                   {!showSpinner ? 'Remove' : <Spinner color={'red'} />}
               </button>
-            ) : voted === VOTE_STATUS.NOT_FETCHED ? null : voted === VOTE_STATUS.VOTED ? (
+            ) : voted === VOTE_STATUS.NOT_FETCHED ? null : voted === VOTE_STATUS.VOTED || (endsAt && new Date(endsAt) <= new Date()) ? (
               <div className={style['movie-poll-result']}>
                 <div className={style['movie-poll-result-title']}>
                   Poll result for this movie: 
                 </div>
-                <MovieResult 
-                  progress={Math.trunc(Math.random()*100)}
-                  votes={Math.trunc(Math.random()*100)} 
-                /> {/* change mock value by progress parameter */}
+                <MovieResult
+                  progress={progress}
+                  votes={votes} 
+                />
               </div>   
             ) : (
               <button 
@@ -197,8 +202,8 @@ const Movie: React.FC<{
                   Poll result for this movie: 
                 </div>
                 <MovieResult 
-                  progress={Math.trunc(Math.random()*100)}
-                  votes={Math.trunc(Math.random()*100)} 
+                  progress={progress}
+                  votes={votes} 
                 />
               </div>  
             ) : null
