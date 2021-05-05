@@ -17,6 +17,7 @@ const Header: React.FC<{
   const [isInvalidDate, setIsInvalidDate] = useState(false);
   const [endDate, setEndDate] = useState(poll.endsAt && new Date(poll.endsAt));
   const [disabledButton, setDisabledButton] = useState(false);
+  const [progress, setProgress] = useState(0);
   const dispatch = useDispatch();
 
   const now = new Date(new Date().setMinutes(new Date().getMinutes() + 30));
@@ -55,6 +56,9 @@ const Header: React.FC<{
   };
 
   useEffect(() => {
+    const totalVotes = poll.movies.map(movie => movie.voteCount ?? 0).reduce((acc, curr) => acc + curr) ?? 0;
+    const tokenQty = poll.tokenQty;
+    setProgress(tokenQty ? Math.ceil((totalVotes / tokenQty)*100) : 0);
     setIsDateUpdated(true);
     poll.isOpen && setDisabledButton(!!(poll.endsAt && new Date(poll.endsAt) <= new Date()));
   }, [poll]);
@@ -105,7 +109,7 @@ const Header: React.FC<{
         {
           poll.isOpen ? null : (
             <ProgressBar 
-              progress={Math.trunc(Math.random()*100)} 
+              progress={progress}
               title={'Poll Progress'} 
               type={'normal'}
             />
@@ -124,10 +128,17 @@ const Header: React.FC<{
               onChange={e => handleEndDateChange(e.target.value)}
               disabled={!isDateUpdated || isUpdating}
             />
-          </div>) : 
+          </div>) : poll.endsAt && new Date(poll.endsAt) > new Date() ?
           (
             <div className={style['end-date']}>
               <div>Ends On: </div>
+              <div>
+                {new Date(poll.endsAt ?? '').toLocaleString([], {dateStyle: 'full', timeStyle: 'short'})}
+              </div>
+            </div>
+          ) : (
+            <div className={style['ended-date']}>
+              <div>Ended On: </div>
               <div>
                 {new Date(poll.endsAt ?? '').toLocaleString([], {dateStyle: 'full', timeStyle: 'short'})}
               </div>
