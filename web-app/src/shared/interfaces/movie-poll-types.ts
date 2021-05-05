@@ -16,6 +16,7 @@ export interface IPoll {
     isOpen?: boolean;
     createdAt?: Date | string;
     endsAt?: Date;
+    tokenQty?: number;
 };
 
 interface ITopMoviesFilters {
@@ -35,4 +36,17 @@ export interface IPoll_PATCH {
     name?: string;
     isOpen?: boolean;
     endsAt?: Date;
+}
+
+export interface IVote {
+    movie: {
+        movieId: number,
+        pollId: number,
+        voteCount: number,
+    };
+    token: {
+        uuid: string,
+        used: boolean,
+        pollId: number,
+    };
 }
