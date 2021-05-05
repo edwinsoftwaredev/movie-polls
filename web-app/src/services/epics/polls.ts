@@ -2,7 +2,7 @@ import { Action } from "@reduxjs/toolkit";
 import { ActionsObservable, Epic, ofType } from "redux-observable";
 import { Observable } from "rxjs";
 import { concatMap, switchMap } from "rxjs/operators";
-import { IPoll, IPoll_PATCH, IRemoveMovie } from "../../shared/interfaces/movie-poll-types";
+import { IPoll, IPoll_PATCH, IRemoveMovie, IVote } from "../../shared/interfaces/movie-poll-types";
 import PollService from "../poll-service";
 
 enum ActionTypes {
@@ -16,7 +16,9 @@ enum ActionTypes {
   REMOVE_POLL_EPIC = 'polls/removePoll_epic',
   REMOVE_POLL = 'polls/removePoll',
   PATCH_POLL = 'polls/patchPoll',
-  GET_PUBLIC_POLL = 'polls/getPublicPoll'
+  GET_PUBLIC_POLL = 'polls/getPublicPoll',
+  SET_VOTE = 'polls/setVote',
+  VOTE = 'polls/vote'
 }
 
 interface IAddPollAction extends Action {
@@ -73,6 +75,16 @@ interface IGetPublicPoll extends Action {
   payload: {pollId: number, tokenId: string}
 }
 
+interface IVoteAction extends Action {
+  type: ActionTypes.VOTE;
+  payload: {pollId: number, tokenId: string, movieId: number};
+}
+
+interface ISetVoteAction extends Action {
+  type: ActionTypes.SET_VOTE;
+  payload: IVote
+}
+
 export const setPoll = (poll: IPoll): ISetPollAction => ({
   type: ActionTypes.SET_POLL,
   payload: poll
@@ -127,6 +139,16 @@ export const getPublicPoll = (payload: {pollId: number, tokenId: string}): IGetP
   payload: payload
 });
 
+const setVote = (payload: IVote): ISetVoteAction => ({
+  type: ActionTypes.SET_VOTE,
+  payload: payload
+});
+
+export const vote = (payload: {pollId: number, movieId: number, tokenId: string}): IVoteAction => ({
+  type: ActionTypes.VOTE,
+  payload: payload
+});
+
 export type PollActionTypes = IFetchPollsAction | 
   IAddPollAction | 
   ISetPollAction | 
@@ -137,7 +159,9 @@ export type PollActionTypes = IFetchPollsAction |
   IRemovePollAction |
   IRemovePollEpicAction |
   IPatchPollAction |
-  IGetPublicPoll;
+  IGetPublicPoll |
+  ISetVoteAction |
+  IVoteAction;
 
 // Use switchMap when getting data(read)
 // Use either mergeMap or concatMap when posting data(write)
@@ -213,5 +237,19 @@ export const getPublicPollEpic: Epic<PollActionTypes> = (
   switchMap(async (action: IGetPublicPoll) => {
     const res = await PollService.getPublicPoll(action.payload.pollId, action.payload.tokenId);
     return addPoll(res);
+  })
+);
+
+export const setVoteEpic: Epic<PollActionTypes> = (
+  action$: ActionsObservable<PollActionTypes>
+): Observable<PollActionTypes> => action$.pipe(
+  ofType<PollActionTypes, IVoteAction>(ActionTypes.VOTE),
+  concatMap(async (action: IVoteAction) => {
+    const pollId = action.payload.pollId;
+    const movieId = action.payload.movieId;
+    const tokenId = action.payload.tokenId;
+
+    const res = await PollService.setVote(pollId, tokenId, movieId);
+    return setVote(res);
   })
 );
