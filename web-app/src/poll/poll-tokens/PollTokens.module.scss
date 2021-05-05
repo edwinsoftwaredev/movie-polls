@@ -162,7 +162,7 @@
 
     .token-container {
         display: grid;
-        grid-template-columns: auto 1fr auto auto auto;
+        grid-template-columns: auto 1fr 10% auto auto;
         grid-template-rows: auto;
         font-size: calc(0.3rem + 0.9vw);  
         font-family: 'PT Sans Narrow';
@@ -193,6 +193,7 @@
             justify-content: center;
             padding: 0 calc(0.3rem + 0.5vw);
             box-sizing: border-box;
+            text-align: center;
         }
 
         button {
@@ -224,6 +225,17 @@
             &.remove-token-btn {
                 svg {
                     color: rgb(209, 34, 34);
+                }
+
+                &:disabled {
+                    svg {
+                        color: rgba(255, 255, 255, 0.1);    
+                    }
+
+                    &:hover {
+                        cursor: default;
+                        background-color: rgba(255, 255, 255, 0.2);
+                    }
                 }
             }
         }

@@ -117,10 +117,10 @@ const PollTokens: React.FC<{
                     {token.used ? 'USED' : 'NOT USED'}
                   </div>
                   <button
-                    title='Remove Token' 
-                    onClick={e => handleRemoveTokenClick(token.uuid)} 
+                    title={!token.used ? 'Remove Token' : 'Token is already used'} 
+                    onClick={e => !token.used && handleRemoveTokenClick(token.uuid)} 
                     className={style['remove-token-btn']}
-                    disabled={removedTokens.filter(t => t === token.uuid).length !== 0 ? true : false}
+                    disabled={token.used || removedTokens.filter(t => t === token.uuid).length !== 0 ? true : false}
                   >
                     {removedTokens.filter(t => t === token.uuid).length !== 0 ? <Spinner color={'red'} /> : <DeleteVector />}
                   </button>
