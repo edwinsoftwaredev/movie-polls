@@ -64,8 +64,8 @@ const MovieCard: React.FC<IMovieCard> = (props: IMovieCard) => {
                 alt={props.movie.title}
                 src={
                   sliderProperties.isMobile ?
-                  `${process.env.REACT_APP_TMDB_API_POSTER_URL}/${props.movie.poster_path}` : 
-                  `${process.env.REACT_APP_TMDB_API_BACKDROP_URL}/${props.movie.backdrop_path}`                   
+                  `${process.env.REACT_APP_TMDB_API_POSTER_URL}${props.movie.poster_path}` : 
+                  `${process.env.REACT_APP_TMDB_API_BACKDROP_URL}${props.movie.backdrop_path}`                   
                 }
                 onLoad={e => setLoaded(true)}
               />
