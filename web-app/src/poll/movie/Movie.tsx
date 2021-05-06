@@ -49,8 +49,8 @@ const Movie: React.FC<{
       const mins = movie.runtime % 60;
       setDuration(hours + 'h ' + mins + 'm');
       movie.credits && setCast(movie.credits.cast.slice(0, 4).map(value => value.name));
-      setDirector(movie.credits.crew.filter(value => value.job === 'Director')[0]?.name ?? '');
-      setCertificaction(
+      movie.credits && setDirector(movie.credits.crew.filter(value => value.job === 'Director')[0]?.name ?? '');
+      movie.release_dates && setCertificaction(
         movie.release_dates.results
           .filter(value => value.iso_3166_1 === 'US')[0]
           ?.release_dates[0]
@@ -77,7 +77,7 @@ const Movie: React.FC<{
           onLoad={e => setLoadedPoster(true)}
           title={movie.title}
           alt={movie.title}
-          src={`${process.env.REACT_APP_TMDB_API_BACKDROP_URL}/${movie.backdrop_path}`} 
+          src={`${process.env.REACT_APP_TMDB_API_BACKDROP_URL}${movie.backdrop_path}`} 
         />
       </div>
       <div className={style['movie-data']}>
@@ -134,7 +134,7 @@ const Movie: React.FC<{
                       className={style['provider-img']}
                       alt={provider.provider_name}
                       title={provider.provider_name}
-                      src={`${process.env.REACT_APP_TMDB_API_PROVIDER_IMAGE}/${provider.logo_path}`}
+                      src={`${process.env.REACT_APP_TMDB_API_PROVIDER_IMAGE}${provider.logo_path}`}
                     />
                   </div>
                 ))
@@ -152,7 +152,7 @@ const Movie: React.FC<{
                       className={style['provider-img']}
                       alt={provider.provider_name}
                       title={provider.provider_name}
-                      src={`${process.env.REACT_APP_TMDB_API_PROVIDER_IMAGE}/${provider.logo_path}`}
+                      src={`${process.env.REACT_APP_TMDB_API_PROVIDER_IMAGE}${provider.logo_path}`}
                     />
                   </div>
                 )) 
