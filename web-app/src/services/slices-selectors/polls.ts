@@ -21,7 +21,7 @@ export const pollsSlice = createSlice<IPoll[] | null, SliceCaseReducers<IPoll[] 
             return {
               ...poll, 
               ...action.payload,
-              movies: isOpenPatch ? poll.movies.map(movie => ({...movie, voteCount: 0})) : poll.movies,
+              movies: isOpenPatch ? poll.movies.map(movie => ({...movie, voteCount: 0})) : action.payload.movies,
               tokens: isOpenPatch ? [] : poll.tokens,
               tokenQty: isOpenPatch ? 0 : poll.tokenQty
             };
