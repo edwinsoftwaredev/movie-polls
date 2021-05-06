@@ -89,8 +89,14 @@ const PollCardContainer: React.FC<IPollCardContainer> = (props: IPollCardContain
   }
 
   useEffect(() => {
-    setPolls(originalPolls && Array.from(originalPolls).sort(sortByCreateAt));
-  }, [originalPolls]);
+    setPolls(
+      originalPolls && 
+      Array.from(
+        originalPolls
+        .filter(poll => typeof poll.isOpen !== 'undefined' && (props.status === 'current' ? !poll.isOpen : poll.isOpen))
+      ).sort(sortByCreateAt)
+    );
+  }, [originalPolls, props.status]);
 
   useEffect(() => {
     setSelectedPolls(state => polls && polls.slice(0, amount).length !== 0 ? polls.slice(0, amount) : null);
