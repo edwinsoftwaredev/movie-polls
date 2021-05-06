@@ -4,11 +4,19 @@
     background-color: rgba(0, 0, 0, 0.4);
     border-radius: 5px;
     max-width: 25vw;
+    position: relative;
     width: 25vw;
 
     &:hover {
         background-color: rgba(0, 0, 0, 0.6);
         cursor: pointer;
+    }
+
+    &.disabled {
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.4);
+            cursor: default;
+        }
     }
 
     .data {
@@ -20,20 +28,70 @@
         font-size: calc(0.5rem + 0.7vw);
         font-family: 'PT Sans Narrow';
         align-items: center;
-        max-height: calc(1.5rem + 0.7vw);
-        height: calc(1.5rem + 0.7vw);
+        // max-height: calc(1.5rem + 0.7vw);
+        // height: calc(1.5rem + 0.7vw);
         margin-bottom: 1rem;
+
+        &.no-poll {
+            grid-template-columns: 1fr 40%;
+        }
 
         *:not(.poll-name) {
             margin: auto 0;
+        }
+
+        .remove-poll-btn {
+            height: 100%;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 0, 0, 0.6);
+            background-color: rgba(255, 0, 0, 0.2);
+            padding: 0 calc(0.5rem + 1vw);
+            box-sizing: border-box;
+            color: rgba(255, 0, 0, 0.9);
+            font-size: calc(1rem + 0.5vw);
+            font-family: 'PT Sans Narrow';
+            font-weight: 600;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            &:hover {
+                cursor: pointer;
+                background-color: rgba(255, 0, 0, 0.1);
+            }
+
+            &:disabled {
+                cursor: default;
+                background-color: rgba(0, 0, 0, 0.1);
+            }
         }
     }
 
     .poll-name {
         font-family: 'PT Sans Narrow';
-        font-size: calc(1rem + 0.7vw);
+        font-size: calc(1rem + 1vw);
         font-weight: 600;
         color: rgba(255, 255, 255, 0.8);
+        overflow: hidden;
+        padding: calc(0.1rem + 0.3vw) calc(0.1rem + 0.5vw);
+        box-sizing: border-box;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        height: 100%;
+
+        div {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+        }
 
         &.empty {
             width: calc(1rem + 30%);
@@ -81,5 +139,20 @@
                 cursor: pointer;
             }
         }
+    }
+
+    .not-a-poll {
+        position: absolute;
+        font-size: calc(1rem + 1vw);
+        font-family: 'PT Sans Narrow';
+        font-weight: 600;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        top: 0;
+        left: 0;
     }
 }
