@@ -34,6 +34,7 @@ const PollNameInput: React.FC<{
           onChange={e => setInitVal(e.target.value)} 
           value={initVal}
           disabled={!editable || !updatable}
+          maxLength={150}
         />
         {
           updatable ? (
