@@ -52,7 +52,8 @@ const PollForm: React.FC<IPollForm> = (props: IPollForm) => {
               otherProperties={{
                 required: 'required',
                 autoComplete: 'off',
-                pattern: '[0-9A-Za-z\\s]+'
+                pattern: '[0-9A-Za-z\\s]+',
+                maxLength: 150
               }}
             />
             <Button

@@ -179,8 +179,8 @@ const CardOverlay: React.FC<ICardOverlay> = (props: ICardOverlay) => {
                   style={{
                     backgroundImage: (
                       props.isMobile ? 
-                        `url(${process.env.REACT_APP_TMDB_API_POSTER_URL}/${props.movie.poster_path})` : 
-                        `url(${process.env.REACT_APP_TMDB_API_BACKDROP_URL}/${props.movie.backdrop_path})`
+                        `url(${process.env.REACT_APP_TMDB_API_POSTER_URL}${props.movie.poster_path})` : 
+                        `url(${process.env.REACT_APP_TMDB_API_BACKDROP_URL}${props.movie.backdrop_path})`
                     ),
                     height: props.card?.getBoundingClientRect().height ?? 0
                   }}
