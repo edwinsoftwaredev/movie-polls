@@ -12,7 +12,7 @@ const ProgressBar: React.FC<IProgressBar> = (props: IProgressBar) => {
         <div className={style['progress-bar']} style={{width: props.progress + '%'}}></div>
       </div>
       {
-        props.progress ? (
+        props.progress !== null ? (
           <div className={style['percentage-label']}>{props.progress}%</div>
         ) : null
       }
