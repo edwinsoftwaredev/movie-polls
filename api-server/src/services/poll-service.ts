@@ -85,10 +85,18 @@ export default class PollService {
     const pollVM = getPollVMFromPoll(res);
     const pollResult: PollVM = {
       ...pollVM,
-      movies: await Promise.all(pollVM.movies.map(async movie => ({
-        ...movie,
-        movie: getMovieFromMovieDetails(await MoviesService.fetchMovieDetails(movie.movieId)) 
-      })))
+      movies: await Promise.all(pollVM.movies.map(async movie => {
+        const movieDetails = await MoviesService.fetchMovieDetails(movie.movieId);
+        return {
+          ...movie,
+          movie: {
+            ...movieDetails,
+            genre_names: movieDetails.genres.map(genre => genre.name),
+            genre_ids: movieDetails.genres.map(genre => genre.id),
+            providers: await MoviesService.fetchMovieProviders(movie.movieId)
+          }
+        }
+      }))
     };
 
     return pollResult;
