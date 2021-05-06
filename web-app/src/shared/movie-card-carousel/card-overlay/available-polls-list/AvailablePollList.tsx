@@ -109,7 +109,7 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
                 (activePoll === item.id ? style['active'] : '') 
               }
             >
-              <div className={style['name']}>{item.name}</div>
+              <div title={item.name} className={style['name']}>{item.name}</div>
               <div className={style['counter']}>({item.movies.length})</div>
               <div className={style['space']}></div>
               <div 
