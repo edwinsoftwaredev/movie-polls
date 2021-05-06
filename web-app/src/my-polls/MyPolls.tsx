@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { pollsSelector } from '../services/slices-selectors/polls';
 import { IPoll } from '../shared/interfaces/movie-poll-types';
@@ -15,6 +15,24 @@ const sortByCreateAt = (a: IPoll, b: IPoll) => {
 
 const MyPolls: React.FC = () => {
   const polls = useSelector(pollsSelector);
+  const [openPolls, setOpenPolls] = useState<IPoll[]>([]);
+  const [runningPolls, setRunnigPolls] = useState<IPoll[]>([]);
+
+  useEffect(() => {
+    polls && 
+    setOpenPolls(
+      Array.from(polls)
+        .filter(poll => typeof poll.isOpen !== 'undefined' && poll.isOpen)
+        .sort(sortByCreateAt)
+    );
+
+    polls &&
+    setRunnigPolls(
+    Array.from(polls)
+      .filter(poll => typeof poll.isOpen !== 'undefined' && !poll.isOpen)
+      .sort(sortByCreateAt)
+    );
+  }, [polls]);
 
   return (
     <div
@@ -26,29 +44,41 @@ const MyPolls: React.FC = () => {
     >
       <div className={style['elements-container']}>
         <div className={style['running-polls-divider']}>
-          <div className={style['divider-title']}>Released Polls</div>
+          <div className={style['divider-title']}>Running Polls</div>
           <div className={style['divider-line']}><hr /></div>
         </div>
         <div className={style['polls-container']}>
         {
-          Array.from(polls ?? []).sort(sortByCreateAt)?.map(poll => (
+          runningPolls.length !== 0 ? 
+          runningPolls
+          .map(poll => (
             <Fragment key={poll.id}>
               <PollCard poll={poll}/>
             </Fragment>
-          ))
+          )) : (
+            <div className={style['no-polls']}>
+              Your Running Polls are Showed Here
+            </div>
+          )
         }
         </div>  
         <div className={style['running-polls-divider']}>
-          <div className={style['divider-title']}>Not Released Polls</div>
+          <div className={style['divider-title']}>Not Running Polls</div>
           <div className={style['divider-line']}><hr /></div>
         </div>
         <div className={style['polls-container']}>
         {
-          Array.from(polls ?? []).sort(sortByCreateAt).map(poll => (
+          openPolls.length !== 0 ?
+          openPolls
+          .map(poll => (
             <Fragment key={poll.id}>
               <PollCard poll={poll}/>
             </Fragment>
-          ))
+          )) : (
+            <div className={style['no-polls']}>
+              Your Not Runnning Polls are Showed Here
+            </div>
+          )
         }
         </div>
       </div>

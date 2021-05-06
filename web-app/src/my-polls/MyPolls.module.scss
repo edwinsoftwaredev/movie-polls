@@ -44,4 +44,14 @@
         gap: 1rem;
         justify-content: center;
     }
+
+    .no-polls {
+        padding: calc(1rem + 1vw);
+        box-sizing: border-box;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        color: rgba(255, 255, 255, 0.8);
+        font-size: calc(1rem + 1vw);
+        font-family: 'PT Sans Narrow';
+        font-weight: 600;
+    }
 }
