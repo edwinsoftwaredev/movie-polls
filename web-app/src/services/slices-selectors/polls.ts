@@ -13,17 +13,13 @@ export const pollsSlice = createSlice<IPoll[] | null, SliceCaseReducers<IPoll[] 
   reducers: {
     addPoll: (state: IPoll[] | null, action: PayloadAction<IPoll>) => {
       if (state?.find(poll => action.payload.id === poll.id)) {
-        state = state?.map(poll => {
+        state = state.map(poll => {
           // By doing this the items will have the same
           // position or index in the array
           if (poll.id === action.payload.id) {
-            const isOpenPatch = action.payload.isOpen !== poll.isOpen;
             return {
               ...poll, 
-              ...action.payload,
-              movies: isOpenPatch ? poll.movies.map(movie => ({...movie, voteCount: 0})) : action.payload.movies,
-              tokens: isOpenPatch ? [] : poll.tokens,
-              tokenQty: isOpenPatch ? 0 : poll.tokenQty
+              ...action.payload
             };
           }
 
@@ -36,6 +32,26 @@ export const pollsSlice = createSlice<IPoll[] | null, SliceCaseReducers<IPoll[] 
           state = [action.payload, ...state];
         }
       }
+      return state;
+    },
+    patchPoll: (state: IPoll[] | null, action: PayloadAction<IPoll>) => {
+      if (!state)
+        return state;
+      
+      state = state.map(poll => {
+        if (poll.id === action.payload.id) {
+          const changeOpenProp = action.payload.isOpen !== poll.isOpen;
+          return {
+            ...poll,
+            ...action.payload,
+            movies: changeOpenProp ? poll.movies.map(movie => ({...movie, voteCount: 0})) : poll.movies,
+            tokens: changeOpenProp ? [] : poll.tokens,
+            tokenQty: changeOpenProp ? 0 : poll.tokenQty
+          }
+        }
+        return poll;
+      });
+
       return state;
     },
     setPolls: (state: IPoll[] | null, action: PayloadAction<IPoll[]>) => {
