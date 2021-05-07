@@ -35,7 +35,7 @@ const Poll: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean | undefined>();
   const [tokenId, setTokenId] = useState<string | null>(null);
   const dispatch = useDispatch();
-  // const history = useHistory();
+  const history = useHistory();
   
   // when this component loads it does with a token
   // if the token is used then the poll must be considered 
@@ -79,14 +79,15 @@ const Poll: React.FC = () => {
   }, [location]);
 
   useEffect(() => {
-    setPoll(
-      polls && 
-      (id !== null ? true : null) && 
-      polls.filter(poll => poll.id === id)[0]
-    );
-    // This could leads to memory leaks. Test before implementation.
-    // history.push('/my-polls'); // this should be called for the poll author
-  }, [id, polls]);
+    if (polls && id !== null) {
+      // This could leads to memory leaks. Test before implementation.
+      if (polls.filter(poll => poll.id === id).length === 1) {
+        setPoll(polls.filter(poll => poll.id === id)[0]);
+      } else {
+        history.push('/my-polls');
+      }
+    }
+  }, [id, polls, history]);
 
   useEffect(() => {
     poll && setTotalVotes(state => poll.movies
