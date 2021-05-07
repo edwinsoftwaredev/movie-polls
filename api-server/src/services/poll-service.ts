@@ -1,7 +1,7 @@
 import { getPollVMFromPoll, getPollVMWithoutMoviesAndTokens, IPoll_PATCH, PollInput, PollVM } from "../shared/type-interfaces/movie-poll-types";
 import prisma from '../prisma-client';
 import { MoviePoll, Prisma } from ".prisma/client";
-import { getMovieFromMovieDetails } from "../shared/type-interfaces/movie-types";
+import { IMovieDetail } from "../shared/type-interfaces/movie-types";
 import MoviesService from "./movie-service";
 import * as admin from 'firebase-admin';
 import {v4 as uuid4} from 'uuid';
@@ -33,7 +33,12 @@ export default class PollService {
 		});
 
 		const movieDetails = await MoviesService.fetchMovieDetails(res.movies[0].movieId);
-		const movie = getMovieFromMovieDetails(movieDetails);
+    const movie: IMovieDetail = {
+      ...movieDetails,
+      genre_names: movieDetails.genres.map(genre => genre.name),
+      genre_ids: movieDetails.genres.map(genre => genre.id),
+      providers: await MoviesService.fetchMovieProviders(movieDetails.id)
+    };
 
 		const pollVM = getPollVMFromPoll(res);
 		const pollResult: PollVM = {
@@ -253,6 +258,12 @@ export default class PollService {
 
     // tokens are removed when the poll is changed from open to close.
     if (typeof patchData.isOpen !== 'undefined') {
+      const moviesInPollCount = await prisma.moviePoll.count({where: {pollId: pollId}});
+
+      if (!patchData.isOpen && moviesInPollCount <= 1) {
+        throw new Error('MIN_NUMBER_MOVIES_POLL');
+      }
+
       const deletedTokens = prisma.token.deleteMany({where: {pollId: pollId}});
       const resetVotes = prisma.moviePoll.updateMany({
         where: {pollId: pollId},
@@ -406,6 +417,13 @@ export default class PollService {
     return res;
   }
 
+  /**
+   * Set a vote for a movie in a poll.
+   * @param pollId the Poll's Id
+   * @param tokenId The token id
+   * @param movieId The movie id
+   * @returns a Promise of movie object with a token object
+   */
   static async setVote(pollId: number, tokenId: string, movieId: number): Promise<{
     movie: MoviePoll,
     token: Token
