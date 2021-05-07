@@ -51,6 +51,7 @@ export interface IMovieDetail extends IMovie {
         }[];
     };
     runtime: number;
+    providers: any;
 }
 
 export interface IGenreRequest {
