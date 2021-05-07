@@ -1,8 +1,10 @@
 import { Action } from "@reduxjs/toolkit";
-import { ActionsObservable, Epic, ofType } from "redux-observable";
-import { Observable } from "rxjs";
-import { concatMap, switchMap } from "rxjs/operators";
+import { ActionsObservable, Epic, ofType, StateObservable } from "redux-observable";
+import { from, Observable, of } from "rxjs";
+import { concatMap, map, switchMap, takeUntil } from "rxjs/operators";
 import { IPoll, IPoll_PATCH, IRemoveMovie, IVote } from "../../shared/interfaces/movie-poll-types";
+import { IMovie } from "../../shared/interfaces/movie-types";
+import { RootState } from "../../store/store";
 import PollService from "../poll-service";
 
 enum ActionTypes {
@@ -15,6 +17,7 @@ enum ActionTypes {
   REMOVE_MOVIE = 'polls/removeMovie',
   REMOVE_POLL_EPIC = 'polls/removePoll_epic',
   REMOVE_POLL = 'polls/removePoll',
+  PATCH_POLL_EPIC = 'polls/patchPollEpic',
   PATCH_POLL = 'polls/patchPoll',
   GET_PUBLIC_POLL = 'polls/getPublicPoll',
   SET_VOTE = 'polls/setVote',
@@ -42,7 +45,7 @@ interface ISetPolls extends Action {
 
 interface IAddMovie extends Action {
   type: ActionTypes.ADD_MOVIE,
-  payload: {pollId: number, movieId: number}
+  payload: {poll: IPoll, movie: {movieId: number, movie: IMovie}}
 }
 
 interface IRemoveMovieEpic extends Action {
@@ -65,9 +68,14 @@ interface IRemovePollAction extends Action {
   payload: IPoll;
 }
 
+interface IPatchPollEpicAction extends Action {
+  type: ActionTypes.PATCH_POLL_EPIC;
+  payload: {id: number, pollPatch: IPoll_PATCH}
+}
+
 interface IPatchPollAction extends Action {
   type: ActionTypes.PATCH_POLL;
-  payload: {id: number, pollPatch: IPoll_PATCH}
+  payload: IPoll
 }
 
 interface IGetPublicPoll extends Action {
@@ -104,7 +112,7 @@ const setPolls = (polls: IPoll[]): ISetPolls => ({
   payload: polls
 });
 
-export const addMovie = (payload: {pollId: number, movieId: number}): IAddMovie => ({
+export const addMovie = (payload: {poll: IPoll, movie: {movieId: number, movie: IMovie}}): IAddMovie => ({
   type: ActionTypes.ADD_MOVIE,
   payload: payload
 }); 
@@ -129,7 +137,12 @@ export const deletePoll = (pollId: number): IRemovePollEpicAction => ({
   payload: pollId
 });
 
-export const patchPoll = (payload: {id: number, pollPatch: IPoll_PATCH}): IPatchPollAction => ({
+export const patchPoll = (payload: {id: number, pollPatch: IPoll_PATCH}): IPatchPollEpicAction => ({
+  type: ActionTypes.PATCH_POLL_EPIC,
+  payload: payload
+});
+
+const patchPollRed = (payload: IPoll): IPatchPollAction => ({
   type: ActionTypes.PATCH_POLL,
   payload: payload
 });
@@ -158,6 +171,7 @@ export type PollActionTypes = IFetchPollsAction |
   IRemoveMovieEpic |
   IRemovePollAction |
   IRemovePollEpicAction |
+  IPatchPollEpicAction |
   IPatchPollAction |
   IGetPublicPoll |
   ISetVoteAction |
@@ -178,16 +192,42 @@ export const setPollEpic: Epic<PollActionTypes> = (
   })
 );
 
+const addMovieAction = (action: IAddMovie): Observable<IAddPollAction> => {
+  const poll: IPoll = {
+    ...action.payload.poll,
+    movies: [action.payload.movie, ...action.payload.poll.movies].sort((a, b) => a.movieId - b.movieId)
+  };
+  return of(addPoll(poll));
+}
+
+const updateMovieAction = (action: IAddMovie, state$: StateObservable<RootState>): Observable<IAddPollAction> => {
+  const pollId = action.payload.poll.id;
+  const movieId = action.payload.movie.movieId;
+  if (typeof pollId === 'undefined') {
+    throw new Error('Poll Id is undefined');
+  }
+
+  return from(PollService.addMovie(pollId, movieId))
+    .pipe(map(resPoll => {
+      // IMPORTANT! Always use the observable state(state$) to get the CURRENT values
+      const polls = state$.value.polls;
+      // if the initial movie object was deleted before getting the response
+      // the current poll, which doesnt have the movie, is setted
+      const currentPoll = polls && polls.filter(poll => poll.id === pollId)[0];
+      if (currentPoll && currentPoll.movies.filter(movie => movie.movieId === movieId).length === 0)
+        return addPoll(currentPoll); 
+      
+      return addPoll(resPoll);
+    }));
+}
+
 export const addMovieEpic: Epic<PollActionTypes> = (
-  action$: ActionsObservable<PollActionTypes>
+  action$: ActionsObservable<PollActionTypes>,
+  state$: StateObservable<RootState>
 ): Observable<PollActionTypes> => action$.pipe(
   ofType<PollActionTypes, IAddMovie>(ActionTypes.ADD_MOVIE),
-  concatMap(async (action: IAddMovie) => {
-    const pollId = action.payload.pollId;
-    const movieId = action.payload.movieId;
-    const res = await PollService.addMovie(pollId, movieId);
-    return addPoll(res);
-  })
+  concatMap((action: IAddMovie) => [addMovieAction(action), updateMovieAction(action, state$)]),
+  concatMap(action => action)
 );
 
 export const fetchPollsEpic: Epic<PollActionTypes> = (
@@ -223,10 +263,10 @@ export const removePollEpic: Epic<PollActionTypes> = (
 export const patchPollEpic: Epic<PollActionTypes> = (
   action$: ActionsObservable<PollActionTypes>
 ): Observable<PollActionTypes> => action$.pipe(
-  ofType<PollActionTypes, IPatchPollAction>(ActionTypes.PATCH_POLL),
-  concatMap(async (action: IPatchPollAction) => {
+  ofType<PollActionTypes, IPatchPollEpicAction>(ActionTypes.PATCH_POLL_EPIC),
+  concatMap(async (action: IPatchPollEpicAction) => {
     const res = await PollService.updatePoll(action.payload.id, action.payload.pollPatch);
-    return addPoll(res);
+    return patchPollRed(res);
   })
 );
 
