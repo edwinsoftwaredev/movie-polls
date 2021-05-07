@@ -51,7 +51,7 @@ const Header: React.FC<{
   };
 
   const handleStartPollClick = () => {
-    poll.isOpen && setDisabledButton(!!(poll.endsAt && new Date(poll.endsAt) <= new Date()));
+    poll.isOpen && poll.movies.length >= 2 && setDisabledButton(!!(poll.endsAt && new Date(poll.endsAt) <= new Date()));
     changeStatusClbk();
   };
 
@@ -84,7 +84,7 @@ const Header: React.FC<{
                 style['release-poll-btn'] + ' ' +
                 (disabledButton || 
                   (poll.isOpen && endDate && endDate <= new Date()) || 
-                  typeof endDate === 'undefined' || 
+                  typeof endDate === 'undefined' || poll.movies.length <= 1 ||
                   endDate === null ? style['disabled'] : '')
               }
               onClick={handleStartPollClick}
@@ -93,7 +93,8 @@ const Header: React.FC<{
                 (poll.isOpen && endDate && endDate <= new Date()) || 
                 disabledButton || 
                 typeof endDate === 'undefined' ||
-                endDate === null
+                endDate === null ||
+                poll.movies.length <= 1
               }
             >
               {isUpdating ? <Spinner color={'white'}/> : poll.isOpen ? 'START POLL' : 'CLOSE POLL'}
