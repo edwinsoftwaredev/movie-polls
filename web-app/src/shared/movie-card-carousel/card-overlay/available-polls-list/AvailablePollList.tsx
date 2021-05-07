@@ -77,7 +77,10 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
       return;
 
     setSPollId(pollId);
-    dispatch(addMovie({pollId: pollId, movieId: props.movie.id}));
+    dispatch(addMovie({
+      poll: poll, 
+      movie: {movieId: props.movie.id, movie: props.movie}
+    }));
   };
 
   useEffect(() => {
