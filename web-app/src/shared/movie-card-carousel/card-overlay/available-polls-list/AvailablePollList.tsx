@@ -202,6 +202,7 @@ const AvailablePollList: React.FC<IAvailablePollList> = (props: IAvailablePollLi
                   type={'button'}
                   spinnerColor={'red'}
                   onClick={e => handleRemovePoll(item.id as number)}
+                  otherProps={{disabled: activePoll !== item.id}}
                 />
               </div>
             </div>
