@@ -1,7 +1,7 @@
 import { Action } from "@reduxjs/toolkit";
 import { ActionsObservable, Epic, ofType, StateObservable } from "redux-observable";
 import { from, Observable, of } from "rxjs";
-import { concatMap, map, switchMap, takeUntil } from "rxjs/operators";
+import { concatMap, map, switchMap } from "rxjs/operators";
 import { IPoll, IPoll_PATCH, IRemoveMovie, IVote } from "../../shared/interfaces/movie-poll-types";
 import { IMovie } from "../../shared/interfaces/movie-types";
 import { RootState } from "../../store/store";
