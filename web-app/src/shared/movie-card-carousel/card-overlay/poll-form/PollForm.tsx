@@ -48,7 +48,7 @@ const PollForm: React.FC<IPollForm> = (props: IPollForm) => {
             <TextInput
               name={'poll-name'}
               clbk={value => setName(value)}
-              placeholder={'Type the name of the new poll'}
+              placeholder={'New Movie Poll'}
               otherProperties={{
                 required: 'required',
                 autoComplete: 'off',
