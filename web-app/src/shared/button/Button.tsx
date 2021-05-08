@@ -8,7 +8,8 @@ interface IButton {
   classType: 'default' | 'contained' | 'radial';
   spinnered: boolean;
   spinnerColor?: 'white' | 'red';
-  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+  otherProps?: any
 }
 
 const Button: React.FC<IButton> = (props: IButton) => {
@@ -25,6 +26,7 @@ const Button: React.FC<IButton> = (props: IButton) => {
         type={props.type}
         disabled={props.spinnered}
         onClick={handleClick}
+        {...props.otherProps}
       >
         {
           !props.spinnered ? props.name : <Spinner color={props.spinnerColor ? props.spinnerColor : 'white'}/>

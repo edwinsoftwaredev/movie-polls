@@ -1,21 +1,25 @@
 .button-container {
   width: fit-content;
+  width: 100%;
   button {
     font-family: 'PT Sans Narrow';
-    font-size: calc(1rem + 0.5vw);
+    font-size: calc(0.5rem + 1vw);
     font-weight: 600;
     background-color: rgba(255, 255, 255, 0.3);
-    padding: 0.7rem 2rem;
+    padding: 0.6vw 2vw;
+    box-sizing: border-box;
     text-transform: capitalize;
-    min-width: 15rem !important;
-    height: calc(1rem + 2vw);
+    min-width: 13vw !important;
     border-radius: 5px;
     border-style: none;
     outline: none;
     transition: 300ms ease;
 
     @media screen and (max-width: 768px) {
-      height: calc(1rem + 7vw);      
+      height: calc(1rem + 8vw);
+      min-width: 40vw !important;
+      width: 100%;
+      font-size: calc(0.5rem + 3vw);
     }
 
     &:hover {
@@ -55,20 +59,24 @@
     
     &.radial {
         min-height: calc(1.5rem + 1vw) !important;
-        height: calc(1.5rem + 1vw) !important;
+        height: calc(0.5rem + 1.9vw) !important;
         margin: auto;
         color: rgba(220, 0, 0, 0.85);
-        padding: 0;
+        padding: 0 2vw;
 
         &:hover {
           border: 1px solid rgba(220, 0, 0, 0.6) !important;
         }
 
+        &:disabled {
+          cursor: default;
+        }
+
         @media screen and (max-width: 768px) {
-          min-width: calc(3rem + 1vw);
-          width:  calc(3rem + 1vw);
-          min-height: calc(3rem + 1vw);
-          height: calc(3rem + 1vw);
+          min-width: 80vw !important;
+          width: 80vw !important;
+          min-height: 9vw !important;
+          height: 9vw !important;
       }
     }
   }
