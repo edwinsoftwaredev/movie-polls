@@ -63,8 +63,10 @@ const PollCard: React.FC<IPollCard> = (props: IPollCard) => {
         {
           typeof props.poll.isOpen !== 'undefined' && !props.poll.isOpen ? (
             <Fragment>
-              <div className={style['date']}>{props.poll.endsAt ? new Date(props.poll.endsAt).toDateString() : ''}</div>
-              <div className={style['time']}>{props.poll.endsAt ? new Date(props.poll.endsAt).toLocaleTimeString([], {timeStyle: 'short'}) : ''}</div>
+              <div className={style['date-time']}>
+                <div className={style['date']}>{props.poll.endsAt ? new Date(props.poll.endsAt).toDateString() : ''}</div>
+                <div className={style['time']}>{props.poll.endsAt ? new Date(props.poll.endsAt).toLocaleTimeString([], {timeStyle: 'short'}) : ''}</div>
+              </div>
             </Fragment>
           ) : (
             isPoll ? 
