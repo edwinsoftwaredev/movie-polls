@@ -2,13 +2,24 @@
   input {
     outline: none;
     border-style: none;
-    border-radius: 2px;
-    height: 3.5rem;
-    font-size: calc(1rem + 0.6vw);
+    border-radius: 5px;
+    // height: 6vh;
+    font-size: calc(0.3rem + 1.2vw);
     font-weight: 600;
     font-family: 'PT Sans Narrow';
     width: 100%;
-    padding: 0 0.9rem;
+    padding: 0.7vw;
     box-sizing: border-box;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.15);
+
+    &:focus {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    @media screen and (max-width: 768px) {
+      font-size: calc(0.5rem + 3.5vw);
+      padding: 3vw 2.3vw;
+    }
   }
 }
