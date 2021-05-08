@@ -172,11 +172,11 @@
                     }
 
                     1% {
-                        padding: 1.5rem;
+                        padding: calc(0.3rem + 1vw);
                     }
 
                     100% {
-                        padding: 1.5rem;
+                        padding: calc(0.3rem + 1vw);
                         visibility: visible;
                         opacity: 1;
                         height: auto;
@@ -206,11 +206,11 @@
                     }
 
                     1% {
-                        padding: 1.5rem;
+                        padding: 1vh 0.7vw;
                     }
 
                     100% {
-                        padding: 1.5rem;
+                        padding: 1vh 0.7vw;
                         visibility: visible;
                         opacity: 1;
                         height: auto;
@@ -306,7 +306,7 @@
                 row-gap: 7px;
                 font-family: 'PT Sans Narrow';
                 font-weight: 600;
-                font-size: calc(1rem + 0.8vw);
+                font-size: calc(0.3rem + 1.3vw);
 
                 @media screen and (max-width: 768px) {
                     height: 100%;
@@ -420,7 +420,7 @@
 
                 .genres {
                     padding: 0.1rem 0;
-                    font-size: calc(1rem + 0.5vw);
+                    font-size: calc(0.5rem + 1vw);
                     grid-column-start: 1;
                     grid-column-end: span 3;
 
@@ -452,7 +452,7 @@
             }
 
             .menu {
-                padding: 1rem 2rem;
+                padding: 1vw 0.7vw;
                 background-color: rgba(255, 255, 255, 0.1);
                 border-radius: 5px;
                 box-sizing: border-box;
@@ -460,15 +460,22 @@
 
                 .title {
                     font-weight: 600;
-                    font-size: calc(1rem + 0.85vw);
+                    font-size: calc(0.5rem + 1.3vw);
                     font-family: 'PT Sans Narrow';
+                }
+
+                @media screen and (max-width: 768px) {
+                    padding: 2vw 2.5vw;
+                    .title {
+                        font-size: calc(0.5rem + 4.5vw);
+                    }
                 }
             }
 
             .available-polls-container {
                 display: grid;
                 grid-template-columns: 1fr auto 1fr;
-                column-gap: 2rem;
+                column-gap: 1rem;
                 grid-template-rows: auto;
 
                 @media screen and (max-width: 768px) {
@@ -485,6 +492,10 @@
                     padding: 1rem 0;
                     width: 80%;
                     margin: 0 auto;
+
+                    @media screen and (max-width: 768px) {
+                        width: 90%;
+                    }
                 }
 
                 .available-poll-details {
@@ -493,13 +504,17 @@
                     padding: 1rem 0;
 
                     .header {
-                        font-size: calc(1rem + 0.7vw);
+                        font-size: calc(0.3rem + 1.3vw);
                         font-family: 'PT Sans Narrow';
                         font-weight: 600;
-                        color: rgba(255,255,255,0.7);
+                        color: rgba(255,255,255,0.8);
                         margin-bottom: 1rem;
                         width: 100%;
                         text-align: center;
+
+                        @media screen and (max-width: 768px) {
+                            font-size: calc(0.5rem + 4vw);
+                        }
                     }
                 }
             }
