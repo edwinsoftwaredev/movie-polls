@@ -34,7 +34,7 @@ const sortByCreateAt = (a: IPoll, b: IPoll) => {
 }
 
 const PollCardContainer: React.FC<IPollCardContainer> = (props: IPollCardContainer) => {
-  const [amount, setAmount] = useState(3); // should be 0 or null when mounting
+  const [amount, setAmount] = useState(0); // should be 0 or null when mounting
   const [selectedPolls, setSelectedPolls] = useState<IPoll[] | null>(null);
   const [polls, setPolls] = useState<IPoll[] | null>(null);
 
@@ -102,6 +102,28 @@ const PollCardContainer: React.FC<IPollCardContainer> = (props: IPollCardContain
     setSelectedPolls(state => polls && polls.slice(0, amount).length !== 0 ? polls.slice(0, amount) : null);
   }, [polls, amount]);
 
+  useEffect(() => {
+    const updateAmount = (width: number) => {
+      if (width > 768) {
+        setAmount(3);
+      } else {
+        setAmount(1);
+      }
+    }
+    
+    updateAmount(document.body.clientWidth);
+
+    const handleResize = () => {
+      updateAmount(document.body.clientWidth);
+    }
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    }
+  }, []);
+
   return (
     <div className={style['poll-card-container-component']}>
       <div className={style['header']}>
@@ -149,7 +171,7 @@ const PollCardContainer: React.FC<IPollCardContainer> = (props: IPollCardContain
       </div>
       <div className={style['poll-card-container']}>
       {
-        (selectedPolls ? selectedPolls : initialPolls).map(poll => (
+        (selectedPolls ? selectedPolls : Array.from(initialPolls).slice(0, amount)).map(poll => (
           <Fragment key={poll.id}>
             <PollCard poll={poll} />          
           </Fragment>
