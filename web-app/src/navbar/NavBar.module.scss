@@ -11,6 +11,13 @@ button {
         stroke-width: 3px;
         margin: auto;
         height: calc(0.7rem + 1vw) !important;
+
+        @media screen and (max-width: 768px) {
+            height: auto !important;
+            width: calc(0.5rem + 8vw);
+            margin-right: auto;
+            margin-left: 0;
+        }
     }
 }
 

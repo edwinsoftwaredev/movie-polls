@@ -15,7 +15,7 @@ const NavBarButton: React.FC<any> = ({text, callback, active, children}) => {
   )
 };
 
-const MenuOptions: React.FC<any> = ({userAuthStatus}) => {
+const MenuOptions: React.FC<any> = ({userAuthStatus, closeMobileOverlayClbk}) => {
   const history = useHistory();
   const location = useLocation();
 
@@ -24,29 +24,64 @@ const MenuOptions: React.FC<any> = ({userAuthStatus}) => {
       {
         userAuthStatus === USER_AUTHENTICATION_STATUS.SIGNED ? (
           <Fragment>
-            <NavBarButton active={location.pathname === '/search'} text={'Search'} callback={() => {history.push('/search')}}>
+            <NavBarButton 
+              active={location.pathname === '/search'} 
+              text={'Search'} 
+              callback={() => {closeMobileOverlayClbk(); history.push('/search');}}
+            >
               <div className={style['search-vector']}>
                 <SearchVector />
               </div>
             </NavBarButton>
-            <NavBarButton active={location.pathname === '/'} text='Home' callback={() => {history.push('/')}} />
-            <NavBarButton active={location.pathname === '/top-movies'} text='Top Movies' callback={() => {history.push('/top-movies')}} />
-            <NavBarButton active={location.pathname === '/trending-movies'} text='Trending Movies' callback={() => {history.push('/trending-movies')}} />
+            <NavBarButton 
+              active={location.pathname === '/'} 
+              text='Home' 
+              callback={() => {closeMobileOverlayClbk(); history.push('/');}} 
+            />
+            <NavBarButton 
+              active={location.pathname === '/top-movies'} 
+              text='Top Movies' 
+              callback={() => {closeMobileOverlayClbk(); history.push('/top-movies')}} 
+            />
+            <NavBarButton 
+              active={location.pathname === '/trending-movies'} 
+              text='Trending Movies' 
+              callback={() => {closeMobileOverlayClbk(); history.push('/trending-movies')}} 
+            />
             {/** <NavBarButton text='Random Picks' callback={() => {history.push('/')}} /> */}
-            <NavBarButton active={location.pathname === '/my-polls'} text='My Polls' callback={() => {history.push('/my-polls')}} />
+            <NavBarButton 
+              active={location.pathname === '/my-polls'} 
+              text='My Polls' 
+              callback={() => {closeMobileOverlayClbk(); history.push('/my-polls')}} 
+            />
             <hr style={{height: '1rem', marginTop: 'auto', marginBottom: 'auto'}}/>
-            <NavBarButton text='Account' callback={() => {firebase.auth().signOut()}}/>
-            <NavBarButton text='Sign Out' callback={() => {firebase.auth().signOut()}}/>
+            <NavBarButton 
+              text='Account' 
+              callback={() => {closeMobileOverlayClbk(); firebase.auth().signOut()}}
+            />
+            <NavBarButton 
+              text='Sign Out' 
+              callback={() => {closeMobileOverlayClbk(); firebase.auth().signOut()}}
+            />
           </Fragment>
         ) : null
       }
       {
         userAuthStatus === USER_AUTHENTICATION_STATUS.NOT_SIGNED ? (
           <Fragment>
-            <NavBarButton text='About' callback={() => {history.push('/')}} />
-            <NavBarButton text='Contact' callback={() => {history.push('/')}} />
+            <NavBarButton 
+              text='About' 
+              callback={() => {closeMobileOverlayClbk(); history.push('/')}} 
+            />
+            <NavBarButton 
+              text='Contact' 
+              callback={() => {closeMobileOverlayClbk(); history.push('/')}} 
+            />
             <hr style={{height: '1rem', marginTop: 'auto', marginBottom: 'auto'}}/>
-            <NavBarButton text='Sign In' callback={() => {history.push('/auth')}}/>            
+            <NavBarButton 
+              text='Sign In' 
+              callback={() => {closeMobileOverlayClbk(); history.push('/auth')}}
+            />            
           </Fragment>
         ) : null
       }
@@ -59,6 +94,10 @@ const NavBar: React.FC = () => {
   const userAuthStatus = useSelector(userAuthenticationStatusSelector);
   const location = useLocation();
 
+  const closeMobileOverlay = () => {
+    setDrawerOpened(false);
+  }
+
   return (
     (userAuthStatus === USER_AUTHENTICATION_STATUS.SIGNED || 
     userAuthStatus === USER_AUTHENTICATION_STATUS.NOT_SIGNED) &&
@@ -69,7 +108,7 @@ const NavBar: React.FC = () => {
         </div>
         <div className={style['space']}></div>
         <div className={style['options']}>
-          <MenuOptions userAuthStatus={userAuthStatus}/>
+          <MenuOptions userAuthStatus={userAuthStatus} closeMobileOverlayClbk={closeMobileOverlay}/>
         </div>
         <div className={style['options-drawer']}>
           <button
@@ -99,7 +138,7 @@ const NavBar: React.FC = () => {
             }
             onClick={e => e.stopPropagation()}
         >
-          <MenuOptions userAuthStatus={userAuthStatus} />
+          <MenuOptions userAuthStatus={userAuthStatus} closeMobileOverlayClbk={closeMobileOverlay} />
           <div className={style['drawer-space']}></div>
           <div className={style['app-title']}>
             Movie Polls
