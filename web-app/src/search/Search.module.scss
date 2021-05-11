@@ -60,6 +60,9 @@
 
 .no-result-component {
     width: 100%;
+    @media screen and (max-width: 768px) {
+        grid-column: 1 / 3 span;
+    }
     .no-result-container {
         border: 1px solid rgba(255, 255, 255, 0.4);
         padding: 1rem;
@@ -70,5 +73,9 @@
         font-family: 'PT Sans Narrow';
         font-size: calc(1rem + 1vw);
         font-weight: 600;
+
+        @media screen and (max-width: 768px) {
+            font-size: calc(0.5rem + 4vw);
+        }
     }
 }
