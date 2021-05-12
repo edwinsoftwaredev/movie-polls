@@ -46,6 +46,10 @@ button {
         color: gold;
         margin: auto;
         text-shadow: 1px 1px 5px black;
+
+        &:hover {
+            cursor: pointer;
+        }
     }
 
     .options {

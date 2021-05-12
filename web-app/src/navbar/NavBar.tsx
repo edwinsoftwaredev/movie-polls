@@ -57,7 +57,7 @@ const MenuOptions: React.FC<any> = ({userAuthStatus, closeMobileOverlayClbk}) =>
             <hr style={{height: '1rem', marginTop: 'auto', marginBottom: 'auto'}}/>
             <NavBarButton 
               text='Account' 
-              callback={() => {closeMobileOverlayClbk(); firebase.auth().signOut()}}
+              callback={() => {closeMobileOverlayClbk(); history.push('/account')}}
             />
             <NavBarButton 
               text='Sign Out' 
@@ -71,11 +71,11 @@ const MenuOptions: React.FC<any> = ({userAuthStatus, closeMobileOverlayClbk}) =>
           <Fragment>
             <NavBarButton 
               text='About' 
-              callback={() => {closeMobileOverlayClbk(); history.push('/')}} 
+              callback={() => {closeMobileOverlayClbk(); history.push('/about')}} 
             />
             <NavBarButton 
               text='Contact' 
-              callback={() => {closeMobileOverlayClbk(); history.push('/')}} 
+              callback={() => {closeMobileOverlayClbk(); history.push('/contact')}} 
             />
             <hr style={{height: '1rem', marginTop: 'auto', marginBottom: 'auto'}}/>
             <NavBarButton 
@@ -93,6 +93,7 @@ const NavBar: React.FC = () => {
   const [drawerOpened, setDrawerOpened] = useState(false);
   const userAuthStatus = useSelector(userAuthenticationStatusSelector);
   const location = useLocation();
+  const history = useHistory();
 
   const closeMobileOverlay = () => {
     setDrawerOpened(false);
@@ -103,7 +104,7 @@ const NavBar: React.FC = () => {
     userAuthStatus === USER_AUTHENTICATION_STATUS.NOT_SIGNED) &&
     location.pathname !== '/auth' ? (
       <div className={style['navbar-component']}>
-        <div className={style['app-title']}>
+        <div className={style['app-title']} onClick={e => history.push('/')}>
           Movie Polls
         </div>
         <div className={style['space']}></div>
