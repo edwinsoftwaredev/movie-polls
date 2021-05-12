@@ -1,0 +1,85 @@
+.sliders-container {
+    display: block;
+    flex: 1;
+    min-height: 80vh;
+}
+
+.account-component {
+    margin: 0 4%;
+    padding: 1.5% 2%;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    @media screen and (max-width: 768px) {
+        padding: 3% 4%;
+    }
+
+    .user-data {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-family: 'PT Sans Narrow';
+        font-size: calc(0.5rem + 2vw);
+        font-weight: 600;
+
+        @media screen and (max-width: 768px) {
+            flex-direction: column;
+            font-size: calc(0.5rem + 4vw);
+        }
+
+        .profile-pic {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            img {
+                width: 8vw;
+                border-radius: 50%;
+                margin: auto;
+
+                @media screen and (max-width: 768px) {
+                    width: 25vw;
+                }
+            }
+        }
+        
+        .profile-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: auto 1%;
+
+            @media screen and (max-width: 768px) {
+                justify-content: center;
+                align-items: center;
+            }
+        }
+
+        .delete-account-btn {
+            border: 2px solid rgba(255, 0, 0, 0.8);
+            background-color: rgba(255, 20, 20, 0.3);
+            font-family: 'PT Sans Narrow';
+            font-size: calc(0.5rem + 1.2vw);
+            font-weight: 600;
+            color: rgba(255, 0, 0, 0.8);
+            padding: 0.5rem 2rem;
+            box-sizing: border-box;
+            border-radius: 5px;
+
+            @media screen and (max-width: 768px) {
+                font-size: calc(0.5rem + 3vw);
+            }
+
+            &:hover {
+                border-color: red;
+                color: red;
+                cursor: pointer;
+            }
+        }
+    }
+}
