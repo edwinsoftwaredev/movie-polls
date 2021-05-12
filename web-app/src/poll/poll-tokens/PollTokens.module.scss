@@ -98,6 +98,10 @@
             font-size: calc(0.3rem + 1vw);
             font-family: 'PT Sans Narrow';
             align-items: flex-end;
+
+            @media screen and (max-width: 768px) {
+                font-size: calc(0.5rem + 2vw);
+            }
         }
 
         .token-empty-list-container {
@@ -111,6 +115,10 @@
             box-sizing: border-box;
             grid-column: 1 / span 2;
             margin: auto;
+
+            @media screen and (max-width: 768px) {
+                font-size: calc(0.5rem + 3vw);
+            }
         }
     }
 
@@ -124,6 +132,12 @@
         font-weight: 600;
         padding: 0 2rem;
         box-sizing: border-box;
+
+        @media screen and (max-width: 768px) {
+            font-size: calc(0.5rem + 4vw);
+            grid-template-columns: 1fr 50% auto;
+            padding: 0.5rem;
+        }
         
         div {
             margin: auto 0;
@@ -141,11 +155,22 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             transition: transform 300ms ease-out;
 
+            @media screen and (max-width: 768px) {
+                height: calc(0.5rem + 7vw);
+                width: calc(0.5rem + 7vw);
+            }
+
             svg {
                 color: white;
                 stroke-width: 0.2rem;
                 width: 3vw;
                 height: 3vw;
+
+                @media screen and (max-width: 768px) {
+                    stroke-width: 0.4rem;
+                    width: 10vw;
+                    height: 10vw;
+                }
             }
 
             &:hover {
@@ -167,6 +192,11 @@
         font-size: calc(0.3rem + 0.9vw);  
         font-family: 'PT Sans Narrow';
 
+        @media screen and (max-width: 768px) {
+            font-size: calc(0.5rem + 2.5vw);
+            grid-template-columns: auto 1fr 20% auto auto;
+        }
+
         .token {
             display: flex;
             flex-direction: column;
@@ -178,10 +208,16 @@
             padding: 0 calc(0.5rem + 0.5vw);
             box-sizing: border-box;
             transition: 250ms ease-out;
+            white-space: nowrap;
+            overflow-x: scroll;
 
             &.token-copied {
                 background-color: rgba(0, 0, 0, 0.6);
                 color: goldenrod;
+            }
+
+            @media screen and (max-width: 768px) {
+                font-size: calc(0.5rem + 2vw);
             }
         }
 
@@ -194,6 +230,10 @@
             padding: 0 calc(0.3rem + 0.5vw);
             box-sizing: border-box;
             text-align: center;
+
+            @media screen and (max-width: 768px) {
+                font-size: calc(0.5rem + 1.5vw);
+            }
         }
 
         button {
@@ -215,6 +255,12 @@
                 width: calc(0.3rem + 1.2vw);
                 height: calc(0.3rem + 1.2vw);
                 stroke-width: 0.3rem;
+
+                @media screen and (max-width: 768px) {
+                    height: calc(0.2rem + 4vw);
+                    width: calc(0.2rem + 4vw);
+                    stroke-width: 0.3rem;
+                }
             }
 
             &.copy-token-btn {
@@ -254,6 +300,10 @@
                 stroke-width: 0.3rem;
                 width: calc(0.2rem + 1.2vw);
                 color: rgba(255, 255, 255, 0.6);
+
+                @media screen and (max-width: 768px) {
+                    width: calc(0.2rem + 3vw);
+                }
             }
         }
     }
@@ -280,6 +330,11 @@
             border-color: rgba(255, 255, 255, 0.7);
             cursor: pointer;
             background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        @media screen and (max-width: 768px) {
+            font-size: calc(0.5rem + 3vw);
+            padding: 0.5rem 0;
         }
     }
 }
