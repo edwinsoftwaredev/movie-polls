@@ -22,6 +22,8 @@ import Search from './search/Search';
 import Footer from './footer/Footer';
 import MyPolls from './my-polls/MyPolls';
 import Poll from './poll/Poll';
+import Contact from './contact/Contact';
+import About from './about/About';
 
 const InitialPage: React.FC = () => {
   const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
@@ -144,6 +146,12 @@ function App() {
           </ProtectedRoute>
           <Route path='/poll'>
             <Poll />
+          </Route>
+          <Route exact path='/contact'>
+            <Contact />
+          </Route>
+          <Route exact path='/about'>
+            <About />
           </Route>
         </Switch>
         <Footer />
