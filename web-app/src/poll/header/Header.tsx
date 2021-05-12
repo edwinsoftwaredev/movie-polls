@@ -109,11 +109,13 @@ const Header: React.FC<{
         <div className={style['space']}></div>
         {
           poll.isOpen ? null : (
-            <ProgressBar 
-              progress={progress}
-              title={'Poll Progress'} 
-              type={'normal'}
-            />
+            <div className={style['progress-bar']}>
+              <ProgressBar 
+                progress={progress}
+                title={'Poll Progress'} 
+                type={'normal'}
+              />
+            </div>
           )
         }
         {
