@@ -4,6 +4,7 @@ import csrfTokenRouter from './csrf_token';
 import movieRouter from './movie';
 import pollRouter from './poll';
 import publicPollRouter from './public-poll';
+import accountRouter from './account';
 import Koa from 'koa';
 import * as admin from 'firebase-admin';
 
@@ -72,6 +73,13 @@ const init = (router: Router<Koa.DefaultState, Koa.DefaultContext>): void => {
     firebaseTokenValidatorMiddleware, 
     pollRouter.routes(), 
     pollRouter.allowedMethods()
+  );
+  router.use(
+    '/api/account',
+    csrfMiddleware,
+    firebaseTokenValidatorMiddleware, 
+    accountRouter.routes(), 
+    accountRouter.allowedMethods()
   );
 };
 
