@@ -1,0 +1,88 @@
+.sliders-container {
+    display: block;
+    flex: 1;
+    min-height: 80vh;
+}
+
+.about-component {
+    padding: 0 4%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+
+    .app-title {
+        font-family: 'Monoton';
+        font-size: calc(0.5rem + 2vw);
+        color: gold;
+        text-shadow: 1px 1px 5px black;
+        flex-basis: auto;
+
+        @media screen and (max-width: 768px) {
+            font-size: calc(0.5rem + 5vw);
+        }
+    }
+
+    .content {
+        padding: 1% 25%;
+        box-sizing: border-box;
+        font-size: calc(0.5rem + 1vw);
+        color: white;
+        text-align: center;
+        font-family: 'PT Sans Narrow';
+
+        @media screen and (max-width: 768px) {
+            padding: 1% 20%;
+            font-size: calc(0.5rem + 3vw);
+        }
+    }
+
+    .powered-by-title {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: baseline;
+        font-size: calc(0.5rem + 1.3vw);
+        font-family: 'PT Sans Narrow';
+        gap: 0.5rem;
+        margin: 1rem 0;
+
+        @media screen and (max-width: 768px) {
+            font-size: calc(0.5rem + 3vw);
+        }
+
+        .app-title {
+            font-size: calc(0.5rem + 1.3vw);
+            margin: 0;
+            @media screen and (max-width: 768px) {
+                font-size: calc(0.5rem + 3vw);
+            }
+        }
+    }
+
+    .tmdb-api {
+        margin-top: 1rem;
+
+        img {
+            height: auto;
+            width: 8vw;
+
+            @media screen and (max-width: 768px) {
+                width: 20vw;
+            }
+        }
+    }
+
+    .justwatch-provider-api {
+        img {
+            height: auto;
+            width: 20vw;
+
+            @media screen and (max-width: 768px) {
+                width: 45vw;
+            }
+        }
+    }
+}
