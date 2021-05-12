@@ -21,8 +21,8 @@ const Footer: React.FC = () => {
         <div className={style['column']}>
           <div className={style['header']}>App</div>
           <div className={style['links']}>
-            <Link to='/'>About</Link>
-            <Link to='/'>Contact</Link>
+            <Link to='/about'>About</Link>
+            <Link to='/contact'>Contact</Link>
           </div>
         </div>
       </div>
