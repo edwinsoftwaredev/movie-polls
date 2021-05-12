@@ -18,8 +18,9 @@ const Movie: React.FC<{
   isUpdating: boolean,
   userIsAuthor: boolean,
   tokenId?: string | null,
-  endsAt?: Date
-  onVote: () => void}> = ({movie, progress, votes, isOpenPoll, pollId, voted, votable, isUpdating, onVote, userIsAuthor, tokenId, endsAt}) => {
+  endsAt?: Date,
+  countryCode?: string
+  onVote: () => void}> = ({movie, progress, votes, isOpenPoll, pollId, voted, votable, isUpdating, onVote, userIsAuthor, tokenId, endsAt, countryCode}) => {
   const [loadedPoster, setLoadedPoster] = useState(false);
   const [cast, setCast] = useState<string[]>([]);
   const [duration, setDuration] = useState<string>('');
@@ -28,6 +29,7 @@ const Movie: React.FC<{
   const [providers, setProviders] = useState<any>();
   const [showSpinner, setShowSpinner] = useState(false);
   const [movieVoted, setMovieVoted] = useState(false);
+  const [validCoutryCode, setValidCountryCode] = useState('US');
   const dispatch = useDispatch();
 
   const handleDelete = () => {
@@ -42,6 +44,12 @@ const Movie: React.FC<{
     tokenId &&
     dispatch(vote({pollId: pollId, movieId: movie.id, tokenId: tokenId}));
   }
+
+  useEffect(() => {
+    if (countryCode && providers && providers[countryCode]) {
+      countryCode && setValidCountryCode(providers[countryCode]);
+    }
+  }, [countryCode, providers]);
 
   useEffect(() => {
     const getDetails = () => {
@@ -124,11 +132,11 @@ const Movie: React.FC<{
         <div className={style['poll-data']}>
           <div className={style['providers']}>
             {
-              providers && providers['US'] && providers['US'].flatrate && <div className={style['providers-title']}>STREAMING ON</div>
+              providers && providers[validCoutryCode] && providers[validCoutryCode].flatrate && <div className={style['providers-title']}>STREAMING ON - ({validCoutryCode})</div>
             }
             <div className={style['providers-container']}>
               {
-                providers && providers['US'] && providers['US'].flatrate && providers['US'].flatrate.map((provider: any) => (
+                providers && providers[validCoutryCode] && providers[validCoutryCode].flatrate && providers[validCoutryCode].flatrate.map((provider: any) => (
                   <div key={provider.provider_id} className={style['image-provider-container']}>
                     <img
                       className={style['provider-img']}
@@ -140,13 +148,13 @@ const Movie: React.FC<{
                 ))
               }
             </div>
-            {providers && providers['US'] && providers['US'].rent && <div className={style['providers-title']}>AVAILABLE ON</div>}
+            {providers && providers[validCoutryCode] && providers[validCoutryCode].rent && <div className={style['providers-title']}>AVAILABLE ON - ({validCoutryCode})</div>}
             <div className={style['providers-container']}>
               {
                 providers && 
-                providers['US'] &&
-                providers['US'].rent &&
-                providers['US'].rent.map((provider: any) => (
+                providers[validCoutryCode] &&
+                providers[validCoutryCode].rent &&
+                providers[validCoutryCode].rent.map((provider: any) => (
                   <div key={provider.provider_id} className={style['image-provider-container']}>
                     <img
                       className={style['provider-img']}
