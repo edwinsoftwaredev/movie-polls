@@ -34,6 +34,7 @@ const Poll: React.FC = () => {
   const userAuthenticationStatus = useSelector(userAuthenticationStatusSelector);
   const [isOpen, setIsOpen] = useState<boolean | undefined>();
   const [tokenId, setTokenId] = useState<string | null>(null);
+  const [countryCode, setCountryCode] = useState<string>();
   const dispatch = useDispatch();
   const history = useHistory();
   
@@ -111,11 +112,25 @@ const Poll: React.FC = () => {
 
   useEffect(() => {
     const tokenId = new URLSearchParams(location.search).get('tid');
+    if (!tokenId && !getUser()) {
+      history.push('/');
+    }
+
     if (tokenId && id && author && author.uid !== getUser()?.uid) {
       setTokenId(tokenId);
       dispatch(getPublicPoll({pollId: id, tokenId: tokenId}));
     }
-  }, [id, location, author, dispatch]);
+  }, [id, location, author, dispatch, history]);
+
+  useEffect(() => {
+    const fetchCountryCode = async () => {
+      const res = await fetch('http://ip-api.com/json');
+      const data = await res.json();
+      setCountryCode(data.countryCode);
+    };
+
+    fetchCountryCode();
+  }, []);
 
   return (
     <div
@@ -160,6 +175,7 @@ const Poll: React.FC = () => {
                     userIsAuthor={!!author && author.uid === getUser()?.uid}
                     tokenId={tokenId}
                     endsAt={poll.endsAt}
+                    countryCode={countryCode}
                   />
                 </Fragment>
               ))
