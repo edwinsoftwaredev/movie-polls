@@ -10,7 +10,11 @@
     box-sizing: border-box;
     border-radius: 5px;
     height: 100%;
-    
+
+    @media screen and (max-width: 768px) {
+        row-gap: 0;
+    }
+
     .title {
         font-family: 'PT Sans Narrow';
         font-size: calc(1rem + 1.5vw);
@@ -32,10 +36,18 @@
         .label {
             color: white;
         }
+
+        @media screen and (max-width: 768px) {
+            padding: 1.5vw 2vw;
+        }
     }
 
     &.normal {
         padding: 0.1vw 0.7vw;
+
+        @media screen and (max-width: 768px) {
+            padding: 1vw 2vw;
+        }    
     }
 
     .container {
@@ -52,9 +64,13 @@
         margin: auto;
         border-radius: 5px;
 
+        @media screen and (max-width: 768px) {
+            height: 1rem;
+        }
+
         .progress-bar {
             background-color: goldenrod;
-            height: 0.7rem;
+            height: 100%;
             width: 100%;
             border-radius: 5px;
         }
@@ -64,6 +80,10 @@
         font-family: 'PT Sans Narrow';
         font-size: calc(0.5rem + 0.8vw);
         color: rgba(255, 255, 255, 0.8);
+
+        @media screen and (max-width: 768px) {
+            font-size: calc(0.5rem + 2.5vw);
+        }
     }
 
     .title {
@@ -76,5 +96,9 @@
         font-weight: normal !important;
         background-color: transparent !important;
         padding: 0 !important;
+
+        @media screen and (max-width: 768px) {
+            font-size: calc(0.5rem + 3vw) !important;
+        }
     }
 }
