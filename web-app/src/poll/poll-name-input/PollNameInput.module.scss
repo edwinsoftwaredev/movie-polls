@@ -27,6 +27,10 @@
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
+
+        @media screen and (max-width: 768px) {
+            font-size: calc(0.5rem + 5vw);
+        }
     }
     
     .edit-vector {
@@ -44,6 +48,10 @@
             width: calc(0.5rem + 1.3vw);
             color: white;
             height: 100%;
+
+            @media screen and (max-width: 768px) {
+                width: calc(0.5rem + 4vw);
+            }
         }
 
         &:hover {
