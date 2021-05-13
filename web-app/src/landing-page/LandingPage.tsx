@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
-import Footer from '../footer/Footer';
 import style from './LandingPage.module.scss';
+import step1 from '../shared/resources/steps-gifs/step_1.gif';
+import step2 from '../shared/resources/steps-gifs/step_2.gif';
+import step3 from '../shared/resources/steps-gifs/step_3.gif';
+import step4 from '../shared/resources/steps-gifs/step_4.gif'
 
 const Carousel: React.FC = () => {
   const [step, setStep] = useState(0);
 
   const steps = [{
-    title: 'Create a new poll',
-    media: ''
-  }, {
-    title: 'Pick the movies',
-    media: ''
+    title: 'Pick the movies & Create a new poll',
+    media: step1
   }, {
     title: 'Generate the tokens/links',
-    media: ''
+    media: step2
   }, {
     title: 'Share the tokens/links',
-    media: ''
+    media: step3
   }, {
     title: 'Check the results',
-    media: ''
+    media: step4
   }]
   
   return (
@@ -33,7 +33,9 @@ const Carousel: React.FC = () => {
         <hr />
       </div>
       <div className={style['media-container']}>
-        <div className={style['media']}></div>
+        <div className={style['media']}>
+          <img alt={steps[step].title} src={steps[step].media} />
+        </div>
       </div>
       <div className={style['buttons']}>
         <div className={style['back']} onClick={e => {
