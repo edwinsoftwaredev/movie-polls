@@ -1,0 +1,14 @@
+node_modules
+build
+.git
+.idea
+Dockerfile
+Dockerfile.prod
+Dockerfile.dev
+# Adding files/directories that were also added to .gitignore
+private-json-keys
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
