@@ -9,6 +9,27 @@ services:
       - ./database-scripts/init_database.sql:/docker-entrypoint-initdb.d/setup.sql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    # instance must not be exposed
-    ports:
-      - 3306:3306
+  api-server:
+    image: api-server:latest
+    depends_on: 
+      - mysql-instance
+    # Prisma migration will fail if mysql-instace is not ready to accept request.
+    # When Prisma migration fails this service restarts. attemps: 50
+    # A restart policy is added to handle fails(This is a workaround).
+    # A real solution is to create a wait-for.sh file.
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 50
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: ${DATABASE_URL}
+      TMDB_API_KEY: ${TMDB_API_KEY}
+      TMDB_API_URL: ${TMDB_API_URL}
+      CLIENT_ORIGIN: ${CLIENT_ORIGIN}
+      KEY: ${KEY}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
+      ports:
+        - 4000:443
+        # This will publish this service on port 443(HTTPS) which is the secured port in Azure App Service
