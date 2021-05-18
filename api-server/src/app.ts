@@ -22,8 +22,8 @@ import bodyParser from 'koa-bodyparser';
 
 /** Apps initialization block **/
 const app = new Koa();
-admin.initializeApp({
-  credential: admin.credential.applicationDefault()
+process.env.GOOGLE_APPLICATION_CREDENTIALS && admin.initializeApp({
+  credential: admin.credential.cert(JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS))
 });
 /******************************/
 
