@@ -30,6 +30,6 @@ services:
       CLIENT_ORIGIN: ${CLIENT_ORIGIN}
       KEY: ${KEY}
       GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
-      ports:
-        - 4000:443
-        # This will publish this service on port 443(HTTPS) which is the secured port in Azure App Service
+    ports:
+      - 443:4000
+      # This will publish this service on port 443(HTTPS) which is the secured port in Azure App Service
