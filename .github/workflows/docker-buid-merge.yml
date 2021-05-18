@@ -1,0 +1,20 @@
+name: Build and Deploy api-server Docker image on Merge
+on:
+  push:
+    branches:
+      - "main"
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: azure/docker-login@v1
+      with: 
+        login-server: index.docker.io
+        username: ${{secrets.DOCKERIO_USERNAME}}
+        password: ${{secrets.DOCKERIO_PASSWORD}}
+    - run: |
+        docker build ./api-server -t edwinsoftwaredev/movie-polls:api-server
+        docker push edwinsoftwaredev/movie-polls:api-server
+# At the moment Azure GitHub Actions does not support deploying multiple containers,
+# that is why the steps to deploy the containers are not defined. 
