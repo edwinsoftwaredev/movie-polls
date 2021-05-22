@@ -56,6 +56,18 @@ const init = (router: Router<Koa.DefaultState, Koa.DefaultContext>): void => {
   // is based on the level of protection determined 
   // for each route in ascending order.
 
+  // this will match root and return status OK
+  // As this project is a REST API, root path by default
+  // returns 404 which prevent health check to be successful.
+  // To prevent that from happening, root path will return 200.
+  router.get('/', async (ctx, next) => {
+    if (ctx.path === '/') {
+      ctx.status = 200;
+      return;
+    }
+    await next();
+  });
+
   // Always use a unique prefix for each router.
   // Doing that will prevent the execution of middlewares used for multiple routers
   // beign called multiple times in a single request.
