@@ -6,3 +6,4 @@ private-json-keys
 .env.test.local
 .env.production.local
 .env.local
+dev.db
