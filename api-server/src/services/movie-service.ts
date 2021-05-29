@@ -32,7 +32,7 @@ export default class MoviesService {
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    return cache ? cache.movies?.result : [];
+    return cache ? JSON.parse(cache.movies).result : [];
   }
 
   /**
@@ -287,7 +287,7 @@ export default class MoviesService {
     const cache = await prisma.bestMovies.findFirst({where: {type: MoviesTypes.TopPopularMovies}});
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    return cache ? cache.movies?.result : [];
+    return cache ? JSON.parse(cache.movies).result : [];
   }
 
   /**
@@ -308,7 +308,7 @@ export default class MoviesService {
     const cache = await prisma.bestMovies.findFirst({where: {type: MoviesTypes.NowPlayingMovies}});
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    return cache ? cache.movies?.result : [];
+    return cache ? JSON.parse(cache.movies).result : [];
   }
 
   /**

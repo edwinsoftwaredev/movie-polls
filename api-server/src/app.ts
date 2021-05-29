@@ -22,9 +22,17 @@ import bodyParser from 'koa-bodyparser';
 
 /** Apps initialization block **/
 const app = new Koa();
-process.env.GOOGLE_APPLICATION_CREDENTIALS && admin.initializeApp({
-  credential: admin.credential.cert(JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS))
-});
+
+if (process.env.NODE_ENV !== 'production') {
+  process.env.GOOGLE_APPLICATION_CREDENTIALS && admin.initializeApp({
+    credential: admin.credential.applicationDefault()
+  });
+} else {
+  process.env.GOOGLE_APPLICATION_CREDENTIALS && admin.initializeApp({
+    credential: admin.credential.cert(JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS))
+  });
+}
+
 /******************************/
 
 app.keys = [process.env.KEY as string];
@@ -33,20 +41,22 @@ const router = new Router<Koa.DefaultState, Koa.DefaultContext>();
 const corsConfig: cors.Options = {origin: process.env.CLIENT_ORIGIN, credentials: true};
 
 const sessionConfig: Partial<session.opts> = {
+  secure: true,
+  sameSite: 'none',
   store: {
     async get(key, maxAge, data) {
       // TODO: Errors should be catched.
       const sessionObj = await prisma.session.findUnique({
         where: {id: key}
       });
-      return sessionObj?.session;
+      return JSON.parse(sessionObj?.session ?? '');
     },
     async set(key, sess, maxAge, data) {
       // TODO: Errors should be catched.
       await prisma.session.upsert({
         where: {id: key},
-        update: {session: sess},
-        create: {id: key, session: sess}
+        update: {session: JSON.stringify(sess)},
+        create: {id: key, session: JSON.stringify(sess)}
       })
     },
     async destroy(key){

@@ -26,7 +26,7 @@ export const moviesJob = schedule.scheduleJob(rule, async () => {
   
         await prisma.bestMovies.update({
           where: {id: cache.id}, 
-          data: {movies: object, updateDate: new Date(today), type: type}
+          data: {movies: JSON.stringify(object), updateDate: new Date(today), type: type}
         });
 
         console.info(`${type} movies cache updated.`);
@@ -40,7 +40,7 @@ export const moviesJob = schedule.scheduleJob(rule, async () => {
       const updateDate = new Date(new Date().setHours(0, 0, 0, 0));
   
       await prisma.bestMovies.create({
-        data: {movies: object, updateDate: updateDate, type: type}
+        data: {movies: JSON.stringify(object), updateDate: updateDate, type: type}
       });
 
       console.log(`${type} movies cached.`);
