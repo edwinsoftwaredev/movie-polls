@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `MoviePoll` MODIFY `voteCount` INTEGER NOT NULL DEFAULT 0;
