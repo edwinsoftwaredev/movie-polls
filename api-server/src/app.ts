@@ -45,7 +45,11 @@ if (process.env.NODE_ENV === 'production') {
 
 
 const router = new Router<Koa.DefaultState, Koa.DefaultContext>();
-const corsConfig: cors.Options = {origin: process.env.CLIENT_ORIGIN, credentials: true};
+const corsConfig: cors.Options = {
+  origin: process.env.CLIENT_ORIGIN, 
+  credentials: true,
+  exposeHeaders: ['CSRF-Token']
+};
 
 const sessionConfig: Partial<session.opts> = {
   secure: process.env.NODE_ENV === 'production',
