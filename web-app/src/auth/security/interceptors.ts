@@ -6,7 +6,7 @@ export default class CsrfToken {
   private static _idTokenInterceptorId: number;
 
   public static setDefaultInterceptors() {
-    this.setCSRFTokenInterceptor();
+    // this.setCSRFTokenInterceptor(); // the current architecture does not handle cookie sessions
     this.setIDTokenInterceptor();
   }
 
