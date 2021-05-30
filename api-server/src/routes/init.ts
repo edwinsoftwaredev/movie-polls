@@ -75,11 +75,20 @@ const init = (router: Router<Koa.DefaultState, Koa.DefaultContext>): void => {
   // '/api/csrf-token', '/api/movies' and '/api/polls' are the unique prefixes 
   // If these prefixes were all setted just like '/api', which is not OK, the firebaseTokenValidatorMiddleware
   // will be called more than once because the middleware is placed before the nested routes.
-  router.use('/api/csrf-token', csrfMiddlewareGenerator, csrfTokenRouter.routes(), csrfTokenRouter.allowedMethods());
-  router.use('/api/movies', csrfMiddleware, firebaseTokenValidatorMiddleware, movieRouter.routes(), movieRouter.allowedMethods());
+ 
+  // Current architecture does not handle cookie based session
+  // router.use('/api/csrf-token', csrfMiddlewareGenerator, csrfTokenRouter.routes(), csrfTokenRouter.allowedMethods());
+  
+  router.use(
+    '/api/movies',
+    // csrfMiddleware, // current architecture does not handle cookie based session
+    firebaseTokenValidatorMiddleware,
+    movieRouter.routes(),
+    movieRouter.allowedMethods()
+  );
   router.use(
     '/api/polls', 
-    csrfMiddleware,
+    // csrfMiddleware, // current architecture does not handle cookie based session
     publicPollRouter.routes(), 
     publicPollRouter.allowedMethods(), 
     firebaseTokenValidatorMiddleware, 
@@ -88,7 +97,7 @@ const init = (router: Router<Koa.DefaultState, Koa.DefaultContext>): void => {
   );
   router.use(
     '/api/account',
-    csrfMiddleware,
+    // csrfMiddleware, // current architecture does not handle cookie based session
     firebaseTokenValidatorMiddleware, 
     accountRouter.routes(), 
     accountRouter.allowedMethods()

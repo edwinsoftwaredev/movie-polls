@@ -48,7 +48,7 @@ const router = new Router<Koa.DefaultState, Koa.DefaultContext>();
 const corsConfig: cors.Options = {
   origin: process.env.CLIENT_ORIGIN, 
   credentials: true,
-  exposeHeaders: ['CSRF-Token']
+  // exposeHeaders: ['CSRF-Token'] // current architecture does not handle cookie based session
 };
 
 const sessionConfig: Partial<session.opts> = {
@@ -84,7 +84,8 @@ initRoutes(router);
 
 app.use(KoaLogger());
 app.use(cors(corsConfig));
-app.use(session(sessionConfig, app)); // Prefer a store like Redis - MySql is in used.
+// current architecture does not handle cookie based session
+// app.use(session(sessionConfig, app)); // Prefer a store like Redis - MySql is in used.
 app.use(bodyParser());
 app.use(router.routes());
 
