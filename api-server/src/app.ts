@@ -37,6 +37,13 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.keys = [process.env.KEY as string];
 
+// Azure App Service has a SSL Load balancer 
+// using app.proxy = true Forward headers are read  
+if (process.env.NODE_ENV === 'production') {
+  app.proxy = true;
+}
+
+
 const router = new Router<Koa.DefaultState, Koa.DefaultContext>();
 const corsConfig: cors.Options = {origin: process.env.CLIENT_ORIGIN, credentials: true};
 
