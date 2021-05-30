@@ -48,7 +48,7 @@ const router = new Router<Koa.DefaultState, Koa.DefaultContext>();
 const corsConfig: cors.Options = {origin: process.env.CLIENT_ORIGIN, credentials: true};
 
 const sessionConfig: Partial<session.opts> = {
-  secure: true,
+  secure: process.env.NODE_ENV === 'production',
   sameSite: 'none',
   store: {
     async get(key, maxAge, data) {
