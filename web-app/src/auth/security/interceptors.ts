@@ -29,17 +29,14 @@ export default class CsrfToken {
         let csrfToken = window.sessionStorage.getItem('csrf-token');
 
         if (!csrfToken) {
-          await Axios.get(
+          const response = await Axios.get(
             `${process.env.REACT_APP_API_SERVER}/api/csrf-token/token`,
             {withCredentials: true}
           );
+          
+          csrfToken = response.headers['CSRF-Token'];
 
-          csrfToken = window.document.cookie
-            .split('; ')
-            .find(cookie => cookie.startsWith('XSRF-TOKEN'))
-            ?.split('=')[1] ?? '';
-
-          window.sessionStorage.setItem('csrf-token', csrfToken);
+          window.sessionStorage.setItem('csrf-token', csrfToken ?? '');
 
           if (!csrfToken) throw new Error('Error fetching CSRF-TOKEN.');
         }
