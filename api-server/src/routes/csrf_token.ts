@@ -22,7 +22,13 @@ router.get('/token', async (
   ctx.cookies.set(
     'XSRF-TOKEN',
     ctx.session?.csrf,
-    {httpOnly: false, signed: false, sameSite: 'none', secure: true}
+    {
+      httpOnly: false, 
+      signed: false, 
+      sameSite: 'none', 
+      secure: true,
+      domain: process.env.CLIENT_ORIGIN
+    }
   );
 
   ctx.status = 204;
