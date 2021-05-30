@@ -18,19 +18,7 @@ router.get('/token', async (
     // the value setted in ctx.session.csrf
     ctx.session.csrf = ctx.csrf;
 
-  // by default cookies are protected from tampering when 'signed' is set to true
-  ctx.cookies.set(
-    'XSRF-TOKEN',
-    ctx.session?.csrf,
-    {
-      httpOnly: false, 
-      signed: false, 
-      sameSite: 'none', 
-      secure: true,
-      domain: process.env.CLIENT_ORIGIN
-    }
-  );
-
+  ctx.set('CSRF-Token', ctx.session?.csrf);
   ctx.status = 204;
 });
 
