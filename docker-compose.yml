@@ -1,22 +1,7 @@
 version: "3.9"
 services:
-  mysql-instance:
-    image: mysql:latest
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    volumes:
-      - ./mysql-data:/var/lib/mysql
-      - ./database-scripts/init_database.sql:/docker-entrypoint-initdb.d/setup.sql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
   api-server:
-    image: api-server:latest
-    depends_on: 
-      - mysql-instance
-    # Prisma migration will fail if mysql-instace is not ready to accept request.
-    # When Prisma migration fails this service restarts. attemps: 50
-    # A restart policy is added to handle fails(This is a workaround).
-    # A real solution is to create a wait-for.sh file.
+    image: edwinsoftwaredev/movie-polls:api-server
     deploy:
       restart_policy:
         condition: on-failure
@@ -24,7 +9,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 4000
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: file:${WEBAPP_STORAGE_HOME}/dev.db
       TMDB_API_KEY: ${TMDB_API_KEY}
       TMDB_API_URL: ${TMDB_API_URL}
       CLIENT_ORIGIN: ${CLIENT_ORIGIN}
