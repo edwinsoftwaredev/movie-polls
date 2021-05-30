@@ -34,14 +34,7 @@ export default class CsrfToken {
             {withCredentials: true}
           );
           
-          console.log(response.headers);
-          
-          console.log(response.headers['CSRF-Token']+ ' - 1');
-          console.log(response.headers['csrf-token'] + ' - 2');
-
-          csrfToken = response.headers['CSRF-Token'];
-          console.log(csrfToken);
-          
+          csrfToken = response.headers['csrf-token'];
           window.sessionStorage.setItem('csrf-token', csrfToken ?? '');
 
           if (!csrfToken) throw new Error('Error fetching CSRF-TOKEN.');
